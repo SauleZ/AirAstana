@@ -1,0 +1,73 @@
+mat-expansion-panel {
+  margin: 1% 0;
+}
+
+.mat-divider {
+  border-top-color: black;
+  margin: 3% 0;
+}
+
+.mat-expansion-panel-header {
+  height: 20% !important;
+}
+
+::ng-deep .example-tooltip {
+  background-color: #1C202C !important;
+  border-radius: 4px;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.example-button {
+  margin-top: 8px;
+}
+
+.routeDep {
+  margin: 2% 0 1% !important;
+}
+
+.panel {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(50, 56, 74, 0.05), 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.panel:hover {
+  box-shadow: 0 8px 16px rgba(50, 56, 74, 0.1), 0 0 1px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+::ng-deep .specific-class > .mat-expansion-indicator:after {
+  border-color: #282D3E!important;
+  margin-left: 2%;
+}
+
+::ng-deep .specific-class > .mat-expansion-indicator {
+  margin-left: 2%;
+}
+
+::ng-deep .specific-class > .mat-expansion-indicator:before {
+  border-color: #282D3E!important;
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+  .routeDep {
+    margin: 0 0 2% !important;
+  }
+}
+
+.selected-Bound {
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2), 0px 4px 8px rgba(50, 56, 74, 0.05);
+  border-radius: 8px;
+  margin: 1% 0;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+}

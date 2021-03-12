@@ -1,0 +1,678 @@
+<div fxLayout="row" style="width: 100%; margin-top: 1%;" class="padding-sides" ngClass.gt-sm="padding-top"
+     *ngIf="booking" ngClass.lt-md="paddingMobile">
+    <div fxFlex.gt-sm="70" fxFlex="100" fxLayout="column">
+        <div *ngFor="let flight of flights; let i = index;" fxLayout="column" fxLayoutAlign="start start"
+             class="margin-bottom">
+
+            <div *ngIf="flight.type === 'Departure'" fxLayout="row"
+                 class="routeDep" fxLayoutAlign="start center" style="width: 100%;">
+                <!--searchRequest && searchRequest.itineraries.length >= 1 && -->
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">{{flight.from}}&nbsp; </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest">{{searchRequest.itineraries[0].originLocation}}&nbsp; </p>
+                <img src="./assets/img/web/Line_header.svg" [fxHide]="isMobile">&nbsp;
+                <p class="headline-M" [fxHide]="!isMobile"> — </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">&nbsp; {{flight.to}} </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest"> &nbsp; {{searchRequest.itineraries[0].destinationLocation}}&nbsp; </p>
+            </div>
+
+
+            <div *ngIf="flight.type === 'Return'" fxLayout="row"
+                 class="routeDep" fxLayoutAlign="start center" style="width: 100%;">
+                <!--searchRequest && searchRequest.itineraries.length === 2 && -->
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">{{flight.from}}&nbsp; </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1">{{searchRequest.itineraries[1].originLocation}}&nbsp; </p>
+                <img src="./assets/img/web/Line_header.svg" [fxHide]="isMobile"
+                     *ngIf="searchRequest && searchRequest.itineraries.length > 1">&nbsp;
+                <p class="headline-M" [fxHide]="!isMobile"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1"> — </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">&nbsp; {{flight.to}} </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1">
+                    &nbsp; {{searchRequest.itineraries[1].destinationLocation}}&nbsp; </p>
+            </div>
+
+
+            <div fxLayout="row" fxLayoutAlign="start center" style="width: 100%;">
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="calendarResult && flight.type === 'Departure'">{{calendarResult.departureDate | localizedDates}}
+                    , {{calendarResult.departureDate | date: 'EEE':undefined:locale}}</div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="searchRequest && searchRequest.itineraries.length > 1 && calendarResult && flight.type === 'Return'">{{calendarResult.returnDate | localizedDates}}
+                    , {{calendarResult.returnDate| date: 'EEE':undefined:locale}}</div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="searchRequest && searchRequest.itineraries.length === 1 && flight.type === 'Departure'">
+                    {{searchRequest.itineraries[0].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[0].departureDateTime | date: 'EEE' :undefined : locale}}
+                </div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="!calendarResult && searchRequest && searchRequest.itineraries.length === 2 && flight.type === 'Departure'">
+                    {{searchRequest.itineraries[0].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[0].departureDateTime | date: 'EEE':undefined:locale}}
+                </div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="searchRequest && searchRequest.itineraries.length > 1 && flight.type === 'Return'">
+                    {{searchRequest.itineraries[1].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[1].departureDateTime | date: 'EEE':undefined:locale}}
+                </div>
+            </div>
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               DESKTOP VERSION                                          ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isDesktop && booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type]"
+                 style="width: 100%;">
+                <div class="selected-Bound" *ngIf="booking.selectedBoundMap[flight.type]">
+                    <div style="padding:39px 32px" fxLayout="row" fxLayoutAlign="start start">
+                        <div fxFlex="80">
+                            <div fxLayout="row" style="width: 100%">
+                                <div fxFlex="8" fxLayoutAlign="start center">
+                                    <img src="assets/img/web/icons/circle_check.svg">
+                                    <!--<ic-icon [icon]="iconService.CIRCLE_CHECK"-->
+                                    <!--style="color: green;" mat-list-icon-->
+                                    <!--size="24px"></ic-icon>--></div>
+                                <div fxFlex="70">
+                                    <div fxLayout="column">
+                                        <div fxLayout="row">
+                                            <div *ngIf="booking && booking.selectedBoundMap[flight.type] && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime"
+                                                 fxFlex="18" fxLayoutAlign="start center"
+                                                 class="headline-S">{{booking.selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                            </div>
+                                            <div fxFlex="17" fxLayoutAlign="center center"></div>
+                                            <div *ngIf="booking && booking.selectedBoundMap[flight.type] && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.duration"
+                                                 fxFlex="30" fxLayoutAlign="center center"
+                                                 class="maintext-S text-muted">{{millsIntoHours(booking.selectedBoundMap[flight.type].bound.duration)}}
+                                                ,&nbsp;<span
+                                                        *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights.length > 1">{{booking.selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                                    stop<span
+                                                            *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights.length > 2">s</span></span>
+                                                <span *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length == 1">{{"DIRECT" | translate}}</span>
+                                            </div>
+                                            <div fxFlex="17" fxLayoutAlign="center center"></div>
+                                            <div *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights"
+                                                 fxFlex="18" fxLayoutAlign="center center"
+                                                 class="paragraph-s text-light-grey"><p
+                                                    class="headline-S">{{booking.selectedBoundMap[flight.type].bound.flights[booking.selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}</p>&nbsp;
+                                                <span *ngIf="countDays(booking.selectedBoundMap[flight.type].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime) > 0">
+                                        +{{countDays(booking.selectedBoundMap[flight.type].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime)}}
+                                                    day<span
+                                                        *ngIf="countDays(booking.selectedBoundMap[flight.type].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime) > 1">s</span></span>
+                                            </div>
+                                        </div>
+                                        <div fxLayout="row">
+                                            <div fxFlex="10" fxLayoutAlign="start center"
+                                                 style="text-decoration: underline"
+                                                 class="maintext-S text-muted"><span
+                                                    class="example-button"
+                                                    matTooltip="{{booking.selectedBoundMap[flight.type].bound.originLocation.cityName}}"
+                                                    matTooltipPosition="above"
+                                                    matTooltipClass="example-tooltip">
+                                            {{booking.selectedBoundMap[flight.type].bound.originLocation.cityCode}}</span>
+                                            </div>
+                                            <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                 style="margin: 3% 0; height: 1px">
+                                            <div fxLayoutAlign="center center"
+                                                 *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound.flights && booking.selectedBoundMap[flight.type].bound.flights.length != 0 && booking.selectedBoundMap[flight.type].bound.flights[0].details.stop"
+                                                 style=" background-color: #F6F7F9;text-align: center;
+                                                 border-radius: 4px;text-decoration-line: underline; z-index: 5; padding: 0 2%;">
+
+                                                <div class="maintext-S text-muted"
+                                                     *ngFor="let stop of getStops(booking.selectedBoundMap[flight.type].bound)">
+                                                    {{stop}}
+
+                                                </div>
+                                            </div>
+
+                                            <!--<img fxFlex="32" src="./assets/img/web/Line_horizontal.png"-->
+                                            <!--*ngIf="!bound.flights[0]?.details.stops"-->
+                                            <!--style="margin: 3% 0; height: 1px">-->
+
+                                            <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                 style="margin: 3% 0; height: 1px">
+
+                                            <div fxFlex="10" fxLayoutAlign="center center"
+                                                 class="maintext-S text-muted"
+                                                 style="text-decoration: underline">
+                                            <span *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.destinationLocation"
+                                                  class="example-button"
+                                                  matTooltip="{{booking.selectedBoundMap[flight.type].bound.destinationLocation.cityName}}"
+                                                  matTooltipPosition="above"
+                                                  matTooltipClass="example-tooltip">{{booking.selectedBoundMap[flight.type].bound.destinationLocation.cityCode}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div fxFlex="20"></div>
+                            </div>
+                        </div>
+                        <div fxFlex="20" fxLayoutAlign="end center">
+                            <div fxLayout="column" fxLayoutGap="10%">
+                                <div fxLayoutAlign="end end">
+                                <span *ngIf="booking && booking.selectedBoundMap[flight.type] && booking.selectedBoundMap[flight.type].rate"
+                                      class="headline-M">
+<!--                                    {{booking.flight.info[0].values[0].price}}-->
+                                    {{priceView(booking.selectedBoundMap[flight.type].rate.cost.total.toString())}}
+                                    <span *ngIf="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                          [innerHTML]="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                </span>
+                                </div>
+                                <div fxLayoutAlign="end center">
+                                    <button mat-raised-button style="background-color: #F6F7F9;"
+                                            (click)="openRouteDetails(flight.type)">
+                                        {{"Route" | translate}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <vex-details-header [type]="'route'" [summary]="true"
+                                    *ngIf="routeDetailsMap && routeDetailsMap[flight.type]"
+                                    [bound]="booking.selectedBoundMap[flight.type].bound"></vex-details-header>
+            </div>
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               MOBILE VERSION                                           ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isMobile && booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type]"
+                 style="margin-top: 16px; width: 100%;">
+                <mat-card class="max-w-full" *ngIf="booking.selectedBoundMap[flight.type]">
+                    <mat-card-content>
+                        <div fxLayout="column" fxLayoutGap="2%">
+                            <div fxLayout="row">
+                                <div fxFlex="10" fxLayoutAlign="start center">
+                                    <img style="padding: 1%" src="./assets/img/web/icons/selected.svg"></div>
+                                <div *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights"
+                                     fxFlex="50" fxLayoutAlign="start center"
+                                     class="maintext-M-semibold">{{booking.selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                    -
+                                    {{booking.selectedBoundMap[flight.type].bound.flights[booking.selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                    <span *ngIf="durationIntoDays(booking.selectedBoundMap[flight.type].bound.duration) > 0">   +{{durationIntoDays(booking.selectedBoundMap[flight.type].bound.duration)}}</span>
+                                </div>
+                                <div *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound"
+                                     fxFlex="40" fxLayoutAlign="center center"
+                                     class="maintext-S text-muted">{{millsIntoHours(booking.selectedBoundMap[flight.type].bound.duration)}}
+                                    ,&nbsp;<span
+                                            *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length > 1">{{booking.selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                        stop<span
+                                                *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type].bound && booking.selectedBoundMap[flight.type].bound.flights.length > 2">s</span></span>
+                                    <span *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length == 1">{{"DIRECT" | translate}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </mat-card-content>
+
+                </mat-card>
+                <mat-card class="max-w-full" style="margin-bottom: 16px">
+                    <mat-card-content>
+                        <div fxLayout="row">
+                            <div fxFlex="20">
+                                <button *ngIf="!type" style="background: #F6F7F9;border-radius: 4px;height: 32px"
+                                        mat-raised-button
+                                        (click)="openDialog(booking.selectedBoundMap[flight.type].bound, flight, i , 'route')">{{"Route" | translate}}
+                                </button>
+                            </div>
+                            <div fxFlex="20"></div>
+                            <div fxFlex="60" fxLayoutAlign="end center">
+                                <span *ngIf="booking && booking.selectedBoundMap[flight.type] && booking.selectedBoundMap[flight.type].rate"
+                                      class="headline-S">
+<!--                                    {{booking.flight.info[0].values[0].price}}-->
+                                    {{priceView(booking.selectedBoundMap[flight.type].rate.cost.total.toString())}}
+                                    <span *ngIf="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                          [innerHTML]="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </mat-card-content>
+
+                </mat-card>
+            </div>
+
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               TABLET VERSION                                           ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isTablet && booking && booking.selectedBoundMap && booking.selectedBoundMap[flight.type]"
+                 style="width: 100%; margin-top: 16px">
+                <mat-card class="max-w-full" *ngIf="booking.selectedBoundMap[flight.type]">
+                    <mat-card-content>
+                        <div fxLayout="column" fxLayoutGap="2%">
+                            <div fxLayout="row">
+                                <div fxFlex="6" fxLayoutAlign="start center">
+                                    <img style="padding: 1%" src="./assets/img/web/icons/selected.svg"></div>
+                                <div fxFlex="54" fxLayoutAlign="start center"
+                                     class="maintext-M-semibold">{{booking.selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                    -
+                                    {{booking.selectedBoundMap[flight.type].bound.flights[booking.selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                    <span *ngIf="durationIntoDays(booking.selectedBoundMap[flight.type].bound.duration) > 0">   +{{durationIntoDays(booking.selectedBoundMap[flight.type].bound.duration)}}</span>
+                                </div>
+                                <div fxFlex="40" fxLayoutAlign="end center"
+                                     class="maintext-S text-muted">{{millsIntoHours(booking.selectedBoundMap[flight.type].bound.duration)}}
+                                    ,&nbsp;<span
+                                            *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length > 1">{{booking.selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                        stop<span
+                                                *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length > 2">s</span></span>
+                                    <span *ngIf="booking.selectedBoundMap[flight.type].bound.flights.length == 1">{{"DIRECT" | translate}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </mat-card-content>
+
+                </mat-card>
+                <mat-card class="max-w-full" style="margin-bottom: 2%">
+                    <mat-card-content>
+                        <div fxLayout="row">
+                            <div fxFlex="10" fxLayoutAlign="start center">
+                                <mat-label class="paragraph-s"
+                                           (click)="openRouteDetails(flight.type)">
+                                    {{"DETAILS" | translate}}
+                                </mat-label>
+                                <!--                                    <mat-select>-->
+                                <!--                                        <mat-option-->
+                                <!--                                                (click)="openDialog(booking.selectedBoundMap[flight.type].bound, flight, i , 'route')"-->
+                                <!--                                                value="route">Route-->
+                                <!--                                        </mat-option>-->
+                                <!--                                        <mat-option-->
+                                <!--                                                (click)="openDialog(booking.selectedBoundMap[flight.type].bound, flight, i , 'rate')"-->
+                                <!--                                                value="rate">Rate-->
+                                <!--                                        </mat-option>-->
+                                <!--                                    </mat-select>-->
+                            </div>
+                            <div fxFlex="30"></div>
+                            <div fxFlex="60" fxLayoutAlign="end center">
+                                <button style="background: #F6F7F9;border-radius: 4px;height: 32px"
+                                        mat-raised-button
+                                        (click)="openRouteDetails(flight.type)">{{"Route" | translate}}
+                                </button>
+                                <span *ngIf="booking && booking.selectedBoundMap[flight.type] && booking.selectedBoundMap[flight.type].rate"
+                                      class="headline-S">
+<!--                                    {{booking.flight.info[0].values[0].price}}-->
+                                    {{priceView(booking.selectedBoundMap[flight.type].rate.cost.total.toString())}}
+                                    <span *ngIf="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                          [innerHTML]="booking.selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </mat-card-content>
+
+                </mat-card>
+
+                <vex-details-header [type]="'route'" [summary]="true"
+                                    *ngIf="routeDetailsMap && routeDetailsMap[flight.type]"
+                                    [bound]="booking.selectedBoundMap[flight.type].bound"></vex-details-header>
+            </div>
+
+        </div>
+        <div *ngIf="isDesktop" fxLayout="column" fxLayoutGap="16px" style="width: 100%; margin: 0 0 2%">
+            <!--            <div class="selected-Bound">Test</div>-->
+            <mat-card style="padding: 24px!important;">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Passenger" | translate}}</p><br>
+                    <div fxLayout="row">
+                        <div style="width: 100%" fxLayout="row"
+                             *ngFor="let passenger of booking.cart.passengers">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"
+                                      fill="#7D8499"/>
+                                <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"
+                                      fill="#7D8499"/>
+                            </svg>
+                            <div fxLayout="column" style="margin-left:12px">
+                                <p class="maintext-M-semibold">{{getTypeName(passenger.personality?.passengerTypeCode) | translate}}</p>
+                                <p class="maintext-M">{{passenger.personality?.firstName}} {{passenger.personality?.lastName}}</p>
+                            </div>
+
+                            <!--                        <div fxFlex="20" fxLayout="row" fxLayoutGap="5%">-->
+                            <!--                            <div>-->
+                            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"-->
+                            <!--                                     xmlns="http://www.w3.org/2000/svg">-->
+                            <!--                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"-->
+                            <!--                                          fill="#7D8499"/>-->
+                            <!--                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"-->
+                            <!--                                          fill="#7D8499"/>-->
+                            <!--                                </svg>-->
+                            <!--                            </div>-->
+                            <!--                            <div fxLayout="column">-->
+                            <!--                                <p class="maintext-M-semibold">Adult</p>-->
+                            <!--                                <p class="maintext-M">Roman Smith</p>-->
+                            <!--                            </div>-->
+                            <!--                        </div>-->
+                            <!--                        <div fxFlex="80"></div>-->
+                        </div>
+                    </div>
+                    <div style="width: 100%; margin: 16px 0">
+                        <svg width="100%" height="1" viewBox="0 0 985 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="1" fill="#E8E9EE"/>
+                        </svg>
+                    </div>
+                    <div *ngIf="booking && booking.cart" fxLayout="column">
+                        <p class="maintext-M-semibold">{{"Contacts" | translate}}</p><br>
+                        <div style="width: 100%" fxLayout="row">
+                            <div fxFlex="20" fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 10.9467V13.304C14.0001 13.4728 13.9361 13.6353 13.8211 13.7588C13.706 13.8823 13.5484 13.9575 13.38 13.9693C13.0887 13.9893 12.8507 14 12.6667 14C6.77533 14 2 9.22467 2 3.33333C2 3.14933 2.01 2.91133 2.03067 2.62C2.04248 2.45163 2.11772 2.29401 2.2412 2.17894C2.36468 2.06387 2.52722 1.99992 2.696 2H5.05333C5.13603 1.99992 5.2158 2.03057 5.27715 2.08601C5.33851 2.14145 5.37706 2.21772 5.38533 2.3C5.40067 2.45333 5.41467 2.57533 5.428 2.668C5.56049 3.59262 5.832 4.49189 6.23333 5.33533C6.29667 5.46867 6.25533 5.628 6.13533 5.71333L4.69667 6.74133C5.5763 8.79097 7.2097 10.4244 9.25933 11.304L10.286 9.868C10.328 9.80933 10.3892 9.76725 10.459 9.7491C10.5288 9.73095 10.6028 9.73787 10.668 9.76867C11.5113 10.1692 12.4104 10.4401 13.3347 10.572C13.4273 10.5853 13.5493 10.6 13.7013 10.6147C13.7835 10.6231 13.8596 10.6617 13.9149 10.7231C13.9702 10.7844 14.0008 10.8641 14.0007 10.9467H14Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p *ngIf="booking && booking.cart.passengers[0]?.contacts[1].number"
+                                   class="maintext-M">+{{booking.cart.passengers[0]?.contacts[1].number}}</p>
+                                <p *ngIf="+booking && booking.cart.passengers[0]?.contacts[0].number"
+                                   class="maintext-M">{{booking.cart.passengers[0]?.contacts[0].number}}</p>
+                            </div>
+
+                            <div fxFlex="20" fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.00004 2H14C14.1769 2 14.3464 2.07024 14.4714 2.19526C14.5965 2.32029 14.6667 2.48986 14.6667 2.66667V13.3333C14.6667 13.5101 14.5965 13.6797 14.4714 13.8047C14.3464 13.9298 14.1769 14 14 14H2.00004C1.82323 14 1.65366 13.9298 1.52864 13.8047C1.40361 13.6797 1.33337 13.5101 1.33337 13.3333V2.66667C1.33337 2.48986 1.40361 2.32029 1.52864 2.19526C1.65366 2.07024 1.82323 2 2.00004 2ZM8.04004 7.78867L3.76537 4.15867L2.90204 5.17467L8.04871 9.54467L13.1027 5.17133L12.2307 4.16267L8.04071 7.78867H8.04004Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p *ngIf="booking && booking.cart.passengers[0]?.contacts[0].address"
+                                   class="maintext-M">{{booking.cart.passengers[0]?.contacts[0].address}}</p>
+                                <p *ngIf="booking && booking.cart.passengers[0]?.contacts[1].address"
+                                   class="maintext-M">{{booking.cart.passengers[0]?.contacts[1].address}}</p>
+                            </div>
+                            <div fxFlex="60"></div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card style="padding: 24px!important;">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Payment methods" | translate}}</p><br>
+                    <p class="paragraph-m" style="color: #32384A;">
+                        {{"You will be redirected to an external page when you click on the Continue button. The methods of payment available will include debit/credit cards of following types: Visa, MasterCard,American Express*, Maestro and Cirrus*, Union Pay*" | translate}}
+                        <br><br><br>
+
+                        {{"Some exceptions apply depending on transaction currency, please refer to Online Booking" | translate}}
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Online-Booking-Terms-and-Conditions"
+                           style="color: #B9966E; text-decoration: underline;">{{"Terms and Conditions for more details" | translate}}</a>.
+                    </p>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div *ngIf="isMobile" style="width: 100%; padding-bottom: 30%" fxLayout="column" fxLayoutGap="16px">
+            <mat-card>
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Passengers" | translate}}</p><br>
+                    <div style="width: 100%;margin-bottom: 16px" fxLayout="column"
+                         *ngFor="let passenger of booking.cart.passengers">
+                        <div fxLayout="row" fxLayoutGap="5%">
+                            <div>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"
+                                          fill="#7D8499"/>
+                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"
+                                          fill="#7D8499"/>
+                                </svg>
+                            </div>
+                            <div fxLayout="column">
+                                <p class="maintext-M-semibold">{{"Adult" | translate}}</p>
+                                <p class="maintext-M"
+                                   *ngIf="booking && booking.cart">{{passenger.personality?.firstName}} {{passenger.personality?.lastName}}</p>
+                                <p class="maintext-M" *ngIf="!booking.cart">Yevgeniy Smith</p>
+                            </div>
+                        </div>
+                        <!--                        <div fxLayout="row" fxLayoutGap="5%">-->
+                        <!--                            <div>-->
+                        <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"-->
+                        <!--                                     xmlns="http://www.w3.org/2000/svg">-->
+                        <!--                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"-->
+                        <!--                                          fill="#7D8499"/>-->
+                        <!--                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"-->
+                        <!--                                          fill="#7D8499"/>-->
+                        <!--                                </svg>-->
+                        <!--                            </div>-->
+                        <!--                            <div fxLayout="column">-->
+                        <!--                                <p class="maintext-M-semibold">Adult</p>-->
+                        <!--                                <p class="maintext-M">Roman Smith</p>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                    </div>
+                    <div style="width: 100%; margin: 16px 0">
+                        <svg width="100%" height="1" viewBox="0 0 985 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="1" fill="#E8E9EE"/>
+                        </svg>
+                    </div>
+                    <div fxLayout="column">
+                        <p class="maintext-M-semibold">{{"Contacts" | translate}}</p><br>
+                        <div style="width: 100%" fxLayout="column" fxLayoutGap="8px">
+                            <div fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.00004 2H14C14.1769 2 14.3464 2.07024 14.4714 2.19526C14.5965 2.32029 14.6667 2.48986 14.6667 2.66667V13.3333C14.6667 13.5101 14.5965 13.6797 14.4714 13.8047C14.3464 13.9298 14.1769 14 14 14H2.00004C1.82323 14 1.65366 13.9298 1.52864 13.8047C1.40361 13.6797 1.33337 13.5101 1.33337 13.3333V2.66667C1.33337 2.48986 1.40361 2.32029 1.52864 2.19526C1.65366 2.07024 1.82323 2 2.00004 2ZM8.04004 7.78867L3.76537 4.15867L2.90204 5.17467L8.04871 9.54467L13.1027 5.17133L12.2307 4.16267L8.04071 7.78867H8.04004Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p class="maintext-M"
+                                   *ngIf="booking.cart && booking.cart.passengers[0].contacts[0].address">
+                                    {{booking?.cart?.passengers[0]?.contacts[0]?.address}}
+                                </p>
+                                <p class="maintext-M"
+                                   *ngIf="booking.cart && booking.cart.passengers[0].contacts[1].address">
+                                    {{booking?.cart?.passengers[0]?.contacts[1]?.address}}
+                                </p>
+                            </div>
+                            <div fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 10.9467V13.304C14.0001 13.4728 13.9361 13.6353 13.8211 13.7588C13.706 13.8823 13.5484 13.9575 13.38 13.9693C13.0887 13.9893 12.8507 14 12.6667 14C6.77533 14 2 9.22467 2 3.33333C2 3.14933 2.01 2.91133 2.03067 2.62C2.04248 2.45163 2.11772 2.29401 2.2412 2.17894C2.36468 2.06387 2.52722 1.99992 2.696 2H5.05333C5.13603 1.99992 5.2158 2.03057 5.27715 2.08601C5.33851 2.14145 5.37706 2.21772 5.38533 2.3C5.40067 2.45333 5.41467 2.57533 5.428 2.668C5.56049 3.59262 5.832 4.49189 6.23333 5.33533C6.29667 5.46867 6.25533 5.628 6.13533 5.71333L4.69667 6.74133C5.5763 8.79097 7.2097 10.4244 9.25933 11.304L10.286 9.868C10.328 9.80933 10.3892 9.76725 10.459 9.7491C10.5288 9.73095 10.6028 9.73787 10.668 9.76867C11.5113 10.1692 12.4104 10.4401 13.3347 10.572C13.4273 10.5853 13.5493 10.6 13.7013 10.6147C13.7835 10.6231 13.8596 10.6617 13.9149 10.7231C13.9702 10.7844 14.0008 10.8641 14.0007 10.9467H14Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p class="maintext-M" *ngIf="booking && booking.cart && booking.cart.passengers[0].contacts[1].number">+
+                                    {{booking.cart.passengers[0].contacts[1].number}}
+                                </p>
+                                <p class="maintext-M" *ngIf="booking && booking.cart && booking.cart.passengers[0].contacts[0].number">+
+                                    {{booking.cart.passengers[0].contacts[0].number}}
+                                </p>
+
+                                <p class="maintext-M" *ngIf="!booking.cart">
+                                    +7 705 972 25 25
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!--            <mat-card>-->
+            <!--                <mat-card-content>-->
+            <!--                    <p class="headline-S" style="color: #282D3E;">Passengers</p><br>-->
+            <!--                    <div style="width: 100%" fxLayout="column" fxLayoutGap="5%">-->
+            <!--                        <div fxLayout="row" fxLayoutGap="5%">-->
+            <!--                            <div>-->
+            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"-->
+            <!--                                     xmlns="http://www.w3.org/2000/svg">-->
+            <!--                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"-->
+            <!--                                          fill="#7D8499"/>-->
+            <!--                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"-->
+            <!--                                          fill="#7D8499"/>-->
+            <!--                                </svg>-->
+            <!--                            </div>-->
+            <!--                            <div fxLayout="column">-->
+            <!--                                <p class="maintext-M-semibold">Adult</p>-->
+            <!--                                <p class="maintext-M">{{booking?.cart?.passengers[0]?.personality?.firstName}} {{booking?.cart?.passengers[0]?.personality?.lastName}}</p>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                        <div fxLayout="row" fxLayoutGap="5%">-->
+            <!--                            <div>-->
+            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"-->
+            <!--                                     xmlns="http://www.w3.org/2000/svg">-->
+            <!--                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"-->
+            <!--                                          fill="#7D8499"/>-->
+            <!--                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"-->
+            <!--                                          fill="#7D8499"/>-->
+            <!--                                </svg>-->
+            <!--                            </div>-->
+            <!--                            <div fxLayout="column">-->
+            <!--                                <p class="maintext-M-semibold">Adult</p>-->
+            <!--                                <p class="maintext-M">{{booking?.cart?.passengers[0]?.personality?.firstName}} {{booking?.cart?.passengers[0]?.personality?.lastName}}</p>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div style="width: 100%; margin: 16px 0">-->
+            <!--                        <svg width="100%" height="1" viewBox="0 0 985 1" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+            <!--                            <rect width="100%" height="1" fill="#E8E9EE"/>-->
+            <!--                        </svg>-->
+            <!--                    </div>-->
+            <!--                    <div fxLayout="column">-->
+            <!--                        <p class="maintext-M-semibold">Contacts</p><br>-->
+            <!--                        <div style="width: 100%" fxLayout="column">-->
+            <!--                            <div fxLayout="row" fxLayoutGap="5%">-->
+            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+            <!--                                    <path d="M2.00004 2H14C14.1769 2 14.3464 2.07024 14.4714 2.19526C14.5965 2.32029 14.6667 2.48986 14.6667 2.66667V13.3333C14.6667 13.5101 14.5965 13.6797 14.4714 13.8047C14.3464 13.9298 14.1769 14 14 14H2.00004C1.82323 14 1.65366 13.9298 1.52864 13.8047C1.40361 13.6797 1.33337 13.5101 1.33337 13.3333V2.66667C1.33337 2.48986 1.40361 2.32029 1.52864 2.19526C1.65366 2.07024 1.82323 2 2.00004 2ZM8.04004 7.78867L3.76537 4.15867L2.90204 5.17467L8.04871 9.54467L13.1027 5.17133L12.2307 4.16267L8.04071 7.78867H8.04004Z" fill="#7D8499"/>-->
+            <!--                                </svg>-->
+            <!--                                <p class="maintext-M">-->
+            <!--                                    {{booking?.cart?.passengers[0]?.contacts[0]?.address}}-->
+            <!--                                </p>-->
+            <!--                            </div>-->
+            <!--                            <div fxLayout="row" fxLayoutGap="5%">-->
+            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+            <!--                                    <path d="M14 10.9467V13.304C14.0001 13.4728 13.9361 13.6353 13.8211 13.7588C13.706 13.8823 13.5484 13.9575 13.38 13.9693C13.0887 13.9893 12.8507 14 12.6667 14C6.77533 14 2 9.22467 2 3.33333C2 3.14933 2.01 2.91133 2.03067 2.62C2.04248 2.45163 2.11772 2.29401 2.2412 2.17894C2.36468 2.06387 2.52722 1.99992 2.696 2H5.05333C5.13603 1.99992 5.2158 2.03057 5.27715 2.08601C5.33851 2.14145 5.37706 2.21772 5.38533 2.3C5.40067 2.45333 5.41467 2.57533 5.428 2.668C5.56049 3.59262 5.832 4.49189 6.23333 5.33533C6.29667 5.46867 6.25533 5.628 6.13533 5.71333L4.69667 6.74133C5.5763 8.79097 7.2097 10.4244 9.25933 11.304L10.286 9.868C10.328 9.80933 10.3892 9.76725 10.459 9.7491C10.5288 9.73095 10.6028 9.73787 10.668 9.76867C11.5113 10.1692 12.4104 10.4401 13.3347 10.572C13.4273 10.5853 13.5493 10.6 13.7013 10.6147C13.7835 10.6231 13.8596 10.6617 13.9149 10.7231C13.9702 10.7844 14.0008 10.8641 14.0007 10.9467H14Z" fill="#7D8499"/>-->
+            <!--                                </svg>-->
+            <!--                                <p class="maintext-M">+-->
+            <!--                                    {{booking?.cart?.passengers[0]?.contacts[1]?.number}}-->
+            <!--                                </p>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </mat-card-content>-->
+            <!--            </mat-card>-->
+
+            <mat-card [ngClass]="{none: open}">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Payment methods" | translate}}</p><br>
+                    <p class="paragraph-m" style="color: #32384A;">
+                        {{"You will be redirected to an external page when you click on the Continue button. The methods of payment available will include debit/credit cards of following types: Visa, MasterCard,American Express*, Maestro and Cirrus*, Union Pay*" | translate}}
+                        <br><br>
+                    </p>
+                    <p (click)="toggle()" target="_blank" href="./#"
+                       style="color: #B9966E; text-decoration: underline;">{{"Expand" | translate}}</p>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card [ngClass]="{none: !open}">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Payment methods" | translate}}</p><br>
+                    <p class="paragraph-m" style="color: #32384A;">
+                        {{"You will be redirected to an external page when you click on the Continue button. The methods of payment available will include debit/credit cards of following types: Visa, MasterCard,American Express*, Maestro and Cirrus*, Union Pay*" | translate}}
+                        <br><br><br>
+
+                        *{{"Some exceptions apply depending on transaction currency, please refer to Online Booking" | translate}}
+                        <a target="_blank" href="./#"
+                           style="color: #B9966E; text-decoration: underline;">{{"Terms and conditions of online booking" | translate}}</a>.
+                    </p><br>
+                    <p (click)="toggle()" href="./#"
+                       style="color: #B9966E; text-decoration: underline;">{{"Collapse" | translate}}</p>
+                </mat-card-content>
+            </mat-card>
+
+        </div>
+        <div *ngIf="isTablet" fxLayout="column" fxLayoutGap="16px" style="width: 100%; margin: 0 0 2%">
+            <!--            <div class="selected-Bound">Test</div>-->
+            <mat-card style="padding: 24px!important;">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Passengers" | translate}}</p><br>
+                    <div fxLayout="row">
+                        <div style="width: 100%" fxLayout="row"
+                             *ngFor="let passenger of booking.cart.passengers">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"
+                                      fill="#7D8499"/>
+                                <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"
+                                      fill="#7D8499"/>
+                            </svg>
+                            <div fxLayout="column" style="margin-left:12px">
+                                <p class="maintext-M-semibold">{{"Adult" | translate}}</p>
+                                <p class="maintext-M">{{passenger.personality?.firstName}} {{passenger.personality?.lastName}}</p>
+                            </div>
+
+                            <!--                        <div fxFlex="20" fxLayout="row" fxLayoutGap="5%">-->
+                            <!--                            <div>-->
+                            <!--                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"-->
+                            <!--                                     xmlns="http://www.w3.org/2000/svg">-->
+                            <!--                                    <path d="M13.3333 14.6667H2.66663V13.3333C2.66663 12.4493 3.01782 11.6014 3.64294 10.9763C4.26806 10.3512 5.1159 10 5.99996 10H9.99996C10.884 10 11.7319 10.3512 12.357 10.9763C12.9821 11.6014 13.3333 12.4493 13.3333 13.3333V14.6667Z"-->
+                            <!--                                          fill="#7D8499"/>-->
+                            <!--                                    <rect x="4.66663" y="1.33334" width="6.66667" height="7.33333" rx="3.33333"-->
+                            <!--                                          fill="#7D8499"/>-->
+                            <!--                                </svg>-->
+                            <!--                            </div>-->
+                            <!--                            <div fxLayout="column">-->
+                            <!--                                <p class="maintext-M-semibold">Adult</p>-->
+                            <!--                                <p class="maintext-M">Roman Smith</p>-->
+                            <!--                            </div>-->
+                            <!--                        </div>-->
+                            <!--                        <div fxFlex="80"></div>-->
+                        </div>
+                    </div>
+                    <div style="width: 100%; margin: 16px 0">
+                        <svg width="100%" height="1" viewBox="0 0 985 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100%" height="1" fill="#E8E9EE"/>
+                        </svg>
+                    </div>
+                    <div fxLayout="column">
+                        <p class="maintext-M-semibold">{{"Contacts" | translate}}</p><br>
+                        <div style="width: 100%" fxLayout="row">
+                            <div fxFlex="30" fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.00004 2H14C14.1769 2 14.3464 2.07024 14.4714 2.19526C14.5965 2.32029 14.6667 2.48986 14.6667 2.66667V13.3333C14.6667 13.5101 14.5965 13.6797 14.4714 13.8047C14.3464 13.9298 14.1769 14 14 14H2.00004C1.82323 14 1.65366 13.9298 1.52864 13.8047C1.40361 13.6797 1.33337 13.5101 1.33337 13.3333V2.66667C1.33337 2.48986 1.40361 2.32029 1.52864 2.19526C1.65366 2.07024 1.82323 2 2.00004 2ZM8.04004 7.78867L3.76537 4.15867L2.90204 5.17467L8.04871 9.54467L13.1027 5.17133L12.2307 4.16267L8.04071 7.78867H8.04004Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p *ngIf="booking?.cart?.passengers[0]?.contacts[0]?.address" class="maintext-M">
+                                    {{booking?.cart?.passengers[0]?.contacts[0]?.address}}
+                                </p>
+                                <p *ngIf="booking?.cart?.passengers[0]?.contacts[1]?.address" class="maintext-M">
+                                    {{booking?.cart?.passengers[0]?.contacts[1]?.address}}
+                                </p>
+                            </div>
+                            <div fxFlex="30" fxLayout="row" fxLayoutGap="5%">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 10.9467V13.304C14.0001 13.4728 13.9361 13.6353 13.8211 13.7588C13.706 13.8823 13.5484 13.9575 13.38 13.9693C13.0887 13.9893 12.8507 14 12.6667 14C6.77533 14 2 9.22467 2 3.33333C2 3.14933 2.01 2.91133 2.03067 2.62C2.04248 2.45163 2.11772 2.29401 2.2412 2.17894C2.36468 2.06387 2.52722 1.99992 2.696 2H5.05333C5.13603 1.99992 5.2158 2.03057 5.27715 2.08601C5.33851 2.14145 5.37706 2.21772 5.38533 2.3C5.40067 2.45333 5.41467 2.57533 5.428 2.668C5.56049 3.59262 5.832 4.49189 6.23333 5.33533C6.29667 5.46867 6.25533 5.628 6.13533 5.71333L4.69667 6.74133C5.5763 8.79097 7.2097 10.4244 9.25933 11.304L10.286 9.868C10.328 9.80933 10.3892 9.76725 10.459 9.7491C10.5288 9.73095 10.6028 9.73787 10.668 9.76867C11.5113 10.1692 12.4104 10.4401 13.3347 10.572C13.4273 10.5853 13.5493 10.6 13.7013 10.6147C13.7835 10.6231 13.8596 10.6617 13.9149 10.7231C13.9702 10.7844 14.0008 10.8641 14.0007 10.9467H14Z"
+                                          fill="#7D8499"/>
+                                </svg>
+                                <p *ngIf="booking?.cart?.passengers[0]?.contacts[1]?.number" class="maintext-M">+
+                                    {{booking?.cart?.passengers[0]?.contacts[1]?.number}}
+                                </p>
+                                <p *ngIf="booking?.cart?.passengers[0]?.contacts[0]?.number" class="maintext-M">+
+                                    {{booking?.cart?.passengers[0]?.contacts[0]?.number}}
+                                </p>
+                            </div>
+                            <div fxFlex="40"></div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card style="padding: 24px!important;">
+                <mat-card-content>
+                    <p class="headline-S" style="color: #282D3E;">{{"Payment methods" | translate}}</p><br>
+                    <p class="paragraph-m" style="color: #32384A;">
+                        {{"You will be redirected to an external page when you click on the Continue button. The methods of payment available will include debit/credit cards of following types: Visa, MasterCard,American Express*, Maestro and Cirrus*, Union Pay*" | translate}}
+                        <br><br><br>
+
+                        {{"Some exceptions apply depending on transaction currency, please refer to Online Booking" | translate}}
+                        <a target="_blank" href="./#"
+                           style="color: #B9966E; text-decoration: underline;">{{"Terms and conditions of online booking" | translate}}</a>.
+                    </p>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <div fxFlex.gt-sm="30" fxFlex="0" class="displayZero" fxLayoutAlign="center center"
+         fxLayoutAlign.gt-sm="start start">
+        <vex-booking style="width: 100%"></vex-booking>
+    </div>
+</div>

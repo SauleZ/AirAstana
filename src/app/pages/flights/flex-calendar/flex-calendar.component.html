@@ -1,0 +1,152 @@
+<div class="calendar-container container-mobile-view" fxLayout="column" fxLayoutAlign="start center">
+
+    <div class="calendar-header top-header" fxLayout="row" fxLayoutAlign="start center">
+        <div class="header-content" fxLayout="column" fxFlex="88">
+            <div fxLayout="row" class="routeDep" fxLayoutAlign="start center">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">{{flights[0]?.from}}
+                    &nbsp;</p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest">{{searchRequest.itineraries[0].originLocation}} &nbsp;</p>
+                <p class="headline-M" [fxHide]="!isMobile"> — </p>
+                <img src="./assets/img/web/Line_header.png" [fxHide]="isMobile">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">
+                    &nbsp; {{flights[0]?.to}} </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="searchRequest">
+                    &nbsp; {{searchRequest.itineraries[1].originLocation}} </p>
+            </div>
+            <div class="paragraph-m headline-paragraph">{{'Specify dates and price' | translate}}</div>
+        </div>
+        <!--        <div fxLayout="row" fxLayoutAlign="end center" fxFlex="10">-->
+        <!--            <ic-icon [icon]="_iconService.FILTER" (click)="openGlobalFilterDialog()" mat-list-icon size="21px" style="cursor: pointer; margin-right: 2%;"></ic-icon>-->
+        <!--            <ic-icon [icon]="_iconService.REFRESH" (click)="refreshFilter()" mat-list-icon size="21px" style="cursor: pointer;"></ic-icon>-->
+        <!--        </div>-->
+
+    </div>
+    <div *ngIf="!isMobile && selectedDate" fxLayout="row" style="width: 100%; margin-bottom: 2% ">
+        <div fxLayoutAlign="start center" fxFlex="85">
+            <p class="paragraph-m">{{selectedDeparture | localizedDates}} – {{selectedReturn | localizedDates}}
+                &nbsp;</p>
+            <p class="maintext-M-semibold"
+               *ngIf="calendarReply && calendarReply[selectedReturn] && calendarReply[selectedReturn][selectedDeparture]?.currencyCode">
+                , {{'FROM' | translate}} {{priceView(calendarReply[selectedReturn][selectedDeparture]?.total.toString())}}
+                 
+                <span *ngIf="calendarReply && calendarReply[selectedReturn] && calendarReply[selectedReturn][selectedDeparture]?.currencyCode"
+                      [innerHTML]="calendarReply[selectedReturn][selectedDeparture]?.currencyCode"></span>
+            </p>
+        </div>
+        <div fxLayoutAlign="end center" fxFlex="15">
+            <button mat-raised-button (click)="continue()" class="button-standard">
+                {{'CONTINUE' | translate}}
+            </button>
+        </div>
+    </div>
+
+    <div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+        <vex-loader></vex-loader>
+    </div>
+    <div class="flex-calendar full-width scrollable" fxLayout="row" fxLayoutAlign="start center"
+         *ngIf="!globalLoading && calendarReply">
+        <div class="full-width" fxLayout="column" fxLayoutAlign="start start">
+            <div fxLayout="row" fxFlex="100" class="{{!isMobile ? 'full-width' : ''}}" fxLayoutAlign="center center">
+                <div class="cell-container" fxLayout="column" fxLayoutAlign="center center">
+                    <div class="departure-return-container cell-mobile" fxLayout="row" fxLayoutAlign="center center">
+                        {{'DEPARTURE' | translate}} &nbsp;
+                        <ic-icon [icon]="_iconService.CHEVRON_RIGHT" style="color: #9399AB;" mat-list-icon
+                                 size="14px"></ic-icon>
+                    </div>
+                    <div class="departure-return-container cell-mobile" fxLayout="row" fxLayoutAlign="center center">
+                        {{'RETURN' | translate}} &nbsp;
+                        <ic-icon [icon]="_iconService.CHEVRON_DOWN" style="color: #9399AB;" mat-list-icon
+                                 size="14px"></ic-icon>
+                    </div>
+                </div>
+                <div *ngFor="let d of calendarDepartureDates; let j = index"
+                     class="{{selectedColumn == j? 'horizontal-headers-selected' : 'horizontal-headers'}}"
+                     fxLayout="column" fxLayoutAlign="center center">
+                    <div class="cell-mobile" fxLayout="column" fxLayoutAlign="center center">
+                        <span class="maintext-S-semibold">{{d | localizedDates  }}</span>
+                        <span class="maintext-S">{{d | date: 'EEE':undefined:locale}}</span>
+                    </div>
+                </div>
+            </div>
+            <div *ngFor="let r of calendarReturnDates; let i = index" class="{{!isMobile ? 'full-width' : ''}}"
+                 fxLayoutAlign="start start" fxLayout="column">
+                <div *ngIf="calendarReply && calendarReply[r]" class="full-width wrappable" fxLayout="row" fxFlex="100"
+                     fxLayoutAlign="center center">
+                    <div class="{{selectedRow == i? 'vertical-headers-selected wrappable' : 'vertical-headers wrappable'}}"
+                         fxLayout="column" fxLayoutAlign="center center">
+                        <div class="cell-mobile" fxLayout="column" fxLayoutAlign="center center">
+                            <span class="maintext-S-semibold">{{r | localizedDates}}</span>
+                            <span class="maintext-S">{{r | date: 'EEE':undefined:locale}}</span>
+                        </div>
+                    </div>
+                    <div *ngFor="let p of calendarDepartureDates; let j = index" fxLayout="column"
+                         class="{{selectedRow == i && selectedColumn == j && calendarReply && calendarReply[selectedReturn] && calendarReply[selectedReturn][selectedDeparture] ? 'cell-mobile selected-date' : (selectedRow == i && j <= selectedColumn) || (i < selectedRow && selectedColumn == j) ? 'cell-mobile connection-dates' : 'cell-mobile default-view'}}"
+                         (click)="selectDates(i, j, r, p)">
+                        <div fxLayout="row" fxLayoutAlign="start center" style="padding:5%"
+                             *ngIf="checkMinPrice(minPrice, calendarReply[r][p]) && isActual(calendarReply[r][p])">
+                            <img src="./assets/img/web/icons/low_price.svg" style="width: 15px;"
+                                 [ngClass]="{strikeStyle: isMobile}" matTooltip="Lowest price"
+                                 matTooltipPosition="above"
+                                 matTooltipClass="example-tooltip">
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center"
+                             *ngIf="isActual(calendarReply[r][p]) && calendarReply && calendarReply[r] && calendarReply[r][p] && minPrice === calendarReply[r][p]?.total"
+                             class="maintext-S changed-view price-low">
+                            {{priceView(defineMinPrice(calendarReply[r][p]?.total))}} &nbsp;
+                            <span *ngIf="calendarReply && calendarReply[r] && calendarReply[r][p]?.currencyCode"
+                                  [innerHTML]="calendarReply[r][p]?.currencyCode"></span>
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center"
+                             *ngIf="!calendarReply[r][p] || !isActual(calendarReply[r][p])"
+                             class="maintext-M changed-view price-normal">
+                            -
+                        </div>
+
+                        <div fxLayout="row" fxLayoutAlign="center center"
+                             *ngIf="isActual(calendarReply[r][p]) && calendarReply && calendarReply[r] && calendarReply[r][p] && minPrice !== calendarReply[r][p]?.total"
+                             class="maintext-S changed-view price-normal">
+                            {{priceView(defineMinPrice(calendarReply[r][p]?.total))}} &nbsp;
+                            <span *ngIf="calendarReply && calendarReply[r] && calendarReply[r][p]?.currencyCode"
+                                  [innerHTML]="calendarReply[r][p]?.currencyCode"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div *ngIf="!isMobile && selectedDate" fxLayout="row" style="width: 100%; margin: 2% 0 1%">
+        <div fxLayoutAlign="start center" fxFlex="85"></div>
+        <div fxLayoutAlign="end center" fxFlex="15">
+            <button mat-raised-button (click)="continue()" class="button-standard">
+                {{'CONTINUE' | translate}}
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="!globalLoading && calendarReply && isMobile && (selectedColumn !== null && selectedColumn !== undefined) &&
+                (selectedRow !== null && selectedRow !== undefined)" fxLayout="row" fxLayoutGap="10px"
+         style="height: 80px; background: white; width: 100%; position: fixed; bottom: 0;box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); z-index: 100000">
+        <div fxLayout="column" fxFlex="65" style="padding: 4% 0 4% 6%;">
+            <div style="color: gray;">
+                <p class="maintext-S text-muted">{{selectedDeparture | date: 'd MMM'}}
+                    – {{selectedReturn | date: 'd MMM'}} &nbsp;</p>
+            </div>
+            <div style="padding-top: 2%;">
+                <p class="maintext-M-semibold"> {{'FROM' | translate}} {{priceView(calendarReply[selectedReturn][selectedDeparture].total.toString())}}&nbsp;
+                    <span *ngIf="calendarReply && calendarReply[selectedReturn] && calendarReply[selectedReturn][selectedDeparture]?.currencyCode"
+                          [innerHTML]="calendarReply[selectedReturn][selectedDeparture]?.currencyCode"></span>
+                </p>
+            </div>
+        </div>
+
+        <button mat-raised-button fxFlex="35" (click)="continue()" class="button-standard">
+            {{'CONTINUE' | translate}}
+        </button>
+    </div>
+</div>

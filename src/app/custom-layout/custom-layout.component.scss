@@ -1,0 +1,76 @@
+.vex-footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 999;
+  width: 100%;
+}
+
+.displayDesktop {
+  display: none !important;
+}
+.vex-toolbar {
+  z-index: 10 !important;
+  margin-bottom: 8%;
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+
+  .displayDesktop {
+    display: block !important;
+  }
+  .vex-toolbar {
+    margin-bottom: 0;
+  }
+}
+
+@keyframes myAnimation{
+  0%{
+    opacity: 1;
+    transform: rotateX(90deg);
+  }
+  50%{
+    opacity: 0.5;
+    transform: rotateX(0deg);
+  }
+  100%{
+    //display: none;
+    opacity: 1;
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes myAnimation2{
+  0%{
+    opacity: 0.5;
+    transform: rotateX(90deg);
+  }
+  50%{
+    opacity: 0;
+    transform: rotateX(0deg);
+  }
+  100%{
+    display: none;
+    opacity: 0;
+    transform: rotateX(0deg);
+  }
+}
+
+.hide {
+  //opacity: 0;
+  //left: -100%;
+  animation-name: myAnimation2;
+  animation-duration: 500ms;
+  animation-fill-mode: forwards;
+  display: none;
+}
+.show {
+//  opacity: 1;
+//  left: 0;
+  animation-name: myAnimation;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+}

@@ -1,0 +1,93 @@
+<div style="margin: 2%">
+    <div fxLayout="column" *ngFor="let flight of flights; let i = index;">
+        <!--{{flight | json}}-->
+        <!--connection Time:{{flight.item.connectionTime}}-->
+
+        <div fxLayout="row">
+            <div fxFlex.gt-sm="10" fxFlex="28">
+                <p class="maintext-M-semibold" fxLayout="row" >{{flight.details.departure.dateTime | date: 'HH:mm'}} &nbsp;
+                    <span fxLayoutGap="3px"
+                          class="paragraph-xs text-light-grey"
+                          *ngIf="countDays(bound.flights[0].details.departure.dateTime, flight.details.departure.dateTime) > 0"><span>
+
+                                        +{{countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime)}}</span>
+                                                    <span>day<span
+                                                            *ngIf="countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime) > 1">s</span></span></span>
+                </p>
+                <p class="maintext-S text-muted">{{flight.details.departure.dateTime | localizedDates}}
+                    , {{flight.details.departure.dateTime | date: 'EEE':undefined:locale}} </p>
+            </div>
+            <div fxFlex.gt-sm="10" fxFlex="15" fxLayoutAlign="center center">
+                <img style="margin: 0 auto" src="./assets/img/web/plane.jpg" alt="" *ngIf="i==0">
+                <img style="margin: 0 auto;" src="./assets/img/web/Ellipse.png" alt=""
+                     *ngIf="i!=0">
+            </div>
+            <div fxFlex.gt-sm="80" fxFlex="57" fxLayoutAlign="start start">
+                <div fxLayout="column">
+                    <p class="maintext-M-semibold">{{flight.details.departure.cityName}}</p>
+                    <p class="maintext-S text-muted">{{flight.details.departure.airportName}}</p></div>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <div fxFlex.gt-sm="10" fxFlex="28">
+                <p class="paragraph-s">{{millsIntoHours(flight.details.duration)}}</p>
+            </div>
+            <div fxFlex.gt-sm="10" fxFlex="15" fxLayoutAlign="center center">
+                <img style="margin: 0 auto" src="./assets/img/web/Line.png" alt="">
+            </div>
+            <div fxFlex.gt-sm="80" fxFlex="57">
+                <p class="maintext-S text-muted">
+                    <span class="paragraph-s">{{flight.details.operatingAirlineCode}} {{flight.details.marketingFlightNumber}}</span>
+                    | {{flight.details.airline}}</p>
+                <p class="paragraph-s text-muted">{{flight.details.aircraft}}</p>
+            </div>
+        </div>
+
+        <div fxLayout="row">
+            <div fxFlex.gt-sm="10" fxFlex="28">
+                <p class="maintext-M-semibold" fxLayout="row" >{{flight.details.arrival.dateTime | date: 'HH:mm' }} &nbsp;
+                    <span fxLayoutGap="3px"
+                          class="paragraph-xs text-light-grey"
+                          *ngIf="countDays(bound.flights[0].details.departure.dateTime, flight.details.arrival.dateTime) > 0"><span>
+
+                                        +{{countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime)}}</span>
+                                                    <span>day<span
+                                                            *ngIf="countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime) > 1">s</span></span></span>
+                </p>
+                <p class="maintext-S text-muted">{{flight.details.arrival.dateTime | localizedDates}}
+                    , {{flight.details.arrival.dateTime | date: 'EEE':undefined:locale}}</p>
+            </div>
+            <div fxFlex.gt-sm="10" fxFlex="15" fxLayoutAlign="center center">
+                <img style="margin: 0 auto;" src="./assets/img/web/Vector2.png" alt="" *ngIf="i == flights.length-1">
+                <img style="margin: 0 auto;" src="./assets/img/web/Ellipse.png" alt="" *ngIf="i != flights.length-1">
+            </div>
+            <div fxFlex.gt-sm="80" fxFlex="57" fxLayoutAlign="start start">
+                <div fxLayout="column">
+                    <p class="maintext-M-semibold">{{flight.details.arrival.cityName}}</p>
+                    <p class="maintext-S text-muted">{{flight.details.arrival.airportName}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background: #F6F7F9;" class="transfer-margin" *ngIf="flight.details.stop || i<flights.length-1 ">
+            <div fxLayout="row" fxLayoutAlign="center center" style="height: 40px">
+                <div fxFlex.gt-sm="13.15" fxFlex="25"></div>
+                <div fxFlex.gt-sm="10" fxFlex="23" fxLayoutAlign="center center">
+                    <img style="margin: 0 auto" src="./assets/img/web/Line2.png" alt="">
+                </div>
+                <div fxFlex.gt-sm="76.85" fxFlex="77" fxLayoutAlign="start start">
+                    <div fxLayout="row" style="width: 100%">
+
+                        <img src="./assets/img/web/icons/clock-16.svg" alt="">
+                        <!--                        <ic-icon [icon]="icAccessime" style="color: black" mat-list-icon size="16px"></ic-icon>-->
+                        <p style="margin-left: 3%" class="maintext-S text-muted">{{"Transfer" | translate}}
+                            –
+                            {{millsIntoHours(flight.details.stop.duration)}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

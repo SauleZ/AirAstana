@@ -1,0 +1,103 @@
+.wrapper {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+}
+
+.adult2 {
+  margin: 0 2% 1%;
+  color: #6A7186;
+  max-font-size: 20px;
+  min-font-size: 5px;
+  font-size: 14px;
+  font-family: ProximaNova-Regular, sans-serif;
+}
+
+mat-card {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+}
+
+.headerTxt {
+  width: 90%;
+  margin-bottom: 4%;
+}
+
+mat-icon {
+  color: #6A7186;
+}
+
+.saveBtn button {
+  color: #FFFFFF;
+  background: #B9966E;
+  width: 90%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+}
+
+.total {
+  width: 50%;
+}
+
+.saveBtn {
+  width: 50%;
+  text-align: right;
+}
+
+#closeIcon:hover {
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .wrapper {
+    max-width: 970px;
+  }
+}
+
+@media (max-width: 970px) {
+  .wrapper {
+    max-width: 750px;
+  }
+}
+
+@media (max-width: 767px) {
+  .wrapper {
+    max-width: none;
+    display: block;
+  }
+
+  .moreInfoPerson {
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+  }
+
+  .cdk-overlay-container {
+    position: static;
+    bottom: 0;
+  }
+
+  .cdk-global-overlay-wrapper {
+    bottom: 0;
+    top: unset;
+    height: unset;
+  }
+
+  .mat-dialog-container {
+    padding: 0 !important;
+  }
+
+  .mat-dialog-content {
+    margin: 0 -8px!important;
+    padding: 0 24px 56px!important;
+    max-height: 83vh!important;
+  }
+
+}
+
+.mat-card-header .mat-card-header-text {
+  margin: 0 !important;
+}

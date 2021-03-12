@@ -1,0 +1,496 @@
+<!-- **************************************************************************************************** -->
+<!-- ******                                  DESKTOP VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<div *ngIf="!isMobile && !globalLoading" fxLayout="column" fxLayoutAlign="start start"
+     style="width: 100%; height: 100%;">
+    <div style="padding: 28px 24px; width: 100%; z-index: 10000; top:0;position: sticky; background-color: white"
+         fxLayout="row">
+        <div fxLayoutAlign="start start" fxFlex="90">
+            <div fxLayout="column" fxLayoutGap="5%">
+                <mat-card-title><p class="headline-S">{{"Extra Baggage" | translate}}</p></mat-card-title>
+            </div>
+        </div>
+        <div fxLayoutAlign="end start" fxFlex="10">
+            <button mat-icon-button (click)="closeClick('cancel')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z"
+                          fill="#6A7186"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div fxLayout="column" style="width: 100%; padding: 0 24px; overflow-y:scroll; overflow-x:hidden; height: 100%;">
+
+        <p style="color: #6A7186; padding-bottom: 24px" class="paragraph-s">{{"Need more luggage?" | translate}}<br>
+            {{"Purchase extra baggage in advance with a 30% discount." | translate}}</p>
+
+        <div *ngIf="selectedServiceMap && (selectedServiceMap['Departure'] || selectedServiceMap['Return'])">
+            <!--            <mat-card-content *ngFor="let depFlight of selectedServiceMap['Departure']" fxLayout="column"-->
+            <!--                              fxLayoutGap="5%">-->
+            <!--                <mat-card *ngIf="flightServices && flightServices[depFlight.id]" style="background: #F6F7F9;">-->
+            <!--                    <mat-card-content fxLayout="column" fxLayoutGap="2%">-->
+            <!--                        <p fxFlex="100" class="headline-S" style="color: #32384A;">-->
+            <!--                            {{depFlight.flight.departure.cityName}}-->
+            <!--                            —  {{depFlight.flight.arrival.cityName}}-->
+            <!--                        </p>-->
+            <!--                        <div fxFlex="100" fxLayout="row">-->
+            <!--                            <div fxFlex="5" fxLayoutAlign="center center">-->
+            <!--                                <img src="./assets/img/web/greyBaggage%201.png" alt="grey baggage"></div>-->
+            <!--                            <p fxFlex="95" class="maintext-S">{{"Rate include:" | translate}}-->
+            <!--                                <b> <span *ngIf="handLuggage && handLuggage.length >= 1">{{handLuggage}}</span> hand luggage </b>-->
+            <!--                            </p>-->
+            <!--                        </div>-->
+            <!--                    </mat-card-content>-->
+            <!--                </mat-card>-->
+
+            <!--                <div *ngFor="let passenger of booking.order.passengers" fxLayout="column" style="margin-bottom: 0% !important;">-->
+            <!--                    <div *ngIf="flightServices && flightServices[depFlight.id] && flightServices[depFlight.id][0] && flightServices[depFlight.id][0].prices && passenger.passengerTypeCode != 'INF'"-->
+            <!--                         fxLayoutGap="3%"-->
+            <!--                         style="padding: 0 16px">-->
+            <!--                        <div fxLayout="column" fxFlex="50">-->
+            <!--                            <p class="maintext-M-semibold">-->
+            <!--                                &lt;!&ndash;                                <span *ngIf="i.personality.gender === 'male'">Mr.</span>&ndash;&gt;-->
+            <!--                                &lt;!&ndash;                                <span *ngIf="i.personality.gender === 'female'">Ms.</span>&ndash;&gt;-->
+            <!--                                {{passenger.names[0].firstName}} {{passenger.names[0].lastName}}-->
+            <!--                            </p>-->
+            <!--                            <div *ngFor="let unit of flightServices[depFlight.id][0].prices.unitPrices">-->
+            <!--                                <p *ngIf="unit.travelerIds.includes(passenger.id)" class="paragraph-s"-->
+            <!--                                   style="color: #565D73;">-->
+            <!--                                    {{priceView(unit.prices[0].total.value.toString())}}-->
+            <!--                                    <span *ngIf="unit.prices[0].total.currencyCode" [innerHTML]="unit.prices[0].total.currencyCode"></span>/-->
+            <!--                                    <span *ngIf="cabinType =='business'">{{"32kg per piece" | translate}}</span>-->
+            <!--                                    <span *ngIf="cabinType =='eco'">{{"23kg per piece" | translate}}</span>-->
+            <!--                                </p>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                        <div *ngIf="result['Departure'] && result['Departure'][depFlight.id] && result['Departure'][depFlight.id][passenger.id]"-->
+            <!--                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">-->
+
+            <!--                            <img class="amount-btn" *ngIf="result['Departure'][depFlight.id][passenger.id].quantity > 0"-->
+            <!--                                 src="./assets/img/web/minus1.png" alt="minus1"-->
+            <!--                                 (click)="minusWeight1('Departure', passenger.id, depFlight.id)">-->
+            <!--                            <img *ngIf="result['Departure'][depFlight.id][passenger.id].quantity <= 0"-->
+            <!--                                 src="./assets/img/web/zero%201.png" alt="disabled click">-->
+            <!--                            <p class="passengerName"> {{result['Departure'][depFlight.id][passenger.id].quantity}} </p>-->
+            <!--                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"-->
+            <!--                                 (click)="addWeight1('Departure', passenger.id, depFlight.id)">-->
+
+            <!--                        </div>-->
+
+            <!--                        <div *ngIf="result['Departure'] && result['Departure'][depFlight.id] && !result['Departure'][depFlight.id][passenger.id]"-->
+            <!--                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">-->
+
+            <!--                            <img src="./assets/img/web/zero%201.png" alt="disabled click">-->
+            <!--                            <p class="passengerName"> 0 </p>-->
+            <!--                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"-->
+            <!--                                 (click)="addWeight1('Departure', passenger.id, depFlight.id)">-->
+
+            <!--                        </div>-->
+
+            <!--                        <div *ngIf="result['Departure'] && !result['Departure'][depFlight.id]"-->
+            <!--                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">-->
+
+            <!--                            <img src="./assets/img/web/zero%201.png" alt="disabled click">-->
+            <!--                            <p class="passengerName"> 0 </p>-->
+            <!--                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"-->
+            <!--                                 (click)="addWeight1('Departure', passenger.id, depFlight.id)">-->
+
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </mat-card-content>-->
+
+            <mat-card-content *ngIf="selectedServiceMap['Departure']" fxLayout="column"> <!--fxLayoutGap="5%"-->
+                <mat-card *ngIf="flightServices && services && services[0] && flightServices[services[0].serviceId]"
+                          style="background: #F6F7F9; margin-bottom: 3%;">
+                    <mat-card-content fxLayout="column" fxLayoutGap="2%">
+                        <span fxLayout="row">
+                        <span fxLayout="row" class="headline-S" style="color: #32384A;"
+                              *ngFor="let cityN of selectedServiceMap['Departure'].names; let i = index;">
+                           {{cityN}} &nbsp; <span *ngIf="selectedServiceMap['Departure'].names.size - 1 != i">—</span>&nbsp;
+                        </span>
+                            </span>
+                        <div fxFlex="100" fxLayout="row">
+                            <div fxFlex="5" fxLayoutAlign="center center">
+                                <img src="./assets/img/web/greyBaggage%201.png" alt="grey baggage"></div>
+                            <p fxFlex="95" class="maintext-S">{{"Rate include:" | translate}}
+                                <b> <span *ngIf="handLuggage && handLuggage.length >= 1">{{handLuggage}}</span> hand
+                                    luggage </b>
+                            </p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+                <div *ngFor="let passenger of serviceAvailablePassengers" fxLayout="column"
+                     style="margin-bottom: 3% !important;">
+                    <div
+                            fxLayoutGap="3%"
+                            style="padding: 0 16px">
+                        <div fxLayout="column" fxFlex="50">
+                            <p class="maintext-M-semibold">
+                                {{passenger.name}}
+                            </p>
+                            <div>
+                                <p class="paragraph-s"
+                                   style="color: #565D73;">
+                                    {{passenger.priceForBaggage[0].value.toString()}}
+                                    <span *ngIf="passenger.priceForBaggage[0]"
+                                          [innerHTML]="passenger.priceForBaggage[0].currencyCode"></span>/
+                                    <span *ngIf="cabinType =='business'">{{"32kg per piece" | translate}}</span>
+                                    <span *ngIf="cabinType =='eco'">{{"23kg per piece" | translate}}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div *ngIf="result['Departure'] && result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)]
+                        && result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+                            <img class="amount-btn"
+                                 *ngIf="result['Departure'][this.getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity > 0"
+                                 src="./assets/img/web/minus1.png" alt="minus1"
+                                 (click)="minusWeight1('Departure', passenger.id, services[0].serviceId, selectedServiceMap['Departure'].flights)">
+                            <img *ngIf="result['Departure'][this.getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity <= 0"
+                                 src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> {{result['Departure'][this.getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity}} </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId, selectedServiceMap['Departure'].flights)">
+
+                        </div>
+
+                        <div *ngIf="result['Departure'] && result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)] &&
+                            !result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                            <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> 0 </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId, selectedServiceMap['Departure'].flights)">
+
+                        </div>
+
+                        <div *ngIf="result['Departure'] && !result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                            <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> 0 </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId, selectedServiceMap['Departure'].flights)">
+
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+
+            <!--            <div> &lt;!&ndash;*ngIf="searchRequest && searchRequest.itineraries.length > 1"&ndash;&gt;-->
+            <div *ngIf="searchRequest && searchRequest.itineraries.length > 1">
+                <mat-card-content *ngIf="selectedServiceMap['Return']" fxLayout="column">
+                    <mat-card style="background: #F6F7F9; margin-bottom: 3% !important;"
+                              *ngIf="flightServices && services && services[1] && flightServices[services[1].serviceId]">
+                        <mat-card-content fxLayout="column" fxLayoutGap="2%">
+                            <span fxLayout="row">
+                                <span fxLayoutAlign="row" class="headline-S" style="color: #32384A;"
+                                      *ngFor="let cityN of selectedServiceMap['Return'].names; let i = index;">
+                                    {{cityN}} &nbsp; <span
+                                        *ngIf="selectedServiceMap['Return'].names.size - 1 != i">—</span> &nbsp;
+                                </span>
+                            </span>
+                            <div fxFlex="100" fxLayout="row">
+                                <div fxFlex="5" fxLayoutAlign="center center">
+                                    <img src="./assets/img/web/greyBaggage%201.png" alt="grey baggage"></div>
+                                <p fxFlex="95" class="maintext-S"> {{"Rate include:" | translate}}
+                                    <!--                                    <b> <span *ngIf="cabinType =='business'">2 x 8 KG</span>-->
+                                    <!--                                        <span *ngIf="cabinType =='eco'">1 x 8 KG</span> hand luggage</b></p>-->
+                                    <b> <span *ngIf="handLuggage && handLuggage.length >= 1">{{handLuggage}}</span> hand
+                                        luggage </b>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <div *ngFor="let passenger of serviceAvailablePassengers" fxLayout="column"
+                         style="margin-bottom: 3% !important;">
+                        <div
+                                fxLayoutGap="3%" style="padding: 0 16px">
+                            <div fxLayout="column" fxFlex="50">
+                                <p class="maintext-M-semibold">
+                                    {{passenger.name}}
+                                </p>
+                                <div>
+                                    <p class="paragraph-s"
+                                       style="color: #565D73;">
+                                        {{passenger.priceForBaggage[1].value.toString()}}
+                                        <span *ngIf="passenger.priceForBaggage[1]"
+                                              [innerHTML]="passenger.priceForBaggage[1].currencyCode"></span>/
+                                        <span *ngIf="cabinType =='business'">{{"32kg per piece" | translate}}</span>
+                                        <span *ngIf="cabinType =='eco'">{{"23kg per piece" | translate}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div *ngIf="result['Return'] && result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)] &&
+                        result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+                                <img class="amount-btn"
+                                     *ngIf="result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity > 0"
+                                     src="./assets/img/web/minus1.png" alt="minus1"
+                                     (click)="minusWeight1('Return', passenger.id, services[1].serviceId, selectedServiceMap['Return'].flights)">
+                                <img *ngIf="result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity <= 0"
+                                     src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> {{result['Return'][this.getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity}} </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId, selectedServiceMap['Return'].flights)">
+
+                            </div>
+
+                            <div *ngIf="result['Return'] && result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)] &&
+                        !result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                                <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> 0 </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId, selectedServiceMap['Return'].flights)">
+
+                            </div>
+
+                            <div *ngIf="result['Return'] && !result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                                <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> 0 </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId, selectedServiceMap['Return'].flights)">
+
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="bottom: 0; width: 100%;padding:24px;box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08);
+    z-index: 5; background-color: white; position: sticky;"
+         fxLayout="row">
+        <div fxFlex="88" fxLayout="column" fxLayoutAlign="center start">
+            <p class="maintext-S text-muted" style="color: #6A7186;">{{"Total for baggage:" | translate}}</p>
+            <p class="maintext-M-semibold" style="color: #282D3E;">{{priceView(total.toString())}}
+                &nbsp;<span *ngIf="currency" [innerHTML]="currency"></span>
+            </p>
+        </div>
+        <div fxFlex="12" fxLayoutAlign="end center">
+            <button class="button-standard-L" mat-raised-button [disabled]="exist"
+                    (click)="closeClick('save')">{{"SAVE" | translate}}</button>
+        </div>
+    </div>
+    <div>
+        <!--<br><br><br><br><br>-->
+    </div>
+</div>
+
+
+<!-- **************************************************************************************************** -->
+<!-- ******                                  MOBILE VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<div *ngIf="isMobile && globalLoading">
+    <vex-loader></vex-loader>
+</div>
+<div *ngIf="isMobile && !globalLoading">
+    <div mat-dialog-title fxLayout="row" style="margin: 20px 16px">
+        <div fxLayoutAlign="start center" fxFlex="90">
+            <mat-card-title><p class="headline-S">{{"Extra Baggage" | translate}}</p></mat-card-title>
+        </div>
+        <div fxLayoutAlign="center center" fxFlex="10">
+            <button mat-icon-button (click)="closeClick('cancel')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z"
+                          fill="#6A7186"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div fxLayout="column"
+         style="width: 100%; padding: 0 24px; overflow-y:scroll; overflow-x:hidden; min-height: 90vh">
+        <div *ngIf="selectedServiceMap && (selectedServiceMap['Departure'] || selectedServiceMap['Return'])">
+            <mat-card-content *ngIf="selectedServiceMap['Departure']" fxLayout="column"
+                              fxLayoutGap="5%">
+
+                <mat-card *ngIf="flightServices && services && services[0] && flightServices[services[0].serviceId]" style="background: #F6F7F9;">
+                    <mat-card-content fxLayout="column" fxLayoutGap="2%">
+                        <span fxLayout="row">
+                        <span fxLayout="row" class="headline-S" style="color: #32384A;"
+                              *ngFor="let cityN of selectedServiceMap['Departure'].names; let i = index;">
+                           {{cityN}} &nbsp; <span *ngIf="selectedServiceMap['Departure'].names.size - 1 != i">—</span>&nbsp;
+                        </span>
+                            </span>
+                        <div fxFlex="100" fxLayout="row">
+                            <div fxFlex="5" fxLayoutAlign="center center">
+                                <img src="./assets/img/web/greyBaggage%201.png" alt="grey baggage"></div>
+                            <p fxFlex="95" class="maintext-S">{{"Rate include:" | translate}}
+                                <b> <span *ngIf="handLuggage && handLuggage.length >= 1">{{handLuggage}}</span> hand
+                                    luggage </b>
+                            </p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+
+                <div *ngFor="let passenger of booking.order.passengers" fxLayout="column"
+                     style="margin-bottom: 0% !important;">
+                    <div *ngIf="flightServices && services && services[0] && flightServices[services[0].serviceId] && flightServices[services[0].serviceId][0] && flightServices[services[0].serviceId][0].prices && passenger.passengerTypeCode != 'INF'"
+                         fxLayoutGap="3%"
+                         style="padding: 0 16px">
+                        <div fxLayout="column" fxFlex="50">
+                            <p class="maintext-M-semibold">
+                                {{passenger.names[0].firstName}} {{passenger.names[0].lastName}}
+                            </p>
+                            <div *ngFor="let unit of flightServices[services[0].serviceId][0].prices.unitPrices">
+                                <p *ngIf="unit.travelerIds.includes(passenger.id)" class="paragraph-s"
+                                   style="color: #565D73;">
+                                    {{priceView(unit.prices[0].total.value.toString())}}
+                                    <span *ngIf="unit.prices[0].total.currencyCode"
+                                          [innerHTML]="unit.prices[0].total.currencyCode"></span>/
+                                    <span *ngIf="cabinType =='business'">{{"32kg per piece" | translate}}</span>
+                                    <span *ngIf="cabinType =='eco'">{{"23kg per piece" | translate}}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div *ngIf="result['Departure'] && result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)] &&
+                        result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                            <img class="amount-btn"
+                                 *ngIf="result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity > 0"
+                                 src="./assets/img/web/minus1.png" alt="minus1"
+                                 (click)="minusWeight1('Departure', passenger.id, services[0].serviceId, selectedServiceMap['Departure'].flights)">
+                            <img *ngIf="result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity <= 0"
+                                 src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> {{result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id].quantity}} </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId,selectedServiceMap['Departure'].flights)">
+
+                        </div>
+
+                        <div *ngIf="result['Departure'] && result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)]
+                        && !result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)][passenger.id]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                            <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> 0 </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId,selectedServiceMap['Departure'].flights)">
+
+                        </div>
+
+                        <div *ngIf="result['Departure'] && !result['Departure'][getServiceId(passenger.id, selectedServiceMap['Departure'].flights)]"
+                             fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                            <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                            <p class="passengerName"> 0 </p>
+                            <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                 (click)="addWeight1('Departure', passenger.id, services[0].serviceId,selectedServiceMap['Departure'].flights)">
+
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+            <div *ngIf="searchRequest && searchRequest.itineraries.length > 1">
+                <mat-card-content *ngIf="selectedServiceMap['Return']" fxLayout="column"
+                                  fxLayoutGap="5%">
+                    <mat-card style="background: #F6F7F9;"
+                              *ngIf="flightServices && services && services[1] && flightServices[services[1].serviceId]">
+                        <mat-card-content fxLayout="column" fxLayoutGap="2%">
+                            <span fxLayout="row">
+                                <span fxLayoutAlign="row" class="headline-S" style="color: #32384A;"
+                                      *ngFor="let cityN of selectedServiceMap['Return'].names; let i = index;">
+                                    {{cityN}} &nbsp; <span
+                                        *ngIf="selectedServiceMap['Return'].names.size - 1 != i">—</span> &nbsp;
+                                </span>
+                            </span>
+                            <div fxFlex="100" fxLayout="row">
+                                <div fxFlex="5" fxLayoutAlign="center center">
+                                    <img src="./assets/img/web/greyBaggage%201.png" alt="grey baggage"></div>
+                                <p fxFlex="95" class="maintext-S"> {{"Rate include:" | translate}}
+                                    <!--                                    <b> <span *ngIf="cabinType =='business'">2 x 8 KG</span>-->
+                                    <!--                                        <span *ngIf="cabinType =='eco'">1 x 8 KG</span> hand luggage</b></p>-->
+                                    <b> <span *ngIf="handLuggage && handLuggage.length >= 1">{{handLuggage}}</span> hand
+                                        luggage </b>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                    <div *ngFor="let passenger of booking.order.passengers" fxLayout="column">
+                        <div *ngIf="flightServices && services && services[1] && flightServices[services[1].serviceId] && flightServices[services[1].serviceId][0] && flightServices[services[1].serviceId][0].prices && passenger.passengerTypeCode != 'INF'"
+                             fxLayoutGap="3%" style="padding: 0 16px">
+                            <div fxLayout="column" fxFlex="50">
+                                <p class="maintext-M-semibold">
+                                    <!--                                <span *ngIf="i.personality.gender === 'male'">Mr.</span>-->
+                                    <!--                                <span *ngIf="i.personality.gender === 'female'">Ms.</span>-->
+                                    {{passenger.names[0].firstName}} {{passenger.names[0].lastName}}
+                                </p>
+                                <div *ngFor="let unit of flightServices[services[1].serviceId][0].prices.unitPrices">
+                                    <p *ngIf="unit.travelerIds.includes(passenger.id)" class="paragraph-s"
+                                       style="color: #565D73;">
+                                        {{priceView(unit.prices[0].total.value.toString())}}
+                                        <span *ngIf="unit.prices[0].total.currencyCode"
+                                              [innerHTML]="unit.prices[0].total.currencyCode"></span>/
+                                        <span *ngIf="cabinType =='business'">{{"32kg per piece" | translate}}</span>
+                                        <span *ngIf="cabinType =='eco'">{{"23kg per piece" | translate}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div *ngIf="result['Return'] && result['Return'][services[1].serviceId] && result['Return'][services[1].serviceId][passenger.id]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                                <img class="amount-btn"
+                                     *ngIf="result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity > 0"
+                                     src="./assets/img/web/minus1.png" alt="minus1"
+                                     (click)="minusWeight1('Return', passenger.id, services[1].serviceId, selectedServiceMap['Return'].flights)">
+                                <img *ngIf="result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity <= 0"
+                                     src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> {{result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id].quantity}} </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId,selectedServiceMap['Return'].flights)">
+
+                            </div>
+
+                            <div *ngIf="result['Return'] && result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)]
+                             && !result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)][passenger.id]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                                <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> 0 </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId,selectedServiceMap['Return'].flights)">
+
+                            </div>
+
+                            <div *ngIf="result['Return'] && !result['Return'][getServiceId(passenger.id, selectedServiceMap['Return'].flights)]"
+                                 fxLayout="row" fxFlex="50" fxLayoutAlign="end center" fxLayoutGap="10%">
+
+                                <img src="./assets/img/web/zero%201.png" alt="disabled click">
+                                <p class="passengerName"> 0 </p>
+                                <img class="amount-btn" src="./assets/img/web/plus1.png" alt="plus1"
+                                     (click)="addWeight1('Return', passenger.id, services[1].serviceId,selectedServiceMap['Return'].flights)">
+
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </div>
+        </div>
+    </div>
+    <div class="choose-rate-footer" style="position: sticky;" fxLayout="row">
+        <div fxFlex="80" fxLayout="column" fxLayoutAlign="center start">
+            <p class="maintext-S text-muted" style="color: #6A7186;">{{"Total for baggage:" | translate}}</p>
+            <p class="maintext-M-semibold" style="color: #282D3E;">{{priceView(total.toString())}}
+                &nbsp;<span *ngIf="currency" [innerHTML]="currency"></span></p>
+        </div>
+        <div fxFlex="20" fxLayoutAlign="end center">
+            <button class="button-standard-L" mat-raised-button [disabled]="exist"
+                    (click)="closeClick('save')">{{"SAVE" | translate}}</button>
+        </div>
+    </div>
+
+</div>

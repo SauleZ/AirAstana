@@ -1,0 +1,190 @@
+<div *ngIf="isDesktop" style="background-color: white">
+    <mat-divider style="border-width: 0.2px; margin: 0 -2%" *ngIf="!summary"></mat-divider>
+    <div style="width: 100%">
+        <div fxLayout="column" style="margin: 2%" *ngIf="type === 'rates'" fxLayoutGap="22px">
+            <div fxLayout="row">
+                <div fxFlex="50" fxLayout="column" fxLayoutGap="1%">
+                    <div class="headline-S">{{"Choose Rate" | translate}}</div>
+                    <div class="displayZero"><span style="text-decoration: underline"
+                                                   class="maintext-S-semibold text-muted"> {{"More about rates" | translate}}</span></div>
+                </div>
+                <div fxFlex="50" fxLayoutAlign.gt-sm="end center" fxLayoutAlign="start start">
+                    <button mat-raised-button style="background: #F6F7F9; padding: 1% 0; width: 46%" fxLayout="row"
+                            (click)="showRouteOrRate()" class="button-change">
+                        <img src="./assets/img/web/icons/route-16.svg" fxFlex="10" style="height: 20px;margin-top:5%;">
+                        <div fxFlex="7"></div>
+                        <span class="maintext-S-semibold" style="color: #282D3E;" fxFlex="83"
+                              fxLayoutAlign="start center">{{"View route details" | translate}}</span>
+                    </button>
+                </div>
+            </div>
+
+            <vex-flights-rates style="width: 100%" [bound]="bound" (selectEvent)="rateSelected($event)" [fareFamilyDictionary]="fareFamilyDictionary"></vex-flights-rates>
+
+        </div>
+        <div fxLayout="column" *ngIf="type === 'route'">
+            <div fxLayout.gt-sm="row" fxLayout="column" style="margin: 2% 2% 0" fxLayoutGap="22px">
+                <div fxFlex="50" fxLayout="column">
+                    <div fxLayout="row">
+                        <div fxLayoutAlign="start start" fxFlex="70" class="headline-S">{{bound.originLocation.cityName}} &nbsp; - &nbsp;
+                            {{bound.destinationLocation.cityName}}
+                        </div>
+                        <div fxLayoutAlign="end end" fxFlex="30">
+                            <ic-icon [icon]="iconService.CLEAR" (click)="close()"
+                                     class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2 displayDesktop"
+                                     inline="true"
+                                     size="22px"></ic-icon>
+                        </div>
+                    </div>
+                    <div><span class="maintext-S text-muted">{{"Travel time" | translate}}: {{millsIntoHours(bound.duration)}}</span></div>
+
+                </div>
+                <div fxFlex="50" fxLayoutAlign="end center" class="displayZero">
+                    <button mat-raised-button style="width: 38%; padding: 1.5% 0!important" class="button-standard" *ngIf="!summary"
+                            (click)="showRouteOrRate()">
+                        <span class="maintext-M-semibold" style="color: white;" fxFlex="83"
+                              fxLayoutAlign="center center">{{"Choose Rate" | translate}}</span>
+                    </button>
+                </div>
+            </div>
+            <vex-flight-route [bound]="bound"></vex-flight-route>
+
+        </div>
+    </div>
+</div>
+
+
+<div [ngClass]="{'pad': getRouteActive() === '/summary'}" *ngIf="isMobile">
+    <div mat-dialog-title fxLayout="row" style="margin-bottom: 3%">
+        <div fxLayout="column" style="width: 100%" *ngIf="type === 'rates'" fxLayoutGap="10px">
+            <div fxLayout="column">
+                <div fxLayout="row">
+                    <div fxLayoutAlign="start start" fxFlex="90" class="headline-S">{{"Choose Rate" | translate}}</div>
+                    <div fxLayoutAlign="end end" fxFlex="10">
+                        <ic-icon [icon]="iconService.CLEAR" (click)="close()"
+                                 class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2"
+                                 inline="true"
+                                 size="22px"></ic-icon>
+                    </div>
+                </div>
+
+                <div><span class="maintext-S text-muted">{{bound.originLocation.cityName}} &nbsp; - &nbsp;
+                    {{bound.destinationLocation.cityName}}</span></div>
+            </div>
+            <div fxLayoutAlign="center center">
+                <button mat-raised-button style="background: #F6F7F9; width: 100%!important; padding: 2% 0"
+                        fxLayout="row" (click)="showRouteOrRate()">
+                    <div fxFlex="8"></div>
+                    <img src="./assets/img/web/icons/route-16.svg" fxFlex="7" style="height: 20px;margin-top:2.5%;">
+                    <span class="maintext-S-semibold" style="color: #282D3E;" fxFlex="45" fxLayoutAlign="center center">{{"View route details" | translate}}</span>
+                    <span fxFlex="40"></span>
+                </button>
+            </div>
+        </div>
+        <div fxLayout="column" style="width: 100%" fxLayoutGap="10px" *ngIf="type === 'route'">
+            <div fxLayout="column">
+                <div fxLayout="row">
+                    <div fxLayoutAlign="start start" fxFlex="90" class="headline-S">{{"Departure Route"}}</div>
+                    <div fxLayoutAlign="end end" fxFlex="10">
+                        <ic-icon [icon]="iconService.CLEAR" (click)="close()"
+                                 class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2"
+                                 inline="true"
+                                 size="22px"></ic-icon>
+                    </div>
+                </div>
+                <div><span class="maintext-S text-muted">{{"Travel time" | translate}}: {{millsIntoHours(bound.duration)}}</span></div>
+
+            </div>
+            <div fxLayoutAlign="center center" class="displayZero full" *ngIf="!summary">
+                <button mat-raised-button style="background-color: #B9966E;color: white"
+                        (click)="showRouteOrRate()">
+                    {{"Choose rate" | translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <mat-dialog-content>
+        <vex-flights-rates [bound]="bound" [chosenRate]="chosenRate" *ngIf="type === 'rates'" (selectEvent)="rateSelected($event)" [fareFamilyDictionary]="fareFamilyDictionary"></vex-flights-rates>
+        <vex-flight-route [bound]="bound" *ngIf="type === 'route'"></vex-flight-route>
+    </mat-dialog-content>
+
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="showRouteOrRate()" *ngIf="type === 'route' && !summary" class="button-standard"><span
+                class="maintext-M-semibold" style="color: white">{{"Choose rate" | translate}}</span>
+        </button>
+        <button mat-button (click)="approveSelect()" *ngIf="type === 'rates'"
+                class="button-standard"><span class="maintext-M-semibold" style="color: white">{{"SELECT"}}</span>
+        </button>
+    </mat-dialog-actions>
+</div>
+
+<div *ngIf="isTablet"> <!--class="displayTablet"-->
+    <mat-card style="padding: 24px">
+        <mat-card-content>
+            <div mat-dialog-title fxLayout="row" style="margin-bottom: 3%">
+                <div fxLayout="column" style="width: 100%" *ngIf="type === 'rates'" fxLayoutGap="10px">
+                    <div fxLayout="column">
+                        <div fxLayout="row">
+                            <div fxLayoutAlign="start start" fxFlex="90" class="headline-S">{{"Choose rate" | translate}}</div>
+<!--                            <div fxLayoutAlign="end end" fxFlex="10">-->
+<!--                                <ic-icon (click)="closeRate()" [icon]="iconService.CLEAR"-->
+<!--                                         class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2"-->
+<!--                                         inline="true"-->
+<!--                                         size="22px"></ic-icon>-->
+<!--                            </div>-->
+                        </div>
+
+                        <div><span class="maintext-S text-muted">{{bound.originLocation.cityName}} &nbsp; - &nbsp;
+                            {{bound.destinationLocation.cityName}}</span>
+                        </div>
+                    </div>
+                    <div fxLayoutAlign="start center">
+                        <button fxLayoutAlign="start start" mat-raised-button style="background: #F6F7F9; width: 100%!important; padding: 1% 0"
+                                fxLayout="row" (click)="showRouteOrRate()">
+                            <div fxFlex="3"></div>
+                            <img src="./assets/img/web/icons/route-16.svg" fxFlex="7" style="height: 20px; margin-top: 1%">
+                            <span fxLayoutAlign="start center" class="maintext-S-semibold" style="color: #282D3E;" fxFlex="45">{{"View route details" | translate}}</span>
+                            <span fxFlex="37"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div fxLayout="row" *ngIf="type === 'route'" style="width: 100%">
+                    <div fxLayout="column" fxFlex="70">
+                        <div fxLayoutAlign="start start" class="headline-S">{{bound.originLocation.cityName}} &nbsp; - &nbsp;
+                            {{bound.destinationLocation.cityName}}</div>
+
+                        <div fxLayout="row"><span class="maintext-S text-muted"> {{"Travel time" | translate}}: {{millsIntoHours(bound.duration)}}</span></div>
+
+                    </div>
+                    <div  fxFlex="30" class="displayZero full">
+                        <button mat-raised-button class="button-standard" *ngIf="!summary"
+                                (click)="showRouteOrRate()">
+                            {{"Choose rate" | translate}}
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <mat-dialog-content>
+                <vex-flights-rates [chosenRate]="chosenRate2" [bound]="bound" *ngIf="type === 'rates'" (selectEvent)="rateSelected($event)" [fareFamilyDictionary]="fareFamilyDictionary"></vex-flights-rates>
+                <vex-flight-route [bound]="bound" *ngIf="type === 'route'"></vex-flight-route>
+            </mat-dialog-content>
+
+
+            <mat-dialog-actions align="end">
+<!--                <button mat-button (click)="showRouteOrRate()" *ngIf="type==='route'" class="button-standard"><span-->
+<!--                        class="maintext-M-semibold" style="color: white">Choose Rate</span>-->
+<!--                </button>-->
+                <button mat-button *ngIf="type === 'rates'" style="padding: 1% 0!important;" (click)="selectRate()"
+                        class="button-standard"><span class="maintext-M-semibold" style="color: white;">{{"SELECT" | translate}}</span>
+                </button>
+            </mat-dialog-actions>
+        </mat-card-content>
+    </mat-card>
+</div>
+

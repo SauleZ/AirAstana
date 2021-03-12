@@ -1,0 +1,76 @@
+<div fxLayout="column" fxLayoutGap="16px" style="width: 100%; height: 100%; padding: 0; margin: 0;">
+<div fxLayout="row" fxLayoutAlign="center center" style="padding: 16px 16px 0 16px">
+    <div fxLayoutAlign="start start" fxFlex="90">
+            <mat-card-title><p class="headline-S">Filter</p></mat-card-title>
+    </div>
+    <div fxLayoutAlign="end start" fxFlex="10">
+        <button mat-icon-button (click)="closeClick()">
+            <ic-icon [icon]="icClear" class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2 displayDesktop"
+                     inline="true"
+                     size="22px"></ic-icon>
+        </button>
+    </div>
+</div>
+<div fxLayout="column">
+    <div style="padding: 0 16px">
+        <mat-card
+                style="background: #F6F7F9; width: 100%; border: 0!important; box-shadow: none!important">
+            <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+                <div>
+                    <p class="maintext-S">Without stops</p>
+                </div>
+                <div>
+                    <mat-slide-toggle #matSlideToggle [(ngModel)]="filter.withoutStops"></mat-slide-toggle>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div style="padding: 16px 16px 0;">
+        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+            <p class="maintext-S">Departure time</p>
+            <p class="maintext-S">{{minutesToHours(filter.departureFrom, false)}}
+                – {{minutesToHours(filter.departureTo, false)}}</p>
+        </div>
+        <ng5-slider [class]="class" [(value)]="filter.departureFrom" [(highValue)]="filter.departureTo"
+                    [options]="options"></ng5-slider>
+
+    </div>
+    <div style="padding: 16px 16px 0;">
+        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+            <p class="maintext-S">Arrival time</p>
+            <p class="maintext-S">{{minutesToHours(filter.arrivalFrom, false)}}
+                – {{minutesToHours(filter.arrivalTo, false)}}</p>
+        </div>
+        <!--<div style="margin: 0; padding: 0;">-->
+        <!--<mat-slider max="24" (input)="getSlider2($event)" style="width: 100%;">-->
+        <!--</mat-slider>-->
+        <!--</div>-->
+        <ng5-slider [class]="class" [(value)]="filter.arrivalFrom" [(highValue)]="filter.arrivalTo" [options]="options"></ng5-slider>
+
+    </div>
+    <div style="padding: 16px 16px 0;">
+        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+            <p class="maintext-S">Duration</p>
+            <p class="maintext-S">{{minutesToHours(filter.durationFrom, true)}}
+                – {{minutesToHours(filter.durationTo, true)}}</p>
+        </div>
+        <ng5-slider [class]="class" [(value)]="filter.durationFrom" [(highValue)]="filter.durationTo" [options]="options"></ng5-slider>
+    </div>
+    <div fxLayout="row" fxFlex="100" fxLayoutGap="2%"
+         style="width: 100%; box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); padding: 16px; margin: 16px 0 0 0;">
+        <div fxFlex="50">
+            <button style="background: #F6F7F9; width: 100%;"
+                    [disabled]="!matSlideToggle.checked && filter.durationFrom == getSlider3FromValue && filter.departureFrom == getSlider1FromValue && filter.arrivalFrom == getSlider2FromValue && filter.departureTo == getSlider1ToValue && filter.arrivalTo == getSlider2ToValue && filter.durationTo == getSlider3ToValue"
+                    (click)="reset()"
+                    mat-raised-button>Reset
+            </button>
+        </div>
+
+        <div fxFlex="50">
+            <button style="background: #B9966E; color: white; width: 100%;"
+                    mat-raised-button (click)="save()">Save
+            </button>
+        </div>
+    </div>
+</div>
+</div>

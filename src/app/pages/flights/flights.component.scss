@@ -1,0 +1,24 @@
+
+
+.padding-top {
+  padding-top: 8%;
+  padding-bottom: 2%
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+
+  .padding-top {
+    padding-top: 10%;
+    padding-bottom: 25%
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1600px) {
+  .padding-top {
+    padding-top: 0
+  }
+}

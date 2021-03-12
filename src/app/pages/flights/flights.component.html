@@ -1,0 +1,15 @@
+<div style="height: 100%; width: 100%;" *ngIf="!show" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<div *ngIf="show" fxLayout="row" style="width: 100%" class="padding-sides padding-top">
+    <div fxFlex.gt-sm="70" fxFlex="100" fxLayout="column">
+<!--        <vex-flex-calendar (eventExecuted)="reloadPage($event)"></vex-flex-calendar>-->
+<!--        <vex-flight-header (eventExecuted)="reloadPage($event)" [state]="state"></vex-flight-header>-->
+        <vex-flight-bounds (selected)="reloadPage($event)" (dataRetrieveEvent)="getChanges($event)"
+                           [dataRetrieved]="dataRetrieved" [state]="state">
+        </vex-flight-bounds>
+    </div>
+    <div *ngIf="dataRetrieved" fxFlex.gt-sm="30" fxFlex="0" class="displayZero" fxLayoutAlign="center center" fxLayoutAlign.gt-sm="start start">
+        <vex-booking (continueEvent)="reloadFlightHeader($event)" style="width: 100%;" [booking]="booking"></vex-booking>
+    </div>
+</div>

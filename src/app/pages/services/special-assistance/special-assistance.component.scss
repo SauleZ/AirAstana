@@ -1,0 +1,16 @@
+::ng-deep .mat-form-field-outline {
+  background: white!important;
+}
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0!important;
+}
+.fixed {
+  position: fixed;
+}
+
+.sticky {
+  position: fixed;
+}
+.sidenav {
+  height: calc(100% + 100px);
+}

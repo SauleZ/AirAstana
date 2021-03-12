@@ -1,0 +1,30 @@
+.dialog-header {
+  width: 100%;
+}
+
+.dialog-content {
+  width: 100%;
+  padding-top: 4%;
+  padding-bottom: 4%;
+}
+
+.dialog-footer {
+  width: 100%;
+}
+
+.content-form {
+  width: 100%;
+}
+
+.content-full-width {
+  width: 100%;
+  background: white;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: white !important;
+}
+//
+//::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+//  background-color: white !important;
+//}

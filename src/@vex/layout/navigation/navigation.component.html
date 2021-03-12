@@ -1,0 +1,259 @@
+<div [ngClass]="{navigation:!isMobile}" fxLayout.lt-sm="column-reverse" fxLayout="row"
+                                        fxLayoutAlign="space-between center"
+                                        fxLayoutAlign.lt-sm="start start" vexContainer>
+    <div fxLayoutAlign="start center" fxFlex.lt-sm="0" fxFlex.gt-sm="63"
+         fxFlex.gt-lg="67" *ngIf="getRouteActive() === '/services' || getRouteActive() === '/passenger'
+        || getRouteActive() === '/summary'">
+        <div *ngIf="!isMobile">
+            <vex-custom-stepper [route]="getRouteActive()" [router]="router" >
+                <cdk-step>
+                </cdk-step>
+                <cdk-step>
+                </cdk-step>
+                <cdk-step>
+                </cdk-step>
+                <cdk-step>
+                </cdk-step>
+            </vex-custom-stepper>
+        </div>
+        <div *ngIf="isMobile" style="height: 50px">
+            <div style="align-items: start; height: 100%" fxLayout="row" fxLayoutAlign="start center"
+                 fxLayoutGap="10%" *ngIf="getRouteActive().includes('/passenger')">
+                <button routerLink="/" mat-icon-button
+                        style="background-color: #F6F7F9">
+                    <ic-icon [icon]="icChevronLeft" size="18px" fxLayoutAlign="start center"></ic-icon>
+                </button>
+                <p class="maintext-M-semibold">Passenger details</p>
+            </div>
+            <div style="align-items: start; height: 100%" fxLayout="row" fxLayoutAlign="start center"
+                 fxLayoutGap="10%" *ngIf="getRouteActive() === '/services'">
+                <button routerLink="/passenger" mat-icon-button
+                        style="background-color: #F6F7F9">
+                    <ic-icon [icon]="icChevronLeft" size="18px" fxLayoutAlign="start center"></ic-icon>
+                </button>
+                <p class="maintext-M-semibold">Services</p>
+            </div>
+            <div style="align-items: start; height: 100%" fxLayout="row" fxLayoutAlign="start center"
+                 fxLayoutGap="10%" *ngIf="getRouteActive().includes('/summary')">
+                <button routerLink="/services" mat-icon-button
+                        style="background-color: #F6F7F9">
+                    <ic-icon [icon]="icChevronLeft" size="18px" fxLayoutAlign="start center"></ic-icon>
+                </button>
+                <p class="maintext-M-semibold">Check details</p>
+            </div>
+        </div>
+    </div>
+
+    <div [ngClass]="{'full':isMobile}" fxLayoutAlign="start center" id="twoBtns" fxFlex.lt-sm="100" fxFlex.gt-sm="63"
+                                       fxFlex.gt-lg="67" fxFlex="0"
+            *ngIf="(getRouteActive().includes('?enc=')) || (getRouteActive()==='/')">
+        <div [ngClass]="{'full':isMobile}" fxLayout="row" fxLayoutAlign="center center">
+            <span *ngIf="!isMobile">
+                <button [ngClass]="{'half-width':isMobile}" style="margin-right: 5px;"
+                                                            mat-button [matMenuTriggerFor]="menu2"
+                                                            class="rounded-light">
+                    <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5%">
+                        <span style="color: #32384A;">{{"BEST" | translate}}</span>
+                        <img src="./assets/img/web/icons/sort.svg" alt="sort" style="height: 16px!important;">
+                    </span>
+                </button>
+                <mat-menu #menu2="matMenu">
+                    <div style="padding: 2% 0; width: 200px;">
+                        <button mat-menu-item (click)="sortSelected('best')">{{"Best *default*" | translate}}</button>
+                        <button mat-menu-item (click)="sortSelected('departure')">{{"Departure time" | translate}}</button>
+                        <button mat-menu-item (click)="sortSelected('arrival')">{{"Arrival time" | translate}}</button>
+                        <button mat-menu-item (click)="sortSelected('stops')">{{"Stops" | translate}}</button>
+                        <button mat-menu-item (click)="sortSelected('duration')">{{"Duration" | translate}}</button>
+                    </div>
+                </mat-menu>
+            </span>
+            <span *ngIf="!isMobile">
+                <button style="margin: 5px;" mat-button (click)="filterOpen()" [matMenuTriggerFor]="menu"
+                        class="rounded-light">
+                    <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5%">
+                        <!--                        <span style="color: #32384A;">Filter</span>-->
+                        <!--                        <img src="./assets/img/web/icons/filter.png" alt="sort" style="height: 16px!important;">-->
+                        <!--                        <img src="./assets/img/web/icons/filter2.svg" alt="sort">-->
+                        <span style="color: #32384A;">{{'FILTER' | translate}}</span>
+                        <img src="./assets/img/web/icons/filter.svg" alt="sort" style="height: 16px!important;">
+                    </span>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <!--                    <div fxLayout="column" id="div_menu_content" (click)="noClickable($event)">-->
+                    <div style="margin: 16px" (click)="$event.stopPropagation();">
+                        <mat-card
+                                style="background: #F6F7F9; width: 250px; border: 0!important; box-shadow: none!important">
+                            <mat-card-content fxLayout="row" fxLayoutAlign="space-between center">
+                                <div>
+                                    <p class="maintext-S">{{"Without stops" | translate}}</p>
+                                </div>
+                                <div>
+                                    <mat-slide-toggle #matSlideToggle [(ngModel)]="filter.withoutStops" ></mat-slide-toggle>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <div style="margin: 16px; padding-top: 16px;" (click)="$event.stopPropagation();">
+                        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+                            <p class="maintext-S">{{"Departure time" | translate}}</p>
+                            <p class="maintext-S">{{minutesToHours(filter.departureFrom, false)}}
+                                – {{minutesToHours(filter.departureTo, false)}}</p>
+                        </div>
+                        <ng5-slider [class]="class" [(value)]="filter.departureFrom" [(highValue)]="filter.departureTo" [options]="options"></ng5-slider>
+                    </div>
+                    <div style="margin: 16px; padding-top: 16px;" (click)="$event.stopPropagation();">
+                        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+                            <p class="maintext-S">{{"Arrival time" | translate}}</p>
+                            <p class="maintext-S">{{minutesToHours(filter.arrivalFrom, false)}}
+                                – {{minutesToHours(filter.arrivalTo, false)}}</p>
+                        </div>
+                        <ng5-slider [class]="class" [(value)]="filter.arrivalFrom"
+                                [(highValue)]="filter.arrivalTo" [options]="options"></ng5-slider>
+
+                    </div>
+                    <div style="margin: 16px; padding-top: 16px;" (click)="$event.stopPropagation();">
+                        <div style="margin: 0; padding: 0;" fxLayout="row" fxLayoutAlign="space-between center">
+                            <p class="maintext-S">{{"Duration" | translate}}</p>
+                            <p class="maintext-S">{{minutesToHours(filter.durationFrom, true)}}
+                                – {{minutesToHours(filter.durationTo, true)}}</p>
+                        </div>
+                        <ng5-slider [class]="class" [(value)]="filter.durationFrom" [(highValue)]="filter.durationTo" [options]="optionsDuration" ></ng5-slider>
+
+                    </div>
+                    <div fxLayout="row" fxFlex="100" fxLayoutGap="2%"
+                         style="width: 100%; box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); padding: 16px;">
+                        <div (click)="$event.stopPropagation();" fxFlex="50">
+                            <button style="background: #F6F7F9; width: 100%;" [disabled]="!matSlideToggle.checked && filter.durationFrom == getSlider3FromValue && filter.departureFrom == getSlider1FromValue && filter.arrivalFrom == getSlider2FromValue && filter.departureTo == getSlider1ToValue && filter.arrivalTo == getSlider2ToValue && filter.durationTo == getSlider3ToValue"
+                                    (click)="reset()"
+                                    mat-raised-button>{{"Reset" | translate}}
+                            </button>
+                        </div>
+                        <div fxFlex="50">
+                            <button style="background: #B9966E; color: white; width: 100%;"
+                                    mat-raised-button (click)="save()">{{"SAVE" | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <!--                    </div>-->
+                </mat-menu>
+            </span>
+            <button *ngIf="isMobile" (click)="openSideNav2()" style="margin: 5px; width: 50%" mat-button
+                                                              class="rounded-light">
+                <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5%">
+                    <!--                    <img src="./assets/img/web/icons/best.svg" alt="sort" style="height: 16px!important;">-->
+                    <!--                    <img src="./assets/img/web/icons/best.svg" alt="sort" style="height: 16px!important;">-->
+                    <span style="color: #32384A;">{{"BEST" | translate}}</span>
+                    <img src="./assets/img/web/icons/sort.svg" alt="sort" style="height: 16px!important;">
+                </span>
+            </button>
+            <button *ngIf="isMobile" (click)="openSideNav()" style="margin: 5px; width: 50%" mat-button
+                                                             class="rounded-light">
+                <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5%">
+                    <span style="color: #32384A;"> {{'FILTER' | translate}} </span>
+                    <img src="./assets/img/web/icons/filter.svg" alt="sort" style="height: 16px!important;">
+                </span>
+            </button>
+        </div>
+    </div>
+    <div *ngIf="(getRouteActive().includes('?enc=')) || (getRouteActive()==='/')" fxLayout="row">
+        <div fxLayoutAlign="start center"
+             class="grey-background nqz" id="displayNQZ" [ngStyle.lt-sm]="{'padding':' 2% 16px'}">
+            <div fxLayout="row" class="maintext-S" fxLayoutAlign="end center"
+                 fxLayoutAlign.lt-sm="start center" *ngIf="!searchRequest">
+                <span class="minWidth1024">Almaty ALA
+                    ‒ Dubai DXB,&nbsp;
+                </span>
+                <span class="min768Max1023">ALA ‒ DXB, &nbsp;</span>
+                <span>17 sep - 26 sep, &nbsp;</span>
+                <span>2 {{"Passenger" | translate}}</span>
+
+            </div>
+
+            <div fxLayout="row" class="maintext-S" fxLayoutAlign="end center"
+                 fxLayoutAlign.lt-sm="start center" *ngIf="searchRequest && !calendarResult">
+                <div *ngIf="searchRequest.itineraries.length > 1">
+                    <span class="minWidth1024">{{searchRequest.itineraries[0].originLocation}} {{searchRequest.itineraries[0].originLocationCode}}
+                        -  {{searchRequest.itineraries[1].originLocation}} {{searchRequest.itineraries[1].originLocationCode}},&nbsp;
+                    </span>
+                    <span class="min768Max1023">
+                        {{searchRequest.itineraries[0].originLocationCode}}
+                        - {{searchRequest.itineraries[1].originLocationCode}},&nbsp;
+                    </span>
+                    <span>
+                        {{searchRequest.itineraries[0].departureDateTime | localizedDates}} -
+                        {{searchRequest.itineraries[1].departureDateTime | localizedDates}},&nbsp;
+                    </span>
+
+                </div>
+
+                <div *ngIf="searchRequest.itineraries.length === 1">
+                    <span class="minWidth1024">{{searchRequest.itineraries[0].originLocation}} {{searchRequest.itineraries[0].originLocationCode}}
+                        -  {{searchRequest.itineraries[0].destinationLocation}} {{searchRequest.itineraries[0].destinationLocationCode}},&nbsp;
+                    </span>
+                    <span class="min768Max1023">
+                        {{searchRequest.itineraries[0].originLocationCode}} - {{searchRequest.itineraries[0].destinationLocationCode}},&nbsp;
+                    </span>
+                    <span>
+                        {{searchRequest.itineraries[0].departureDateTime | localizedDates}},&nbsp;
+                    </span>
+
+                </div>
+
+                <span *ngIf="passengerCount > 1">{{passengerCount}} {{"Passengerz" | translate}}</span>
+                <span *ngIf="passengerCount ==1">{{passengerCount}} {{"Passenger" | translate}}</span>
+                <!--            <button mat-icon-button type="button" fxFlex="10" class="grey-background"-->
+                <!--                fxLayoutAlign.gt-sm="center center" [routerLink]="'/'">-->
+                <!--                <img src="./assets/img/web/icons/edit-16.svg">-->
+                <!--            </button>-->
+            </div>
+
+
+            <div fxLayout="row" class="maintext-S" fxLayoutAlign="end center"
+                 fxLayoutAlign.lt-sm="start center" *ngIf="searchRequest && calendarResult">
+                <div *ngIf="searchRequest.itineraries.length > 1">
+                    <span class="minWidth1024">{{searchRequest.itineraries[0].originLocation}} {{searchRequest.itineraries[0].originLocationCode}}
+                        -  {{searchRequest.itineraries[1].originLocation}} {{searchRequest.itineraries[1].originLocationCode}},&nbsp;
+                    </span>
+                    <span class="min768Max1023">
+                        {{searchRequest.itineraries[0].originLocationCode}}
+                        - {{searchRequest.itineraries[1].originLocationCode}},&nbsp;
+                    </span>
+                    <span>
+                        <!--{{searchRequest.itineraries[0].departureDateTime | localizedDates}}-->
+                        {{calendarResult.departureDate | localizedDates}}
+                        -
+                        {{calendarResult.returnDate | localizedDates}},&nbsp;
+
+                        <!--{{searchRequest.itineraries[1].departureDateTime | localizedDates}},&nbsp;-->
+                    </span>
+
+                </div>
+
+                <div *ngIf="searchRequest.itineraries.length === 1">
+                    <span class="minWidth1024">{{searchRequest.itineraries[0].originLocation}} {{searchRequest.itineraries[0].originLocationCode}}
+                        -  {{searchRequest.itineraries[0].destinationLocation}} {{searchRequest.itineraries[0].destinationLocationCode}},&nbsp;
+                    </span>
+                    <span class="min768Max1023">
+                        {{searchRequest.itineraries[0].originLocationCode}} - {{searchRequest.itineraries[0].destinationLocationCode}},&nbsp;
+                    </span>
+                    <span>
+                        {{calendarResult.departureDate | localizedDates}},&nbsp;
+                    </span>
+
+                </div>
+
+                <span *ngIf="passengerCount > 1">{{passengerCount}} {{"Passengerz" | translate}}</span>
+                <span *ngIf="passengerCount == 1">{{passengerCount}} {{"Passenger" | translate}}</span>
+                <!--            <button mat-icon-button type="button" fxFlex="10" class="grey-background"-->
+                <!--                fxLayoutAlign.gt-sm="center center" [routerLink]="'/'">-->
+                <!--                <img src="./assets/img/web/icons/edit-16.svg">-->
+                <!--            </button>-->
+            </div>
+
+        </div>
+        <!--    <button mat-icon-button type="button" style="background-color: #F6F7F9;padding: 0!important;border-radius: 0; border-top-right-radius: 8px; border-bottom-right-radius: 8px"-->
+        <!--            fxLayoutAlign.gt-sm="center center">&lt;!&ndash;[routerLink]="'/calendar'"&ndash;&gt;-->
+        <!--        <img src="./assets/img/web/icons/edit-16.svg">-->
+        <!--    </button>-->
+    </div>
+</div>

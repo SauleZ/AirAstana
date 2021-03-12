@@ -1,0 +1,499 @@
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+
+<div class="h-full displayZero fixed-booking" fxLayout="column" *ngIf="!isMobile">
+
+    <div style="overflow-y:auto;" class="py-4 px-gutter" fxLayout="column" fxLayoutAlign="start start"
+         fxLayoutGap="1vh">
+        <span class="headline-M">{{"Your booking" | translate}}</span>
+        <div class="w-full displayZero">
+            <mat-accordion displayMode="flat">
+                <mat-expansion-panel *ngIf="isShown()" [expanded]="true">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before">
+                        <mat-panel-title fxFlex="40" fxLayoutAlign="start center" style="color: #282D3E;"
+                                         class="maintext-M-semibold">
+                            {{"Flights" | translate}}
+                        </mat-panel-title>
+                        <mat-panel-description fxFlex="60" fxLayoutAlign="end center"
+                                               class="maintext-M-semibold" style="color: #282D3E;">
+                            {{priceView(booking?.cart?.offers[0].costContainer.cost.total.toString())}} &nbsp;
+                            <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div fxLayout="column" fxLayoutGap="5%" [ngStyle.gt-sm]="{'margin-bottom':'0%'}">
+                        <div fxLayout="column">
+                            <div fxLayout="row">
+                                <div fxFlex="10">
+                                    <img style="max-height: 20px;" src="./assets/img/web/planeRight.png">
+                                </div>
+                                <div fxLayout="column"
+                                     *ngIf="booking && booking.cart && booking.cart.offers && booking.selectedBoundMap['Departure']">
+                                    <p class="maintext-S-semibold" style="color: #282D3E;">{{"DEPARTURE" | translate}},&nbsp;
+                                        {{booking?.cart.offers[0].bounds[0].flights[0].details.departure.dateTime | date: 'd MMMM, EEE':undefined:locale}}</p>
+                                    <p class="maintext-S text-muted">{{booking?.cart.offers[0].bounds[0].flights[0].details.departure.dateTime | date: 'HH:mm'}}
+                                        {{booking?.cart.offers[0].bounds[0].flights[0].details.departure.locationCode}}
+                                        –
+                                        {{booking?.cart.offers[0].bounds[0].flights[booking?.cart.offers[0].bounds[0].flights.length - 1].details.arrival.dateTime  | date: 'HH:mm'}}
+                                        {{booking?.cart.offers[0].bounds[0].flights[booking?.cart.offers[0].bounds[0].flights.length - 1].details.arrival.locationCode}}</p>
+                                </div>
+
+                                <div fxLayout="column" *ngIf="!booking.cart">
+                                    <p class="maintext-S-semibold" style="color: #282D3E;">Departure, 11 july, wed</p>
+                                    <p class="maintext-S text-muted">06:10 ALA –
+                                        07:55
+                                        FRA</p>
+                                </div>
+                            </div>
+                            <div style="margin-left: 10%" fxLayout="row">
+                                <div fxFlex="50" fxFlexAlign="start" class="maintext-S text-muted">
+                                    <div *ngIf="searchRequest">
+                                    <span *ngFor="let passenger of getKeys(passengersCount); let l = last">
+                                        {{passengersCount[passenger]}}
+                                        <span>
+                                            {{getPassengerType(passenger, passengersCount[passenger]) | translate}}<span
+                                                *ngIf="!l">,</span>
+                                        </span>
+                                    </span>
+                                    </div>
+                                    <div *ngIf="!searchRequest">1&nbsp;<span>{{"ADULT" | translate}}, 1&nbsp;<span>{{"CHILD" | translate}}</span></span>
+                                    </div>
+                                </div>
+                                <div fxFlex="50" fxLayoutAlign="end center">
+                                    <p class="maintext-S text-muted">{{priceView(booking?.selectedBoundMap['Departure'].rate.cost.total.toString())}}
+                                        <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div fxLayout="column">
+                            <div fxLayout="row"
+                                 *ngIf="booking && booking.cart && booking.cart.offers && booking.selectedBoundMap['Return']">
+                                <div fxFlex="10">
+                                    <img style="max-height: 20px; transform: scale(-1, 1);"
+                                         src="./assets/img/web/planeRight.png">
+                                </div>
+                                <div fxLayout="column">
+                                    <p class="maintext-S-semibold" style="color: #282D3E;">{{"RETURN" | translate}},
+                                        &nbsp;{{booking?.cart.offers[0].bounds[1].flights[0].details.departure.dateTime | date: 'd MMMM, EEE':undefined:locale}}</p>
+                                    <p class="maintext-S text-muted">{{booking?.cart.offers[0].bounds[1].flights[0].details.departure.dateTime | date: 'HH:mm'}}
+                                        {{booking?.cart.offers[0].bounds[1].flights[0].details.departure.locationCode}}
+                                        –
+                                        {{booking?.cart.offers[0].bounds[1].flights[booking?.cart.offers[0].bounds[1].flights.length - 1].details.arrival.dateTime | date: 'HH:mm'}}
+                                        <span *ngIf="countDays(booking.selectedBoundMap['Return'].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap['Return'].bound.flights[0].details.departure.dateTime) > 0">
+                                        +{{countDays(booking.selectedBoundMap['Return'].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap['Return'].bound.flights[0].details.departure.dateTime)}}
+                                            day<span
+                                                *ngIf="countDays(booking.selectedBoundMap['Return'].bound.flights[0].details.arrival.dateTime, booking.selectedBoundMap['Return'].bound.flights[0].details.departure.dateTime) > 1">s</span></span>
+                                        {{booking?.cart.offers[0].bounds[1].flights[booking?.cart.offers[0].bounds[1].flights.length - 1].details.arrival.locationCode}}
+                                    </p>
+                                </div>
+
+                                <div fxLayout="column" *ngIf="!booking.cart">
+                                    <p class="maintext-S-semibold" style="color: #282D3E;">Return, 11 july, wed</p>
+                                    <p class="maintext-S text-muted">06:10 FRA –
+                                        07:55
+                                        ALA</p>
+                                </div> <!--for the git-->
+                            </div>
+                            <div style="margin-left: 10%" fxLayout="row" *ngIf="booking.selectedBoundMap['Return']">
+                                <div fxFlex="50" fxFlexAlign="start" class="maintext-S text-muted">
+                                    <div *ngIf="searchRequest">
+                                    <span *ngFor="let passenger of getKeys(passengersCount); let l = last">
+                                        {{passengersCount[passenger]}}
+                                        <span>
+                                            {{getPassengerType(passenger, passengersCount[passenger]) | translate}}<span
+                                                *ngIf="!l">,</span>
+                                        </span>
+                                    </span>
+                                    </div>
+                                    <div *ngIf="!searchRequest">1&nbsp;<span>{{"ADULT" | translate}}, 1&nbsp;<span>{{"CHILD" | translate}}</span></span>
+                                    </div>
+                                </div>
+
+                                <div fxFlex="50" fxLayoutAlign="end center">
+                                    <p class="maintext-S text-muted">{{priceView(booking?.selectedBoundMap['Return'].rate.cost.total.toString())}}
+                                        <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <mat-expansion-panel style="margin: 0; padding: 0; box-shadow: 0 0 0 0">
+                        <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before"
+                                                    style="padding-right: 10px ">
+                            <mat-panel-title fxLayout="row"
+                                             style="margin-top: 3%;" fxLayoutAlign="space-between end">
+                                <span class="maintext-S text-muted">{{"Taxes" | translate}}</span>
+                                <span *ngIf="booking.cart && booking.cart.offers" style="margin-right: 1%"><p
+                                        class="maintext-S text-muted">{{priceView(booking?.cart?.offers[0]?.costContainer.cost.totalTaxes.toString())}}
+                                    <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p></span>
+                                <span *ngIf="booking.rate && !booking.rate.cost" style="margin-bottom: 6%"><p
+                                        class="maintext-S text-muted">8 000 <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p></span>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div *ngIf="booking && booking.cart && booking.cart.offers">
+                            <div *ngFor="let typeCode of getKeys(smartTaxesMap); let i = index;"
+                                 style="padding: 0; width: 100%"
+                                 fxLayout="row"
+                                 fxLayoutAlign="space-between center">
+                                <div *ngIf="typeCode !== 'INF'" style="width: 100%">
+
+                                    <p class="maintext-XS text-muted">{{getTypeName(typeCode) | translate}}</p>
+                                    <div *ngFor="let taxCode of getKeys(smartTaxesMap[typeCode])">
+                                        <div fxFlex="65" fxLayoutAlign="start center">
+                                            <p class="maintext-XS text-muted">{{smartTaxesMap[typeCode][taxCode].title}}
+                                                <span
+                                                        *ngIf="smartTaxesMap[typeCode][taxCode].passengerCount>1"> x {{smartTaxesMap[typeCode][taxCode].passengerCount }}</span>
+                                            </p>
+                                        </div>
+                                        <div fxFlex="32" fxLayoutAlign="end center">
+                                            <p *ngIf="booking.cart"
+                                               class="maintext-XS text-muted">{{priceView((smartTaxesMap[typeCode][taxCode].total * smartTaxesMap[typeCode][taxCode].passengerCount).toString())}}
+                                                <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                            <p *ngIf="booking.rate && !booking.rate.cost"
+                                               class="maintext-XS text-muted">4000
+                                                <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a *ngIf="locale === 'en'" target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Online-Booking-Terms-and-Conditions"
+                           style="color: #8A6842; text-decoration: #8A6842 underline;"
+                           class="maintext-S-semibold">{{"Terms" | translate}}</a>
+                        <a *ngIf="locale === 'ru' || locale === 'kz'" target="_blank"
+                           href="https://airastana.com/global/ru-ru/Informatsiia/Pravila-i-usloviia/Pravila-i-usloviia-onlain-bronirovaniia"
+                           style="color: #8A6842; text-decoration: #8A6842 underline;"
+                           class="maintext-S-semibold">{{"Terms" | translate}}</a>
+
+                    </mat-expansion-panel>
+                </mat-expansion-panel>
+
+                <mat-expansion-panel *ngIf="showBaggage()">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before">
+                        <mat-panel-title fxFlex="65" fxFlex.md="40" fxLayoutAlign="start center"
+                                         class="maintext-M-semibold">
+                            {{"Baggage" | translate}}
+                        </mat-panel-title>
+                        <mat-panel-description fxFlex="35" fxFlex.md="60" fxLayoutAlign="end center"
+                                               class="maintext-M-semibold"
+                                               *ngIf="serviceContent && serviceContent['baggageTotal']
+                                                && serviceContent['baggageTotal']['baggage'] === 0">
+                            {{"Free" | translate}}
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['baggage'], 'baggage', $event)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                        <mat-panel-description fxFlex="35" fxFlex.md="60" fxLayoutAlign="end center"
+                                               class="maintext-M-semibold"
+                                               *ngIf="serviceContent && serviceContent['baggageTotal']
+                                                && serviceContent['baggageTotal']['baggage'] != 0" style="white-space: nowrap;">
+                            <p class="maintext-M-semibold" style="white-space: nowrap; margin-right: 5px">{{priceView(serviceContent['baggageTotal']['baggage'].toString())}} </p> <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['baggage'], 'baggage',  $event)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let baggage of booking.order.services.baggage"
+                             style="width: 100%!important;">
+<!--                            <p style="margin-left: 5%" class="maintext-S-semibold text-muted">-->
+<!--                                {{baggage.departure}} — {{baggage.arrival}}-->
+<!--                            </p>-->
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{baggage.quantity}} bags /
+                                        <span *ngIf="cabinType =='business'">16kg</span>
+                                        <span *ngIf="cabinType =='eco'">23kg</span>
+                                    </p>
+                                </div>
+                                <div *ngIf="baggage.prices && baggage.prices.totalPrices" fxFlex="50"
+                                     fxLayoutAlign="end center" fxLayoutAlign.md="space-between center">
+                                    <p class="maintext-S text-muted">{{priceView(baggage.prices.totalPrices[0].total.value.toString())}}
+                                        <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </mat-expansion-panel>
+
+                <mat-expansion-panel *ngIf="booking && booking.order && booking.order.seats">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before maintext-M-semibold">
+                        <mat-panel-title fxFlex="60" fxFlex.md="40"
+                                         fxLayoutAlign="start center">{{"Seats" | translate}}</mat-panel-title>
+                        <mat-panel-description fxFlex="35" fxFlex.md="60" fxLayoutAlign="end center"
+                                               fxLayoutAlign.md="space-between center" class="maintext-M-semibold"
+                                               *ngIf="calculateTotal(booking.order.seats, 'seats') === 0">
+                            {{"Free" | translate}}
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteSeats(booking.order.seats)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                        <mat-panel-description fxFlex="40" fxFlex.md="60" fxLayoutAlign="end center"
+                                               class="maintext-M-semibold"
+                                               *ngIf="calculateTotal(booking.order.seats, 'seats') != 0">
+                            {{priceView(calculateTotal(booking.order.seats, 'seats').toString())}}&nbsp;
+                            <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteSeats(booking.order.seats)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+
+                    <div fxLayout="column" fxLayoutGap="5%" *ngIf="booking && booking.order && booking.order.seats"
+                         style="margin-left: 24px">
+                        <div fxLayout="column" *ngFor="let flight of booking.order.seats;">
+                            <p class="maintext-S-semibold text-muted">
+                                <!--{{seatResult.flight.details.departure.cityName}} — {{seatResult.flight.details.arrival.cityName}}-->
+                                {{flight.departure}} — {{flight.arrival}}
+                            </p>
+                            <div fxLayout="row" fxLayoutAlign="space-between center"
+                                 *ngFor="let seat of flight.seatSelections; let i = index;">
+                                <div fxLayoutAlign="start canter">
+                                    <p class="maintext-S text-muted">1 place {{seat.seatNumber}}</p>
+                                </div>
+                                <div *ngIf="flight.prices" fxLayoutAlign="end canter">
+                                    <div fxLayoutAlign="end canter" *ngFor="let unitPrice of flight.prices.unitPrices;">
+                                        <p class="maintext-S text-muted"
+                                           *ngIf="checkPassengerSeat(flight.prices.unitPrices, seat.travelerId)">
+                                            <span *ngIf="unitPrice && unitPrice.travelerIds[0] === seat.travelerId">
+                                                {{priceView(unitPrice.prices[0].base.value.toString())}}
+                                                <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></span></p>
+<!--                                        <p class="maintext-S text-muted"-->
+<!--                                           *ngIf="unitPrice && !checkPassengerSeat(flight.prices.unitPrices, seat.travelerId) && flight.seatSelections">-->
+<!--                                            Free5</p>-->
+                                    </div>
+                                </div>
+                                <div fxLayoutAlign="end canter" *ngIf="!flight.prices || !seat.isChargeable">
+                                    <p class="maintext-S text-muted">Free</p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </mat-expansion-panel>
+
+                <mat-expansion-panel *ngIf="showMeal()">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before maintext-M-semibold">
+                        <mat-panel-title fxFlex="65"
+                                         fxLayoutAlign="start center">{{"Meal" | translate}}</mat-panel-title>
+                        <mat-panel-description fxFlex="35" fxLayoutAlign="end center" class="maintext-M-semibold">
+                            {{"Free" | translate}}
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['meal'], 'meal', $event)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let meal of mealList"
+                             style="width: 100%!important;">
+                            <!--                            <p style="margin-left: 5%" class="maintext-S-semibold text-muted">-->
+                            <!--                                {{meal.departure}} — {{meal.arrival}}</p>-->
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{meal}}</p>
+                                </div>
+                                <div fxFlex="50" fxLayoutAlign="end center">
+                                    <p class="maintext-S text-muted">{{"Free" | translate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+
+                <mat-expansion-panel *ngIf="showAssistance()">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before maintext-M-semibold">
+                        <mat-panel-title fxFlex="65"
+                                         fxLayoutAlign="start center">{{"Assistance" | translate}}</mat-panel-title>
+                        <mat-panel-description fxFlex="35" fxLayoutAlign="end center" class="maintext-M-semibold"
+                                               (click)="$event.stopPropagation()">
+                            {{"Free" | translate}}
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['assistance'], 'assistance', $event)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let assistance of assistanceList" style="width: 100%!important;">
+                            <!--                            <p style="margin-left: 5%" class="maintext-S-semibold text-muted">-->
+                            <!--                                {{meal.departure}} — {{meal.arrival}}</p>-->
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{assistance}}</p>
+                                </div>
+                                <div fxFlex="50" fxLayoutAlign="end center">
+                                    <p class="maintext-S text-muted">{{"Free" | translate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+
+            </mat-accordion>
+        </div>
+        <div *ngIf="!isShown()"
+             class="card p-6" fxLayoutAlign="center center" fxLayout="column">
+            <img class="w-12 select-none m-6" src="assets/img/web/plane.png">
+            <h3 class="maintext-S">{{"Select Flights" | translate}}</h3>
+        </div>
+
+        <mat-card class="   w-full"
+                  *ngIf="booking && (booking.selectedBoundMap['Departure'] || booking.selectedBoundMap['Return'])">
+            <div fxLayout.gt-sm="column" fxLayout="row" fxLayoutGap.gt-sm="10px" fxLayoutGap="0">
+                <div fxLayout.gt-sm="row" fxLayout="column" fxFlex.gt-sm="100" fxFlex="45">
+                    <div fxFlex="40" fxLayoutAlign="start start" class="maintext-M-semibold"> {{"Total" | translate}}:
+                    </div>
+                    <div fxFlex="60" fxLayoutAlign.gt-sm="end center" fxLayoutAlign="start start"
+                         *ngIf="booking.cart && !booking.order">
+                        <span class="headline-S">{{priceView(booking?.cart?.total.total.toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>&nbsp;</span>
+
+                    </div>
+                    <div fxFlex="60" fxLayoutAlign.gt-sm="end center" fxLayoutAlign="start start"
+                         *ngIf="booking.cart && booking.order">
+                        <span class="headline-S">{{priceView(booking?.order?.total.total.toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>&nbsp;</span>
+                    </div>
+                </div>
+                <div fxFlex.gt-sm="100" fxFlex="50">
+                    <span class="maintext-S">{{"For all passengers, including all taxes" | translate}}</span>
+                </div>
+            </div>
+        </mat-card>
+
+
+        <div *ngIf="getRouteActive() === '/summary'" class="h-full w-full displayZero">
+            <mat-accordion displayMode="flat">
+
+                <mat-expansion-panel *ngIf="booking">
+                    <mat-expansion-panel-header class="mat-expansion-toggle-indicator-before">
+                        <mat-panel-title fxFlex="55" fxLayoutAlign="start center">
+                            <mat-checkbox (change)="showPayNow()">
+                                <p class="maintext-S" style="color: #32384A;">{{"I agree with all" | translate}} <a
+                                        style="color: #B9966E; text-decoration: underline;">{{"conditions" | translate}}</a>
+                                </p>
+                            </mat-checkbox>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div style="margin-left: 16px" fxLayout="column">
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Online-Booking-Terms-and-Conditions"
+                           style="color: #B9966E; text-decoration: underline;">Online Booking Terms and Conditions </a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Rules-of-Air-Carriage-of-Passengers-and-Baggage"
+                           style="color: #B9966E; text-decoration: underline;">Rules of Air Carriage of Passengers and
+                            Baggage</a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/General-Conditions-of-Contract"
+                           style="color: #B9966E; text-decoration: underline;">General Conditions of Contract</a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Privacy-Policy"
+                           style="color: #B9966E; text-decoration: underline;">Privacy Policy</a>
+                    </div>
+
+                </mat-expansion-panel>
+
+            </mat-accordion>
+        </div>
+
+        <div class="continueBtn" style="width: 100%;" *ngIf="getRouteActive() !== '/summary'">
+             <button mat-raised-button class="button-standard"
+                     *ngIf="booking && (booking.selectedBoundMap['Departure'] || booking.selectedBoundMap['Return'])"
+                     (click)="continue()">{{"CONTINUE" | translate}}</button>
+        </div>
+        <div style="width: 100%;" *ngIf="getRouteActive() === '/summary'">
+             <button mat-raised-button class="button-standard" [disabled]="!iAgree"
+                     *ngIf="booking && (booking.selectedBoundMap['Departure'] || booking.selectedBoundMap['Return'])"
+                     (click)="redirectToPayment()">{{"Pay now" | translate}}</button>
+        </div>
+    </div>
+</div>
+<mat-card style="overflow-y:auto; z-index: 10000" class="h-full w-full"
+          *ngIf="isMobile && booking && getRouteActive() !== '/calendar'">
+    <div>
+        <div *ngIf="getRouteActive() === '/summary'">
+            <mat-accordion>
+                <mat-expansion-panel *ngIf="booking" style="box-shadow: none!important;">
+                    <mat-expansion-panel-header style="margin-left: -5%; max-width: 75%; padding-bottom: 7%;">
+                        <mat-panel-title fxFlex="55" fxLayoutAlign="start center">
+                            <mat-checkbox (change)="showPayNow()">
+                                <p class="maintext-S" style="color: #32384A;">{{"I agree with all" | translate}} <a
+                                        style="color: #B9966E; text-decoration: underline;">{{"conditions" | translate}}</a>
+                                </p>
+                            </mat-checkbox>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div style="margin-left: 16px" fxLayout="column">
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Online-Booking-Terms-and-Conditions"
+                           style="color: #B9966E; text-decoration: underline;">Online Booking Terms and Conditions </a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Rules-of-Air-Carriage-of-Passengers-and-Baggage"
+                           style="color: #B9966E; text-decoration: underline;">Rules of Air Carriage of Passengers and
+                            Baggage</a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/General-Conditions-of-Contract"
+                           style="color: #B9966E; text-decoration: underline;">General Conditions of Contract</a>
+                        <a target="_blank"
+                           href="https://airastana.com/global/en-us/Information/Terms-and-Conditions/Privacy-Policy"
+                           style="color: #B9966E; text-decoration: underline;">Privacy Policy</a>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+        <div fxLayout="row">
+            <div (click)="openBooking()" fxFlex="60">
+                <div fxFlex="10" fxLayoutAlign="center center" style="margin: 5% 0">
+                    <ic-icon [icon]="iconService.KEYBOARD_UP" style="color: black" size="16px"></ic-icon>
+                </div>
+                <div fxLayout.gt-sm="row" fxLayout="column" fxFlex.gt-sm="100" fxFlex="90">
+                    <div fxFlex="40" fxLayoutAlign="start start" class="maintext-S text-muted"> {{"Total" | translate}}:
+                    </div>
+                    <div fxFlex="50" fxLayoutAlign.gt-sm="center center" fxLayoutAlign="start start"
+                         *ngIf="booking.cart && !booking.order">
+                        <div class="maintext-M-semibold"
+                             style="color: #282D3E;">{{priceView(booking.cart.total.total.toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                        </div>
+                    </div>
+                    <div fxFlex="50" fxLayoutAlign.gt-sm="center center" fxLayoutAlign="start start"
+                         *ngIf="booking.cart && booking.order">
+                        <div class="maintext-M-semibold"
+                             style="color: #282D3E;">{{priceView(booking.order.total.total.toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                        </div>
+                    </div>
+                    <div fxFlex="10"></div>
+                </div>
+            </div>
+            <button *ngIf="getRouteActive() !== '/summary'" fxFlex="40" mat-raised-button class="button-standard"
+                    (click)="continue()">{{"CONTINUE" | translate}}
+            </button>
+            <button [disabled]="!iAgree" *ngIf="getRouteActive() === '/summary'" fxFlex="40" mat-raised-button
+                    class="button-standard" (click)="redirectToPayment()">{{"Pay now" | translate}}
+            </button>
+        </div>
+    </div>
+</mat-card>
+
+<form [hidden]="true" [method]="purchase.method" [action]="purchase.url">
+    <div *ngFor="let data of purchase.data">
+        <input name="{{data.name}}" value="{{data.value}}" hidden/>
+    </div>
+    <button mat-button id="redirect" type="submit" [hidden]="true"></button>
+</form>

@@ -1,0 +1,174 @@
+<!-- **************************************************************************************************** -->
+<!-- ******                                  DESKTOP VERSION                                       ****** -->
+<!-- **************************************************************************************************** -->
+<div *ngIf="isDesktop && fareFamilyDictionary && rateItemMap" class="displayZero"
+     fxLayout="row wrap"
+     fxFlex="100"
+     fxLayout.xs="column"
+     fxLayoutGap="11px">
+
+    <mat-card class="safariView" *ngFor="let rate of customRates; let i = index;" style="padding: 0 0 16px 0" fxFlex="25" fxFlex.md="35"
+              [ngClass]="{'notAvailableCard': offerIds && !rate.offerIdsCheck}">
+        <mat-card-header style="padding: 16px 16px 16px 12px; max-height: 24%; height: 24%">
+            <mat-card-title class="headline-S">{{priceView(rate.cost.total.toString())}}&nbsp;
+                <span *ngIf="rate.cost.currencyCode" [innerHTML]="rate.cost.currencyCode"></span>
+            </mat-card-title>
+            <mat-card-subtitle *ngIf="fareFamilyDictionary && rateItemMap && rateItemMap[rate.fareFamilyContainer.id]"
+                               class="maintext-M-semibold text-muted">{{rateItemMap[rate.fareFamilyContainer.id].title}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <div fxLayout="row" fxLayoutAlign="start center" class="line-word">
+                <div class="line line-green"></div>
+                <!--                <div class="tag"></div>-->
+            </div>
+            <mat-list *ngIf="rateItemMap && rateItemMap[rate.fareFamilyContainer.id]" class="rate-item-list">
+                <mat-list-item
+                        *ngFor="let item of rateItemMap[rate.fareFamilyContainer.id].characteristics; let i = index;"
+                        class="list-item-margin"
+                        fxLayout="row">
+                    <i class="icon-ok" *ngIf="item.type === 'Included'" mat-list-icon></i> <!--"getIcon(item.type) === 'included'"-->
+                    <i class="icon-remove" *ngIf="item.type === 'Not included' && !item.value.includes('*')" mat-list-icon></i>
+                    <i class="icon-tenge" *ngIf="item.type === 'Chargeable' && !item.value.includes('*')" mat-list-icon></i>
+                    <!--                    </div>-->
+                    <!--                    <i *ngIf="item.type === 'paid'" class="icon-tenge"  mat-list-icon></i>-->
+                    <!--                    <i *ngIf="item.type === 'notInclude'" class="icon-remove" mat-list-icon></i>-->
+                    <div mat-line>
+                        <span class="maintext-S" style="color: #282D3E;">{{item.title | translate}}</span>
+                        <span class="maintext-S itemValue" style="color: black;" *ngIf="item && item.value">&nbsp;{{item.value}}</span>
+                    </div>
+                    <!--                    <div *ngIf="item.type === 'notInclude'" mat-line><span-->
+                    <!--                            class="maintext-S text-muted">{{item.title}}</span></div>-->
+                    <!--                    <div *ngIf="item.link" class="maintext-S-semibold text-muted" style="text-decoration: underline">-->
+                    <!--                        <a href="{{item.link}}">Learn more</a>-->
+                    <!--                    </div>-->
+
+                    <!--                    <div mat-line class="maintext-S content">{{content.item}}</div>-->
+                </mat-list-item>
+
+                <!--                <mat-list-item class="list-item-margin" fxLayout="row">-->
+                <!--                    <div class="maintext-S-semibold text-muted" style="text-decoration: underline">Learn more</div>-->
+                <!--                </mat-list-item>-->
+            </mat-list>
+            <!--            </div>-->
+        </mat-card-content>
+        <mat-card-actions fxLayoutAlign="center center">
+            <button class="card-select-button" (click)="selectItem(rate, i)" mat-button
+                    [ngClass]="{'notAvailableBtn': offerIds && !rate.offerIdsCheck}" [disabled]="offerIds && !rate.offerIdsCheck">
+                <span class="maintext-M-semibold" style="color: white">{{"SELECT" | translate}}</span>
+            </button>
+        </mat-card-actions>
+    </mat-card>
+</div>
+
+<!-- **************************************************************************************************** -->
+<!-- ******                                  MOBILE VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<mat-accordion *ngIf="isMobile" class="displayDesktop">
+    <mat-expansion-panel *ngFor="let rate of customRates; let i = index;" [ngClass]="{'notAvailableCard': offerIds && !rate.offerIdsCheck}"  [disabled]="offerIds && !rate.offerIdsCheck">
+        <mat-expansion-panel-header style="border-radius: 8px 8px 0 0;">
+            <mat-radio-button
+                    [checked]="chosenRate && chosenRate.fareFamilyContainer.id === rate.fareFamilyContainer.id"
+                    fxLayout="row" style="width: 100%!important" (click)="selectItem(rate, i)">
+                <span fxFlex="50" fxLayoutAlign="start start"
+                      class="maintext-M-semibold text-muted" *ngIf="fareFamilyDictionary && rateItemMap && rateItemMap[rate.fareFamilyContainer.id]">{{rateItemMap[rate.fareFamilyContainer.id].title}}</span>
+                <span fxFlex="50" fxLayoutAlign="end end" class="maintext-M-semibold"
+                      style="color: #282D3E; ">{{priceView(rate.cost.total.toString())}}&nbsp;
+                    <span *ngIf="rate.cost.currencyCode" [innerHTML]="rate.cost.currencyCode"></span>
+                </span>
+            </mat-radio-button>
+        </mat-expansion-panel-header>
+        <!--        <mat-list *ngIf="rateItemMap && rateItemMap[rate.fareFamilyContainer.id]" style="padding: 24px 3px"-->
+        <!--                  class="rate-item-list">-->
+        <!--            <mat-list-item *ngFor="let item of rateItemMap[rate.fareFamilyContainer.id].characteristics; let i = index;"-->
+        <!--                           class="list-item-margin"-->
+        <!--                           fxLayout="row">-->
+        <!--                &lt;!&ndash;                    <ic-icon [icon]="content.icon" mat-list-icon size="16px" fxLayoutAlign="start center"></ic-icon>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    <i class="icon-ok" mat-list-icon></i>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    <div>&ndash;&gt;-->
+        <!--                <i class="icon-ok" *ngIf="getIcon(item.value) === 'included'" mat-list-icon></i>-->
+        <!--                <i class="icon-remove" *ngIf="getIcon(item.value) === 'not included'" mat-list-icon></i>-->
+        <!--                <i class="icon-tenge" *ngIf="getIcon(item.value) === 'paid'" mat-list-icon></i>-->
+        <!--                &lt;!&ndash;                    </div>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    <i *ngIf="item.type === 'paid'" class="icon-tenge"  mat-list-icon></i>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    <i *ngIf="item.type === 'notInclude'" class="icon-remove" mat-list-icon></i>&ndash;&gt;-->
+        <!--                <div mat-line>-->
+        <!--                    <span class="maintext-S" style="color: #282D3E;">{{item.title | translate}}</span></div>-->
+        <!--                &lt;!&ndash;                    <div *ngIf="item.type === 'notInclude'" mat-line><span&ndash;&gt;-->
+        <!--                &lt;!&ndash;                            class="maintext-S text-muted">{{item.title}}</span></div>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    <div *ngIf="item.link" class="maintext-S-semibold text-muted" style="text-decoration: underline">&ndash;&gt;-->
+        <!--                &lt;!&ndash;                        <a href="{{item.link}}">Learn more</a>&ndash;&gt;-->
+        <!--                &lt;!&ndash;                    </div>&ndash;&gt;-->
+
+        <!--                &lt;!&ndash;                    <div mat-line class="maintext-S content">{{content.item}}</div>&ndash;&gt;-->
+        <!--            </mat-list-item>-->
+
+        <!--            &lt;!&ndash;                <mat-list-item class="list-item-margin" fxLayout="row">&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    <div class="maintext-S-semibold text-muted" style="text-decoration: underline">Learn more</div>&ndash;&gt;-->
+        <!--            &lt;!&ndash;                </mat-list-item>&ndash;&gt;-->
+        <!--        </mat-list>-->
+        <mat-list *ngIf="rateItemMap && rateItemMap[rate.fareFamilyContainer.id]" class="rate-item-list"
+                  style="padding: 24px 3px">
+            <mat-list-item
+                    *ngFor="let item of rateItemMap[rate.fareFamilyContainer.id].characteristics; let i = index;"
+                    class="list-item-margin"
+                    fxLayout="row">
+                <i class="icon-ok" *ngIf="item.type === 'Included'" mat-list-icon></i> <!--"getIcon(item.type) === 'included'"-->
+                <i class="icon-remove" *ngIf="item.type === 'Not included' && !item.value.includes('*')" mat-list-icon></i>
+                <i class="icon-tenge" *ngIf="item.type === 'Chargeable' && !item.value.includes('*')" mat-list-icon></i>
+                <div mat-line style="width: 100%">
+                    <span class="maintext-S" style="color: #282D3E; width: 100%">{{item.title | translate}}</span></div>
+                <span class="maintext-S itemValue" style="color: black;" *ngIf="item && item.value">&nbsp;{{item.value}}</span>
+            </mat-list-item>
+
+            <!--                <mat-list-item class="list-item-margin" fxLayout="row">-->
+            <!--                    <div class="maintext-S-semibold text-muted" style="text-decoration: underline">Learn more</div>-->
+            <!--                </mat-list-item>-->
+        </mat-list>
+    </mat-expansion-panel>
+</mat-accordion>
+
+
+<!-- **************************************************************************************************** -->
+<!-- ******                                  TABLET VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<mat-accordion *ngIf="isTablet">
+    <mat-expansion-panel *ngFor="let rate of bound.rates; let i = index;" [ngClass]="{'notAvailableCard': offerIds && !rate.offerIdsCheck}"  [disabled]="offerIds && !rate.offerIdsCheck">
+        <mat-expansion-panel-header style="border-radius: 8px 8px 0 0;">
+            <mat-radio-button
+                    [checked]="chosenRate && chosenRate.fareFamilyContainer.id === rate.fareFamilyContainer.id"
+                    fxLayout="row" style="width: 100%!important" (click)="selectItem(rate, i)">
+                <span fxFlex="50" fxLayoutAlign="start start"
+                      class="maintext-M-semibold text-muted">{{rate.fareFamilyContainer.id}}</span>
+                <span fxFlex="50" fxLayoutAlign="end end" class="maintext-M-semibold "
+                      style="color: #282D3E; ">{{priceView(rate.cost.total.toString())}}&nbsp;
+                    <span *ngIf="rate.cost.currencyCode" [innerHTML]="rate.cost.currencyCode"></span>
+                </span>
+            </mat-radio-button>
+        </mat-expansion-panel-header>
+        <mat-list *ngIf="rateItemMap && rateItemMap[rate.fareFamilyContainer.id]" style="padding: 24px 3px">
+            <mat-list-item
+                    *ngFor="let item of rateItemMap[rate.fareFamilyContainer.id].characteristics; let i = index;"
+                    class="list-item-margin"
+                    fxLayout="row">
+                <i class="icon-ok" *ngIf="item.type === 'Included'" mat-list-icon></i> <!--"getIcon(item.type) === 'included'"-->
+                <i class="icon-remove" *ngIf="item.type === 'Not included' && !item.value.includes('*')" mat-list-icon></i>
+                <i class="icon-tenge" *ngIf="item.type === 'Chargeable' && !item.value.includes('*')" mat-list-icon></i>
+                <div mat-line style="width: 100%">
+                    <span class="maintext-S" style="color: #282D3E; width: 100%">{{item.title | translate}}</span></div>
+                <span class="maintext-S itemValue" style="color: black;" *ngIf="item && item.value">&nbsp;{{item.value}}</span>
+            </mat-list-item>
+        </mat-list>
+        <!--        <mat-list style="margin: 3% 0 0" *ngIf="rateItemMap && rateItemMap[rate.fareFamilyContainer.id]">-->
+        <!--            <mat-list-item *ngFor="let item of rateItemMap[rate.fareFamilyContainer.id]; let i = index" class="list-item-margin" fxLayout="row">-->
+        <!--                &lt;!&ndash;                <ic-icon [icon]="content.icon" mat-list-icon size="16px" fxLayoutAlign="start center"></ic-icon>&ndash;&gt;-->
+        <!--                <img *ngIf="item.type === 'include'" src="./assets/img/web/icons/yes.svg" mat-list-icon>-->
+        <!--                <img *ngIf="item.type === 'paid'" src="./assets/img/web/icons/tenge.svg" mat-list-icon>-->
+        <!--                <img *ngIf="item.type === 'notInclude'" src="./assets/img/web/icons/no.svg" mat-list-icon>-->
+        <!--                <div *ngIf="item.type === 'include' || item.type === 'paid'" mat-line>-->
+        <!--                    <span class="maintext-S" style="color: #282D3E;">{{item.title}}</span></div>-->
+        <!--                <div *ngIf="item.type === 'notInclude'" mat-line><span-->
+        <!--                        class="maintext-S text-muted">{{item.title}}</span></div>-->
+        <!--            </mat-list-item>-->
+        <!--        </mat-list>-->
+    </mat-expansion-panel>
+</mat-accordion>

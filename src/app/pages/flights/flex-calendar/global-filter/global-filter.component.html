@@ -1,0 +1,99 @@
+<div class="dialog-header" fxLayout="row" fxLayoutAlign="start center" style="width: 100%">
+    <div fxLayout="column" fxFlex="93" style="padding: 2% 0 2% 2%;">
+        <div fxLayout="row" class="routeDep" fxLayoutAlign="start center">
+            <p class="headline-S">{{"Global Filter" | translate}}</p>
+        </div>
+        <div style="color: gray;">{{"Fulfill all information" | translate}}</div>
+    </div>
+    <button mat-icon-button (click)="close()">
+        <ic-icon [icon]="iconService.CLEAR" inline="true" size="22px"></ic-icon>
+    </button>
+</div>
+
+<div class="dialog-content" fxLayout="row" fxLayoutAlign="start center">
+    <div class="content-form">
+
+        <table class="content-full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"From Full city" | translate}}</mat-label>
+                        <input name="fromName" [(ngModel)]="form.fromName" matInput>
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"From code"| translate}}</mat-label>
+                        <input name="fromCode" [(ngModel)]="form.fromCode" matInput>
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+
+
+        <table class="content-full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"To Full name of the city" | translate}}</mat-label>
+                        <input name="toName" [(ngModel)]="form.toName" matInput>
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"To code" | translate}}</mat-label>
+                        <input name="toCode" [(ngModel)]="form.toCode" matInput>
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content-full-width">
+            <tr>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"Departure Date"| translate}}</mat-label>
+                        <input name="departureDate" [(ngModel)]="form.departureDate" matInput>
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"Return Date" | translate}}</mat-label>
+                        <input name="returnDate" [(ngModel)]="form.returnDate" matInput>
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content-full-width" cellspacing="0">
+            <tr>
+                <td fxLayout="row">
+                    <mat-form-field fxFlex="33" class="content-full-width">
+                        <mat-label>{{"Adult" | translate}}</mat-label>
+                        <input name="adult" [(ngModel)]="form.adult" matInput>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33" class="content-full-width">
+                        <mat-label>Child</mat-label>
+                        <input name="child" [(ngModel)]="form.child" matInput>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="33" class="content-full-width">
+                        <mat-label>Infant</mat-label>
+                        <input name="infant" [(ngModel)]="form.infant" matInput>
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="content-full-width">
+                        <mat-label>{{"Flight Type" | translate}}</mat-label>
+                        <input name="flightClass" [(ngModel)]="form.cabinType" matInput>
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+<div class="dialog-footer" fxLayout="row" fxLayoutAlign="end center">
+    <button mat-icon-button color="primary" (click)="apply()">{{"Apply" | translate}}</button>
+</div>

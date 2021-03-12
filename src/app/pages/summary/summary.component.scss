@@ -1,0 +1,52 @@
+.none {
+  display: none;
+}
+
+.padding-top {
+  padding-top: 8%;
+  padding-bottom: 2%
+}
+
+@media (max-width: 767px) {
+  .padding-top {
+    //padding-top: 10%;
+    padding-bottom: 25%
+  }
+
+  .displayZero {
+    display: none !important;
+  }
+  .displayZero {
+    display: none !important;
+  }
+  .displayZero {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1600px) {
+  .padding-top {
+    padding-top: 0
+  }
+}
+
+.selected-Bound {
+  width: 100%;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2), 0px 4px 8px rgba(50, 56, 74, 0.05);
+  border-radius: 8px;
+  margin: 1% 0;
+}
+
+mat-card {
+  border: 0 solid #E8E9EE;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.margin-bottom {
+  margin-bottom: 2%;
+}
+.paddingMobile {
+  padding-bottom: 15%;
+}

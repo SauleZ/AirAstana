@@ -1,0 +1,138 @@
+.title {
+  margin: 15% 0 5% 0 !important;
+  font-weight: bold;
+}
+
+::ng-deep .mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator:after, .mat-expansion-panel-header {
+  border-color: #9399AB !important;
+  background-color: white !important;
+  margin-right: -3% !important;
+}
+
+
+::ng-deep .mat-expansion-panel-header.mat-expansion-toggle-indicator-before .mat-expansion-indicator:after, .mat-expansion-panel-header:hover {
+  border-color: #9399AB !important;
+  background-color: white !important;
+  margin-right: -3% !important;
+}
+
+
+.card {
+  width: 100%;
+}
+
+mat-expansion-panel {
+  margin: 1% 0;
+}
+
+.continueBtn {
+  height: var(--continue-btn-height);
+}
+
+.fixed-booking {
+  position: fixed;
+  width: 30%;
+  overflow-y: scroll !important;
+  height: 75%!important;
+  //height: calc(100% + var(--continue-btn-height));
+}
+
+.displayDesktop {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+
+  .displayDesktop {
+    display: block !important;
+  }
+
+  .fixed-booking {
+    position: relative;
+    width: 100%;
+  }
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+
+
+  .displayTablet {
+    display: block !important;
+  }
+
+  .mat-expansion-panel.mat-expanded, .mat-expansion-panel.mat-expanded:hover {
+    border-radius: 8px !important;
+    border: 1px solid #32384A !important;
+  }
+
+  .mat-expansion-panel {
+    border: 1px solid #E8E9EE !important;
+    border-radius: 8px !important;
+    margin-bottom: 2% !important;
+  }
+
+  ::ng-deep .mat-radio-label-content {
+    width: 100% !important;
+  }
+
+  .mat-list-item-content {
+    padding: 0 1% !important;
+  }
+
+  .mat-list-icon {
+    padding: 2px !important;
+    border-radius: 0 !important;
+  }
+
+  .mat-list-item {
+    margin-bottom: -4% !important;
+  }
+
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+
+  .mat-expansion-panel.mat-expanded, .mat-expansion-panel.mat-expanded:hover {
+    border: 0 !important;
+  }
+
+  .mat-expansion-panel {
+    border: 0 !important;
+  }
+
+  .mat-expansion-panel-header.mat-expanded,
+  .mat-expansion-panel-header.mat-expanded:hover {
+    background: #FFFFFF !important;
+
+    .mat-radio-button span {
+      color: white !important;
+    }
+  }
+
+  .fixed-booking {
+    position: fixed;
+    width: 30%;
+    overflow-y: scroll !important;
+    //height: 82%!important;
+  }
+}
+
+
+ .mat-expansion-panel-header.mat-expansion-toggle-indicator-after .mat-expansion-indicator::after, .mat-expansion-panel-header {
+  border-color: #B9966E !important;
+}
+
+
+ .mat-expansion-panel-header.mat-expansion-toggle-indicator-after .mat-expansion-indicator::after, .mat-expansion-panel-header:hover {
+  border-color: #B9966E !important;
+}
+::ng-deep .padding {
+  mat-dialog-container {
+    padding: 0;
+  }
+}

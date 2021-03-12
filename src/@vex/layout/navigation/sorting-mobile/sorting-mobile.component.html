@@ -1,0 +1,21 @@
+<div fxLayout="column" fxLayoutGap="16px" style="width: 100%; height: 100%; padding: 0; margin: 0;">
+    <div fxLayout="row" fxLayoutAlign="center center" style="padding: 16px 16px 0 16px">
+        <div fxLayoutAlign="start start" fxFlex="90">
+            <mat-card-title><p class="headline-S">Best</p></mat-card-title>
+        </div>
+        <div fxLayoutAlign="end start" fxFlex="10">
+            <button mat-icon-button (click)="closeClick()">
+                <ic-icon [icon]="icClear" class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2 displayDesktop"
+                         inline="true"
+                         size="22px"></ic-icon>
+            </button>
+        </div>
+    </div>
+    <div fxLayout="column">
+        <button mat-menu-item (click)="sortSelected('best')">Best *default*</button>
+        <button mat-menu-item (click)="sortSelected('departure')">Departure time</button>
+        <button mat-menu-item (click)="sortSelected('arrival')">Arrival time</button>
+        <button mat-menu-item (click)="sortSelected('stops')">Stops</button>
+        <button mat-menu-item (click)="sortSelected('duration')">Duration</button>
+    </div>
+</div>

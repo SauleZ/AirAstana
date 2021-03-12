@@ -1,0 +1,18 @@
+<div fxFlex="row" class="filter container">
+    <button fxFlex="50" mat-stroked-button type="button" [matMenuTriggerFor]="sort" class="button-style" fxLayout="row" [routerLink]="'/'">
+        <span fxFlex="50" fxLayoutAlign="end center" class="maintext-S"> Best</span>
+        <img fxFlex="50" fxLayoutAlign="start start" src="./assets/img/web/icons/sort.svg" >
+    </button>
+    <mat-menu #sort="matMenu">
+        Sort
+    </mat-menu>
+
+    <button fxFlex="50" mat-stroked-button type="button" [matMenuTriggerFor]="filter" class="button-style" fxLayout="row" [routerLink]="'/'">
+        <span fxFlex="50" fxLayoutAlign="end center" class="maintext-S">Filter</span>
+        <img fxFlex="50" fxLayoutAlign="start start" src="./assets/img/web/icons/filter.svg">
+    </button>
+    <mat-menu #filter="matMenu">
+        Filter
+    </mat-menu>
+</div>
+

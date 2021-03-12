@@ -1,0 +1,51 @@
+::ng-deep .newClass .mat-dialog-container {
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.title {
+  margin: 15% 0 5% 0 !important;
+  font-weight: bold;
+}
+
+.card {
+  width: 100%;
+}
+
+mat-expansion-panel {
+  margin: 1% 0;
+}
+
+
+
+::ng-deep .specific-class > .mat-expansion-indicator:after {
+  color: black;
+}
+
+.displayDesktop {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+
+  .displayDesktop {
+    display: block !important;
+  }
+
+  ::ng-deep .cdk-global-overlay-wrapper {
+    bottom: 0;
+    top: unset;
+    height: auto;
+  }
+
+  ::ng-deep .mat-dialog-container {
+    border-radius: 0!important;
+    border-top-left-radius: 8px!important;;
+    border-top-right-radius: 8px!important;;
+  }
+
+}

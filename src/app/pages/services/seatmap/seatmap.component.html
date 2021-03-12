@@ -1,0 +1,144 @@
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+
+<div *ngIf="!globalLoading" fxLayout="column" fxLayoutAlign="start start" style="width: 100%; ">
+    <div fxLayout="row" fxLayoutAlign="start center"
+         style="height: 15%; width: 100%; z-index: 10000; top:0;position: sticky; background-color: white">
+        <div fxLayout="column" fxFlex="93" style="padding: 4% 0 4% 4%;" *ngIf="!flight">
+            <div fxLayout="row" class="routeDep" fxLayoutAlign="start center">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">Almaty &nbsp; </p>
+                <p [fxHide]="!isMobile"> — </p>
+                <img src="./assets/img/web/Line_header.png" [fxHide]="isMobile">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">&nbsp; Istanbul </p>
+            </div>
+            <div style="color: gray;">{{"Select Rate" | translate}}</div>
+        </div>
+
+        <div fxLayout="column" fxFlex="93" style="padding: 4% 0 4% 4%;" *ngIf="flight">
+            <div fxLayout="row" class="routeDep" fxLayoutAlign="start center">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">{{flight.details.departure.cityName}} &nbsp; </p>
+                <p [fxHide]="!isMobile"> — </p>
+                <img src="./assets/img/web/Line_header.png" [fxHide]="isMobile">
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">&nbsp; {{flight.details.arrival.cityName}}</p>
+            </div>
+            <div style="color: gray;">{{"Select Rate" | translate}}</div>
+        </div>
+        <button mat-icon-button (click)="closeSeatmap()">
+            <ic-icon [icon]="_iconService.CLEAR" class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2"
+                     inline="true"
+                     size="22px"></ic-icon>
+        </button>
+    </div>
+
+
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutAlign.md="start center" style="background: #F6F7F9; width: 100%;">
+        <div class="seatmap-desktop {{getAircraftWidth()}}" fxLayout="column" fxLayoutAlign="start start"
+             style="position: relative; margin: 0 4% 0 4%; z-index: 10">
+            <div class="{{isEconom ? 'row-fix-position-econom' : 'row-fix-position-business'}}" fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <div *ngFor="let col of width;" style="cursor: default;"
+                     class="{{isEconom ? 'econom-seat' : 'seat'}}"
+                     fxLayout="row"
+                     fxLayoutAlign="center center">
+
+                    <div *ngIf="letters[firstRow][col]">
+                        {{letters[firstRow][col]}}
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div *ngFor="let row of rows; let i = index"
+                 class="{{isEconom ? 'row-fix-position-econom' : 'row-fix-position-business'}}" fxLayout="row"
+                 fxLayoutAlign="space-between center">
+                <div *ngFor="let col of columns; let j = index;" class="{{isEconom ? 'econom-seat' : 'seat'}}" fxLayout="column" fxLayoutAlign="center center">
+
+                    <div *ngIf="coordinates[row][col-1]" id="d-{{'r' + row + '-c' + col}}"
+                         class="{{isEconom ? 'econom-seat-icon' : 'seat-icon'}}"
+                         [ngStyle]="{'background-image' : 'url(.' + getImage(row, col - 1, '') + ')', 'display': 'flex', 'justify-content': 'center', 'align-items': 'center'}"
+                         (click)="selectSeat(coordinates[row][col-1].seat)"
+                         (mouseover)="mouseOverEvent('d-r' + row + '-c' + col, row, col - 1)"
+                         (mouseout)="mouseLeaveEvent('d-r' + row + '-c' + col, row, col - 1)">
+                        <span style="text-align: center;color: white!important;font-size: 90%;" *ngIf="coordinates[row][col-1].passengerInitials">
+                            {{coordinates[row][col-1].passengerInitials}}
+                        </span>
+                    </div>
+
+                    <div *ngIf="isEconom && !coordinates[row][col-1] && ((coordinates[row][col-2] && coordinates[row][col-2].type && coordinates[row][col-2].type === 'seat')
+                     || (coordinates[row][col] && coordinates[row][col].type && coordinates[row][col].type === 'seat'))">
+                        {{ (+row + 10)}}
+                    </div>
+
+                    <div *ngIf="!isEconom && !coordinates[row][col-1] && ((coordinates[row][col-2] && coordinates[row][col-2].type && coordinates[row][col-2].type === 'seat')
+                     || (coordinates[row][col] && coordinates[row][col].type && coordinates[row][col].type === 'seat'))">
+                        {{ getPosition(coordinates[row][col])}}
+                    </div>
+
+                    <div style="margin-top: 3%;" *ngIf="coordinates[row][col-1] === 'exit'">
+                        <div fxLayout="row" fxLayoutAlign="start center" *ngIf="col-1 === 0"
+                             class="{{isEconom ? 'econom-exit-left' : 'business-exit-left'}}">
+                            <img style="width: 100%" src="./assets/img/web/icons/exit.svg"/>
+                            <span>{{"exit" | translate}}</span>
+                        </div>
+                        <div *ngIf="col-1 !== 0" fxLayout="row" fxLayoutAlign="end center"
+                             class="{{isEconom ? 'econom-exit-right' : 'business-exit-right'}}">
+                            <span>{{"exit" | translate}}</span>
+                            <img style="width: 100%" src="./assets/img/web/icons/exit.svg"/>
+                        </div>
+                    </div>
+
+                    <div class="row-service" style="margin-top: 4%;" fxLayout="row"
+                         *ngIf="coordinates[row][col-1] === 'LA'"
+                         fxLayoutAlign="space-between center">
+                        <div class="service" fxLayout="column" fxLayoutAlign="center center">
+                            <img class="service-icon" src="./assets/img/web/icons/toilet.svg"/>
+                        </div>
+                    </div>
+
+                    <div class="row-service" style="margin-top: 4%;" fxLayout="row" fxLayoutAlign="space-between center"
+                         *ngIf="coordinates[row][col-1] === 'GN'">
+                        <div class="large-service" fxLayout="column" fxLayoutAlign="center center">
+                            <img class="service-icon" src="./assets/img/web/icons/eat.svg"/>
+                        </div>
+                    </div>
+
+                    <div class="row-service" style="margin-top: 4%;" fxLayout="row" fxLayoutAlign="space-between center"
+                         *ngIf="coordinates[row][col-1] === 'CL'">
+                        <div class="large-service" fxLayout="column" fxLayoutAlign="center center">
+                            <img class="service-icon" src="./assets/img/web/icons/hanger.svg"/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <img *ngIf="startWings && endWings" class="wing" style="position: absolute; z-index: 5; width: 100%"
+         [ngStyle]="{'height': wingsHeight + 'px', 'top': marginTop + 'px'}" src="/assets/img/web/Rectangle8.png">
+
+    <div fxLayout="row" fxLayoutAlign="start center"
+         style="height: 15%; width: 100%; position: sticky; bottom: 0;background-color: white; z-index: 10000">
+        <div fxLayout="column" fxFlex="84" style="padding: 4% 0 4% 4%;">
+            <div style="color: gray;">
+                <p style="font-size: 16px; color: gray;">{{"Total for seats"| translate}}:</p>
+            </div>
+            <div style="padding-top: 2%;" >
+                <p *ngIf="totalPrice[flightId]">{{priceView(totalPrice[flightId].toString())}} &nbsp;
+<!--                    <ic-icon [icon]="_iconService.FA_TENGE" inline="true" size="14px"></ic-icon>-->
+                    <span *ngIf="currency" [innerHTML]="currency"></span>
+                </p>
+                <p *ngIf="!totalPrice[flightId] || totalPrice[flightId] === 0">0 &nbsp;
+<!--                    <ic-icon [icon]="_iconService.FA_TENGE" inline="true" size="14px"></ic-icon>-->
+                    <span *ngIf="currency" [innerHTML]="currency"></span>
+                </p>
+            </div>
+        </div>
+        <div class="seat-save-btn" (click)="saveSeats()">
+            {{"SAVE" | translate}}
+        </div>
+    </div>
+</div>
+

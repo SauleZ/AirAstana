@@ -1,0 +1,166 @@
+<!-- **************************************************************************************************** -->
+<!-- ******                                  DESKTOP VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<div style="height: 100%; overflow-y:scroll; overflow-x:hidden;" fxLayout="column" fxLayoutAlign="start start"
+     *ngIf="(isDesktop || isTablet) && !globalLoading">
+    <div style="padding: 28px 24px; height: auto; width: 100%; z-index: 10000; top:0;position: sticky; background-color: white"
+         fxLayout="row">
+        <div fxLayoutAlign="start start" fxFlex="90">
+            <div fxLayout="column" fxLayoutGap="5%">
+                <mat-card-title><p class="headline-S">{{"Meal" | translate}}</p></mat-card-title>
+            </div>
+        </div>
+        <div fxLayoutAlign="end start" fxFlex="10">
+            <button mat-icon-button (click)="closeClick('cancel')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z" fill="#6A7186"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div style="width: 100%; padding: 0 24px; height: auto;">
+        <p style="color: #6A7186;padding-bottom: 24px"
+           class="paragraph-s">{{"Additional requests are processed no later than 24 hours before departure. Special meals may not be available depending on the route." | translate}}</p>
+        <mat-card-content fxLayout="column" fxLayoutGap="4%"
+                         >
+            <div fxLayout="column" *ngIf="booking">
+                <p style="color: red; padding-bottom: 1vh" *ngIf="mealError">{{mealError}}</p>
+                <div fxLayout="column" fxLayoutGap="1%"
+                     *ngFor="let passenger of booking.order.passengers; let i = index">
+                    <p *ngIf="passenger.passengerTypeCode != 'INF'" class="maintext-M-semibold">{{passenger.names[0].firstName}} {{passenger.names[0].lastName}}</p>
+
+                    <mat-form-field *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">
+                        <mat-label>{{"Select meal" | translate}}</mat-label>
+                        <mat-select [(ngModel)]="selectedServiceMap[passenger.id]">
+                            <mat-option *ngFor="let service of services" [value]="service.serviceId">
+                                {{service.title}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </mat-card-content>
+    </div>
+
+    <div style="background: white; z-index: 5; bottom: 0; width: 100%;padding:3%;box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); position: fixed; overflow-y:scroll; overflow-x:hidden;"
+         fxLayout="row">
+        <div fxFlex="88" fxLayout="column" fxLayoutAlign="center start">
+            <p class="maintext-M-semibold" style="color: #282D3E;">Free</p>
+        </div>
+        <div fxFlex="12" fxLayoutAlign="center center">
+            <button class="button-standard-L" [disabled]="exist" mat-raised-button (click)="closeClick()">{{"SAVE" | translate}}</button>
+        </div>
+    </div>
+    <div>
+        <br><br><br><br><br>
+    </div>
+</div>
+
+
+<!-- **************************************************************************************************** -->
+<!-- ******                                  MOBILE VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<div *ngIf="isMobile && !globalLoading">
+    <div mat-dialog-title fxLayout="row" style="margin: 20px 16px">
+        <div fxLayoutAlign="start center" fxFlex="90">
+            <mat-card-title><p class="headline-S">{{"Meal" | translate}}</p></mat-card-title>
+        </div>
+        <div fxLayoutAlign="center center" fxFlex="10">
+            <button mat-icon-button (click)="closeClick('cancel')">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z" fill="#6A7186"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <mat-dialog-content fxLayout="column" fxLayoutGap="4%">
+
+        <div style="width: 100%; padding: 0 6px; height: auto;">
+<!--            <p style="color: #6A7186;padding-bottom: 24px"-->
+<!--               class="paragraph-s">{{"Additional requests are processed no later than 24 hours before departure. Special meals may not be available depending on the route." | translate}}</p>-->
+            <mat-card-content fxLayout="column" fxLayoutGap="4%"
+            >
+                <div fxLayout="column" *ngIf="booking">
+                    <div fxLayout="column" fxLayoutGap="1%"
+                         *ngFor="let passenger of booking.order.passengers; let i = index">
+                        <p *ngIf="passenger.passengerTypeCode != 'INF'" class="maintext-M-semibold">{{passenger.names[0].firstName}} {{passenger.names[0].lastName}}</p>
+
+                        <mat-form-field *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">
+                            <mat-label>{{"Select meal" | translate}}</mat-label>
+                            <mat-select [(ngModel)]="selectedServiceMap[passenger.id]">
+                                <mat-option *ngFor="let service of services" [value]="service.serviceId">
+                                    {{service.title}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </mat-card-content>
+        </div>
+
+<!--        <div fxLayout="column">-->
+
+<!--            <div fxLayout="column" *ngFor="let depFlight of selectedServiceMap['Departure']">-->
+<!--                <p fxFlex="100" class="headline-S" style="color: #32384A; padding-bottom: 24px">-->
+<!--                    {{depFlight.flight.departure.cityName}}-->
+<!--                    —  {{depFlight.flight.arrival.cityName}}</p>-->
+
+<!--                <div fxLayout="column" fxLayoutGap="1%"-->
+<!--                     *ngFor="let passenger of booking.order.passengers; let i = index">-->
+<!--                    <p *ngIf="passenger.passengerTypeCode != 'INF'" class="maintext-M-semibold">{{passenger.names[0].firstName}} {{passenger.names[0].lastName}}</p>-->
+
+<!--                    <mat-form-field *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">-->
+<!--                        <mat-label>{{"Select meal" | translate}}</mat-label>-->
+<!--                        <mat-select [(ngModel)]="result['Departure'][depFlight.id][passenger.id]">-->
+<!--                            <mat-option *ngFor="let service of flightServices[depFlight.id]" [value]="service">-->
+<!--                                {{service.title}}-->
+<!--                            </mat-option>-->
+<!--                            <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                        </mat-select>-->
+<!--                    </mat-form-field>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div fxLayout="column" *ngFor="let arrFlight of selectedServiceMap['Return']">-->
+<!--                <p fxFlex="100" class="headline-S" style="color: #32384A; padding-bottom: 24px">-->
+<!--                    {{arrFlight.flight.departure.cityName}}-->
+<!--                    —  {{arrFlight.flight.arrival.cityName}}</p>-->
+
+<!--                <div fxLayout="column" fxLayoutGap="1%" *ngFor="let passenger of booking.order.passengers">-->
+<!--                    <p *ngIf="passenger.passengerTypeCode != 'INF'" class="maintext-M-semibold">{{passenger.names[0].firstName}} {{passenger.names[0].lastName}}</p>-->
+
+<!--                    <mat-form-field *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">-->
+<!--                        <mat-label>{{"Select meal" | translate}}</mat-label>-->
+<!--                        <mat-select [(ngModel)]="result['Return'][arrFlight.id][passenger.id]">-->
+<!--                            <mat-option *ngFor="let service of flightServices[arrFlight.id]" [value]="service">-->
+<!--                                {{service.title}}-->
+<!--                            </mat-option>-->
+<!--                            <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                        </mat-select>-->
+<!--                    </mat-form-field>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+    </mat-dialog-content>
+
+
+    <div style="bottom: 0; left: 0; position: fixed; width: 100%;padding:16px;box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); z-index: 10; background-color: white; height: 80px"
+         fxLayout="row">
+        <div fxFlex="80" fxLayout="column" fxLayoutAlign="center start">
+            <p class="maintext-M-semibold" style="color: #282D3E;">Free</p>
+        </div>
+        <div fxFlex="20" fxLayoutAlign="center center">
+            <button class="button-standard-L" mat-raised-button [disabled]="exist"
+                    (click)="closeClick()">{{"SAVE" | translate}}</button>
+        </div>
+    </div>
+
+</div>

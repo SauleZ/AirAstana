@@ -1,0 +1,81 @@
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+mat-card {
+  border: 1px solid #E8E9EE;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+mat-divider {
+  border-width: medium;
+  margin-bottom: 2%;
+}
+
+.line-green {
+  border-color: darkgreen;
+}
+
+.line-red {
+  border-color: red;
+}
+.line-black {
+  border-color: #282D3E;
+}
+
+.line-orange {
+  border-color: #C9A158;
+}
+.time {
+  font-family: ProximaNova-Semibold, sans-serif;
+  color: #282D3E;
+  max-font-size: 36px;
+  min-font-size: 8px;
+  font-size: 18px;
+}
+.adult {
+  color: #6A7186;
+  max-font-size: 20px;
+  min-font-size: 5px;
+  font-size: 14px;
+  font-family: ProximaNova-Regular, sans-serif;
+}
+.itemsLeft {
+  width: 50%;
+  margin-bottom: 2%;
+}
+
+
+
+.displayDesktop {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+
+  .displayZero {
+    display: none !important;
+  }
+
+  .displayDesktop {
+    display: block !important;
+  }
+
+  .transfer-margin {
+    margin: 9% -5%!important;
+    background-color: #F6F7F9!important;
+  }
+
+  ::ng-deep .mat-dialog-container {
+    border-radius: 0!important;
+    border-top-left-radius: 8px!important;;
+    border-top-right-radius: 8px!important;;
+  }
+}
+
+.transfer-margin {
+  margin: 3% -5%;
+  background-color: #F6F7F9!important;
+}

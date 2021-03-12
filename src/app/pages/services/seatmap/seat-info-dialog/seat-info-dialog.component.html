@@ -1,0 +1,51 @@
+<div mat-dialog-title>
+    <div *ngIf="seat" fxLayout="row" fxLayoutAlign="start center" style="padding: 20px 20px 0 20px;">
+        <div fxFlex="90" fxLayout="row" fxLayoutAlign="start center">
+            <div *ngIf="seat.cabin === 'business'" class="seat" fxLayout="column" fxLayoutAlign="center center">
+                <img class="seat-icon" src="./assets/img/web/seat/business/available.svg"/>
+            </div>
+            <div *ngIf="seat.cabin !== 'business' && seat.travelers[0].seatCharacteristicsCodes.indexOf('CH') !== -1" class="econom-seat" fxLayout="column" fxLayoutAlign="center center">
+                <img class="econombig-seat-icon" src="./assets/img/web/seat/econombig/available.svg"/>
+            </div>
+            <div *ngIf="seat.cabin !== 'business' && seat.travelers[0].seatCharacteristicsCodes.indexOf('CH') === -1" class="econom-seat" fxLayout="column" fxLayoutAlign="center center">
+                <img class="econom-seat-icon" src="./assets/img/web/seat/econom/available.svg"/>
+            </div>
+            &nbsp;&nbsp;
+
+            <div fxLayout="column" fxLayoutAlign="start center">
+                <div fxLayoutAlign="start center" style="width: 100%"><b>{{seat.seatNumber}}</b></div>
+                <div *ngIf="seat.travelers[0].seatCharacteristicsCodes.indexOf('CH') === -1" fxLayoutAlign="start center">Free</div>
+                <div *ngIf="seat.travelers[0].seatCharacteristicsCodes.indexOf('CH') !== -1" fxLayoutAlign="start center">{{priceView(seat.travelers[0].prices[0].total.toString())}}&nbsp;<span *ngIf="currency" [innerHTML]="currency"></span></div>
+            </div>
+        </div>
+        <div fxFlex="10">
+            <ic-icon [icon]="iconsService.CLEAR" class="mr-3" inline="true" style="cursor: pointer;font-size: 22px" (click)="closeDialog('')"></ic-icon>
+        </div>
+    </div><br>
+    <div style="border: 1px solid #E8E9EE;"></div>
+</div>
+
+<div *ngIf="order && order.passengers && order.passengers.length > 0" mat-dialog-content style="padding-bottom: 0!important;">
+    <div *ngFor="let passenger of order.passengers" fxLayout="row" style="margin-bottom: 1%" fxLayoutAlign="space-between center">
+
+        <div *ngIf="passenger.passengerTypeCode != 'INF'" fxLayout="column" fxLayoutAlign="space-between start" >
+            <div><b>{{passenger.names[0].firstName}} {{passenger.names[0].lastName}}</b></div>
+            <div>{{seatmapInfo && seatmapInfo[passenger.id] ? seatmapInfo[passenger.id].seatNumber : '-'}}</div>
+        </div>
+
+        <button *ngIf="passenger.passengerTypeCode != 'INF' && seatmapInfo && seatmapInfo[passenger.id] && seatmapInfo[passenger.id].seatNumber !== seat.seatNumber" mat-raised-button
+                class="change-btn" (click)="changeSeat(passenger)">Change</button>
+
+        <button *ngIf="passenger.passengerTypeCode != 'INF' && seatmapInfo && seatmapInfo[passenger.id] && seatmapInfo[passenger.id].seatNumber === seat.seatNumber" mat-raised-button
+                class="change-btn" (click)="cancelSeat(passenger)">Cancel</button>
+
+
+        <button *ngIf="passenger.passengerTypeCode != 'INF' && seatmapInfo && !seatmapInfo[passenger.id]" mat-raised-button
+                class="select-btn" (click)="selectPassenger(passenger)">Select</button>
+
+    </div>
+
+</div>
+<div mat-dialog-actions >
+    <button mat-button class="button-standard" [ngStyle]="{'line-height': isDesktop ? '24px' : '' }" (click)="closeDialog('save')"> {{"SAVE" | translate}}</button>
+</div>

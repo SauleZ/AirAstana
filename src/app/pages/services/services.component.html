@@ -1,0 +1,462 @@
+<!-- CONFIGPANEL -->
+<div class="overlay {{seatmap.opened || baggage.opened || specialmeals.opened || specialassistance.opened  ? 'overlay-active' : 'overlay-inactive'}}"
+     style="overflow-y: hidden;">
+</div>
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<vex-sidebar #baggage [invisibleBackdrop]="true" position="right">
+    <vex-baggage style="height: 100%" (close)="closeExtraBaggage($event)"></vex-baggage>
+</vex-sidebar>
+<!--<vex-sidebar #configpanel3 [invisibleBackdrop]="true" position="right">-->
+<!--    <vex-seat-reservation (close)="closeSideNav3($event)"></vex-seat-reservation>-->
+<!--</vex-sidebar>-->
+<vex-sidebar #seatmap [invisibleBackdrop]="true" position="right">
+    <vex-seatmap (close)="closeSeatmap($event)"></vex-seatmap>
+</vex-sidebar>
+<vex-sidebar #specialmeals [invisibleBackdrop]="true" position="right">
+    <vex-special-meals style="height: 100%" (close)="closeSpecialMeals($event)"></vex-special-meals>
+</vex-sidebar>
+<vex-sidebar #specialassistance [invisibleBackdrop]="true" position="right">
+    <vex-special-assistance style="height: 100%"
+                            (close)="closeSpecialAssistance($event)"></vex-special-assistance>
+</vex-sidebar>
+<div *ngIf="!globalLoading" fxLayout="row" style="width: 100%; z-index: 500;" class="padding-sides padding-top">
+    <div fxFlex.gt-sm="70" fxFlex="100" fxLayoutGap="2%" fxLayout="column">
+        <h2 [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">{{"Choose Services" | translate}}</h2>
+        <div fxLayout="column" [fxLayoutGap]="isMobile ? '8px' : '16px'">
+            <div *ngIf="services['baggage'] != null && services['baggage'].length != 0" fxFlex="100">
+                <mat-card [ngClass]="isMobile ? 'default' : 'custom'">
+                    <mat-card-content fxLayout="column">
+                        <div *ngIf="(!selectedServicesMap) || (selectedServicesMap && !selectedServicesMap['baggage'])"
+                             fxFlex="100" fxLayout="row"
+                             fxLayoutGap="16px" class="warning2"
+                             fxLayoutAlign="start start"
+                             fxFlexFill>
+
+                            <img src="./assets/img/web/warningService.svg"
+                                 alt="warning">
+                            <p fxFlex="96" fxFlex.gt-sm="96" style="color: #563A0F;" class="paragraph-s"
+                               fxLayoutAlign="start start">{{"Your rate Classic doesn’t include baggage, just 8kg hand luggage"| translate}}</p>
+                        </div>
+                        <div fxFlex="100" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="4%"
+                             fxLayoutGap.gt-sm="8%">
+                            <div fxFlex="100" fxLayout="row"
+                                 fxLayoutGap="16px"
+                                 fxLayoutAlign="start center" fxLayoutAlign.lt-sm="center center"
+                                 (click)="openSideNav2('extraBaggage')">
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="15" fxFlex.gt-sm="40px">
+                                    <img style="max-width: 40px;"
+                                         src="./assets/img/web/baggageInc.svg" alt="baggage in a circle">
+                                    <ic-icon *ngIf="booking && booking.order && booking.order.services && selectedServicesMap['baggage'].length !== 0"
+                                             [icon]="_iconService.CIRCLE_CHECK" class="mobile-icon"
+                                             style="color: #63C191; z-index: 9;margin-left: -30%; margin-bottom: 60%"></ic-icon>
+
+                                </div>
+                                <div fxFlex="93" fxFlex.lt-sm="85" fxFlex.lt-lg="85" fxLayout="column">
+                                    <p [ngClass]="isMobile ? 'headline-M' : 'headline-S'">{{"Extra baggage" | translate}}</p>
+                                    <p *ngIf="!isMobile" style="color: #6A7186; margin-top:1%"
+                                       [ngClass]="isMobile ? 'maintext-S' : 'maintext-M'">
+                                        {{"Book MyBaggage Online with 30% Discount" | translate}}</p>
+                                    <p *ngIf="isMobile && !calculateTotal(selectedServicesMap['baggage']) && !total['baggage']" style="color: #6A7186; margin-top:1%"
+                                       [ngClass]="isMobile ? 'maintext-S' : 'maintext-M'">
+                                        {{"Book MyBaggage Online with 30% Discount" | translate}}</p>
+
+                                    <p *ngIf="isMobile&&calculateTotal(selectedServicesMap['baggage']) !== 0" style="color: #6A7186; margin-top:1%"
+                                       [ngClass]="isMobile ? 'maintext-S' : 'maintext-M'">
+                                        {{priceView(calculateTotal(selectedServicesMap['baggage']).toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span>
+                                    </p>
+                                    <p *ngIf="isMobile&&total['baggage']" style="color: #6A7186; margin-top:1%"
+                                       [ngClass]="isMobile ? 'maintext-S' : 'maintext-M'">
+                                        {{priceView(total['baggage'].toString())}} <span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+                                </div>
+                                <div fxHide.lt-sm="true" fxFlex="0" fxFlex.gt-sm="10" fxFlex.md="15"
+                                     *ngIf="selectedServicesMap['baggage'].length === 0">
+                                    <button class="custom-btn" mat-raised-button (click)="openSideNav('extraBaggage')">
+                                        + {{"ADD" | translate}}
+                                    </button>
+                                </div>
+                                <div (click)="openSideNav('extraBaggage')" class="rightAngle" *ngIf="isMobile">
+                                    <ic-icon
+                                            [icon]="_iconService.ANGLE_RIGHT" class="mobile-icon"
+                                            style="color: #6A7186;"
+                                    ></ic-icon>
+                                </div>
+
+
+                                <div *ngIf="selectedServicesMap['baggage'].length !== 0"
+                                     fxHide.lt-sm="true"
+                                     fxFlex="0" fxFlex.gt-sm="25" fxLayoutGap="10%" fxLayout="row">
+                                    <!--<p fxFlex="60" class="maintext-S-semibold"-->
+                                       <!--fxLayoutAlign="end center" *ngIf="total['baggage']">{{total['baggage']}} ₸</p>-->
+                                    <p fxFlex="70" class="maintext-S-semibold"
+                                       fxLayoutAlign="end center"
+                                       *ngIf="calculateTotal(selectedServicesMap['baggage']) !== 0 && !total['baggage']">{{priceView(calculateTotal(selectedServicesMap['baggage']).toString())}}&nbsp;<span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+
+                                    <p fxFlex="70" class="maintext-S-semibold"
+                                       fxLayoutAlign="end center"
+                                       *ngIf="total['baggage']">{{priceView(total['baggage'].toString())}}&nbsp;<span *ngIf="booking?.cart?.offers[0].costContainer.cost.currencyCode" [innerHTML]="booking?.cart?.offers[0].costContainer.cost.currencyCode"></span></p>
+
+
+                                    <p fxFlex="70" class="maintext-S-semibold"
+                                       fxLayoutAlign="end center"
+                                       *ngIf="calculateTotal(selectedServicesMap['baggage']) === 0 && !total['baggage']">Free</p>
+
+                                    <div fxFlex="30" fxLayoutAlign="center center">
+                                        <button class="custom-btn-edit" mat-raised-button (click)="editService('baggage')"><span
+                                                class="maintext-S-semibold">{{"Edit" | translate}}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div fxFlex="100">
+                <mat-card [ngClass]="isMobile ? 'default' : 'custom'" style="padding-bottom: 0!important;">
+                    <mat-card-content>
+                        <div fxFlex="100" fxLayout="column" fxFlexAlign="center center">
+                            <div fxLayout="row" style="margin-bottom: 16px">
+                                <div fxFlex="100" fxLayout="row" fxLayoutGap="16px"
+                                     fxLayoutAlign="start center" fxLayoutAlign.lt-sm="center center">
+                                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="15" fxFlex.gt-sm="40px">
+                                        <img style="max-width: 40px;"
+                                             src="./assets/img/web/seat.svg">
+                                        <ic-icon
+                                                *ngIf="checkAllFlightsSeats()"
+                                                [icon]="_iconService.CIRCLE_CHECK" class="mobile-icon"
+                                                style="color: #63C191; z-index: 9; margin-left: -30%; margin-bottom: 60%"></ic-icon>
+                                    </div>
+                                    <div fxFlex="93" fxFlex.lt-sm="85" fxFlex.lt-lg="90" fxLayout="column"
+                                         class="extraBagText">
+                                        <p [ngClass]="isMobile ? 'headline-M' : 'headline-S'">Seat reservation</p>
+                                        <p style="color: #6A7186;margin-top:1%"
+                                           [ngClass]="isMobile ? 'paragraph-s' : 'maintext-M'">
+                                            {{"Choose your favorite place now" | translate}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 16px">
+                                <mat-divider></mat-divider>
+                            </div>
+                            <div fxLayout="row" fxFlexAlign="center center">
+                                <div *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap['Departure']"
+                                     style="width: 100%">
+
+
+                                    <div *ngFor="let flight of booking.selectedBoundMap['Departure'].bound.flights; let i = index;">
+                                        <!--123 {{check(flight)}}-->
+                                        <div fxLayout="column" fxLayoutGap="16px" style="margin-bottom: 16px">
+                                            <div *ngIf="i !== 0">
+                                                <mat-divider></mat-divider>
+                                            </div>
+                                            <div fxLayout="row" >
+                                                <div fxLayoutAlign="center center" fxFlex="93" fxFlex.lt-sm="95" fxFlex.lt-lg="90">
+                                                    <span fxLayoutAlign="center center" fxFlex="18" fxFlex.gt-sm="6">
+                                                    <img src="./assets/img/web/plane.svg"
+                                                         class="mobile-image"></span>
+                                                    <div fxLayout="column" fxFlex="82" fxFlex.gt-sm="94">
+                                                        <p class="maintext-S-semibold direction">{{flight.details.departure.cityName}}
+                                                             <span
+                                                                    *ngIf="!isMobile">{{flight.details.departure.cityCode}} </span>
+                                                            —  {{flight.details.arrival.cityName}}<span
+                                                                    *ngIf="!isMobile"> {{flight.details.arrival.cityCode}}</span>
+                                                        </p>
+
+                                                        <div *ngIf="check(flight)">
+                                                            <div *ngFor="let seat of booking.order.seats">
+                                                                <div *ngIf="checkCityNames(seat, flight)">
+                                                                    <p fxLayout="row" class="direction">
+                                                                       <span *ngFor="let seatInfo of seat.seatSelections"
+                                                                             class="maintext-M-semibold text-muted">
+                                                                           {{seatInfo.seatNumber}} &nbsp;
+                                                                       </span>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div fxFlex="7" *ngIf="!check(flight)"
+                                                     fxHide.lt-sm="true" fxFlex="0"
+                                                     fxFlex.gt-sm="10" fxFlex.md="15"
+                                                     fxFlexAlign="center center">
+                                                    <button class="custom-btn" (click)="openSeatReservation(flight)"
+                                                            mat-raised-button>{{'SELECT' | translate}}
+                                                    </button>
+                                                </div>
+
+
+                                                <div class="rightAngle" *ngIf="isMobile" fxFlex.gt-sm="12"
+                                                     fxFlexAlign="end center">
+                                                    <ic-icon
+                                                            [icon]="_iconService.ANGLE_RIGHT" class="mobile-icon"
+                                                            (click)="openSeatReservation2(flight)"
+                                                            style="color: #6A7186;"
+                                                    ></ic-icon>
+                                                </div>
+
+
+                                                <div class="tima" *ngIf="check(flight)"
+                                                     fxHide.lt-sm="true" fxFlex.gt-sm="25">
+                                                    <div *ngFor="let seat of booking.order.seats">
+                                                        <div *ngIf="checkCityNames(seat, flight)">
+                                                            <p *ngIf="seat.prices" fxFlex="60" style="margin-right: 10%"
+                                                               class="maintext-S-semibold"
+                                                               fxLayoutAlign="end center">
+                                                                {{seat.prices.totalPrices[0].total.value != 0 && seat.prices.totalPrices[0].total.value != null
+                                                                ?    priceView(seat.prices.totalPrices[0].total.value.toString()) + ' ' + booking?.cart?.offers[0].costContainer.cost.currencyCode : 'Free'}}
+                                                            </p>
+                                                            <p *ngIf="!seat.prices" fxFlex="60"
+                                                               style="margin-right: 10%"
+                                                               class="maintext-S-semibold"
+                                                               fxLayoutAlign="end center">
+                                                                Free
+                                                            </p>
+
+                                                            <div fxFlex="40" fxLayoutAlign="center center">
+                                                                <button class="custom-btn-edit" mat-raised-button
+                                                                        (click)="openSeatReservation(flight)">
+                                                                    <span class="maintext-S-semibold">{{'Edit' | translate}}</span>
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div fxLayout="row" fxFlexAlign="center center">
+                                <div *ngIf="booking && booking.selectedBoundMap && booking.selectedBoundMap['Return']"
+                                     style="width: 100%">
+
+
+                                    <div *ngFor="let flight of booking.selectedBoundMap['Return'].bound.flights; let l = last; let i = index;">
+
+                                        <div fxLayout="column" fxLayoutGap="16px" style="margin-bottom: 16px">
+                                            <div>
+                                                <mat-divider></mat-divider>
+                                            </div>
+                                            <div fxLayout="row" >
+                                                <div fxLayoutAlign="center center" fxFlex="93" fxFlex.lt-sm="95" fxFlex.lt-lg="90" fxLayout="row">
+                                                    <span fxFlex="18" fxFlex.gt-sm="6" fxLayoutAlign="center center">
+                                                    <img src="./assets/img/web/plane.svg"
+                                                         style="max-width: 40px; transform: scale(-1, 1);"
+                                                         class="mobile-image">
+                                                    </span>
+
+                                                    <div fxLayout="column" fxFlex="82" fxFlex.gt-sm="94">
+                                                        <p class="maintext-S-semibold direction">{{flight.details.departure.cityName}}
+                                                             <span
+                                                                    *ngIf="!isMobile">{{flight.details.departure.cityCode}} </span>
+                                                            —  {{flight.details.arrival.cityName}}<span
+                                                                    *ngIf="!isMobile"> {{flight.details.arrival.cityCode}}</span>
+                                                        </p>
+
+                                                        <div *ngIf="check(flight)">
+                                                            <div *ngFor="let seat of booking.order.seats">
+                                                                <div *ngIf="checkCityNames(seat, flight)">
+                                                                    <p fxLayout="row" class="direction">
+                                                                       <span *ngFor="let seatInfo of seat.seatSelections"
+                                                                             class="maintext-M-semibold text-muted">
+                                                                           {{seatInfo.seatNumber}} &nbsp;
+                                                                       </span>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div *ngIf="!check(flight)"
+                                                     fxHide.lt-sm="true" fxFlex="0" fxFlex.gt-sm="10" fxFlex.md="15"
+                                                     fxFlexAlign="center center">
+                                                    <button class="custom-btn" (click)="openSeatReservation(flight)"
+                                                            mat-raised-button>{{'SELECT' | translate}}
+                                                    </button>
+                                                </div>
+
+                                                <div class="rightAngle" *ngIf="isMobile" fxFlex.gt-sm="12"
+                                                     fxFlexAlign="end center">
+                                                    <ic-icon
+                                                            [icon]="_iconService.ANGLE_RIGHT" class="mobile-icon"
+                                                            (click)="openSeatReservation2(flight)"
+                                                            style="color: #6A7186;"
+                                                    ></ic-icon>
+                                                </div>
+
+
+                                                <div *ngIf="check(flight)"
+                                                     fxHide.lt-sm="true" fxFlex.gt-sm="25">
+                                                    <div *ngFor="let seat of booking.order.seats">
+                                                        <div *ngIf="checkCityNames(seat, flight)">
+                                                            <p *ngIf="seat.prices" fxFlex="60" style="margin-right: 10%"
+                                                               class="maintext-S-semibold"
+                                                               fxLayoutAlign="end center">
+                                                                {{seat.prices.totalPrices[0].total.value != 0 && seat.prices.totalPrices[0].total.value != null
+                                                                ? priceView(seat.prices.totalPrices[0].total.value.toString()) + ' ' + booking?.cart?.offers[0].costContainer.cost.currencyCode : 'Free'}}
+
+                                                            </p>
+                                                            <p *ngIf="!seat.prices" fxFlex="60"
+                                                               style="margin-right: 10%"
+                                                               class="maintext-S-semibold"
+                                                               fxLayoutAlign="end center">
+                                                                Free
+                                                            </p>
+
+                                                            <div fxFlex="40" fxLayoutAlign="center center">
+                                                                <button class="custom-btn-edit" mat-raised-button
+                                                                        (click)="openSeatReservation(flight)">
+                                                                    <span class="maintext-S-semibold">{{'Edit' | translate}}</span>
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div *ngIf="services['meal'] != null && services['meal'].length != 0" fxFlex="100">
+                <mat-card [ngClass]="isMobile ? 'default' : 'custom'">
+                    <mat-card-content>
+                        <div fxFlex="100" fxLayout="row" (click)="openSideNav2('specialMeals')">
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="15" fxFlex.gt-sm="40px">
+                                <img style="max-width: 40px;"
+                                     src="./assets/img/web/meal.svg">
+                                <ic-icon
+                                        *ngIf="selectedServicesMap['meal'].length !== 0"
+                                        [icon]="_iconService.CIRCLE_CHECK" class="mobile-icon"
+                                        style="color: #63C191; z-index: 9; margin-left: -30%; margin-bottom: 60%"></ic-icon>
+
+                                <!--                                    <img style="max-width: 40px;" *ngIf="selectedServicesMap['meals'] && selectedServicesMap['meals'] === true"-->
+                                <!--                                         src="./assets/img/web/icons/yes.svg">-->
+                            </div>
+                            <div fxFlex="93" fxFlex.lt-sm="85" fxFlex.lt-lg="90" fxLayout="column"
+                                 style="margin-left: 1.5%">
+                                <p [ngClass]="isMobile ? 'headline-M' : 'headline-S'">{{"Special meals" | translate}}</p>
+                                <p *ngIf="selectedServicesMap['meal'].length == 0" style="color: #6A7186;margin-top:1%"
+                                   [ngClass]="isMobile ? 'paragraph-s' : 'maintext-M'">
+                                    {{"Choose a meal based on your needs" | translate}}</p>
+                                <p *ngIf="selectedServicesMap['meal'].length !== 0" style="color: #6A7186;margin-top:1%"
+                                   [ngClass]="isMobile ? 'paragraph-s' : 'maintext-M'">
+                                    {{"Free" | translate}}</p>
+                            </div>
+
+                            <div class="rightAngle" *ngIf="isMobile" (click)="openSideNav('specialMeals')">
+                                <ic-icon
+                                        [icon]="_iconService.ANGLE_RIGHT" class="mobile-icon"
+                                        style="color: #6A7186;"
+                                ></ic-icon>
+                            </div>
+                            <div fxHide.lt-sm="true" fxFlex="0" fxFlex.gt-sm="10" fxFlex.md="15"
+                                 *ngIf="selectedServicesMap['meal'].length === 0">
+                                <button class="custom-btn" mat-raised-button
+                                        (click)="openSideNav('specialMeals')">{{"SELECT" | translate}}
+                                </button>
+                            </div>
+                            <div *ngIf="selectedServicesMap['meal'].length !== 0"
+                                 fxHide.lt-sm="true"
+                                 fxFlex="0" fxFlex.gt-sm="25" fxLayoutGap="10%" fxLayout="row">
+                                <p fxFlex="60" class="maintext-S-semibold"
+                                   fxLayoutAlign="end center">Free</p>
+                                <div fxFlex="40" fxLayoutAlign="center center">
+                                    <button class="custom-btn-edit" mat-raised-button><span
+                                            class="maintext-S-semibold"
+                                            (click)="editService('meal')">{{"Edit" | translate}}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div *ngIf="services['assistance'] != null && services['assistance'].length != 0" fxFlex="100">
+                <mat-card [ngClass]="isMobile ? 'default' : 'custom'">
+                    <mat-card-content>
+                        <div fxFlex="100" fxLayout="row" (click)="openSideNav2('specialAssistance')">
+                            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="15" fxFlex.gt-sm="40px">
+                                <img style="max-width: 40px;"
+                                     src="./assets/img/web/assistance.svg">
+                                <ic-icon *ngIf="selectedServicesMap['assistance']['hearing']?.length != 0 ||
+                                selectedServicesMap['assistance']['visual']?.length != 0 || selectedServicesMap['assistance']['special']?.length != 0"
+                                         [icon]="_iconService.CIRCLE_CHECK" class="mobile-icon"
+                                         style="color: #63C191; z-index: 9; margin-left: -30%; margin-bottom: 60%">
+
+                                </ic-icon>
+
+                            </div>
+                            <div fxFlex="93" fxFlex.lt-sm="85" fxFlex.lt-lg="90" fxLayout="column"
+                                 style="margin-left: 1.5%">
+                                <p [ngClass]="isMobile ? 'headline-M' : 'headline-S'">{{"Special assistance" | translate}}</p>
+                                <p *ngIf="selectedServicesMap['assistance']['hearing']?.length == 0 &&
+                                selectedServicesMap['assistance']['visual']?.length == 0 && selectedServicesMap['assistance']['special']?.length == 0" style="color: #6A7186;margin-top:1%"
+                                   [ngClass]="isMobile ? 'paragraph-s' : 'maintext-M'">
+                                    {{"Need help during a flight?" | translate}}</p>
+                                <p *ngIf="selectedServicesMap['assistance']['hearing']?.length != 0 ||
+                                selectedServicesMap['assistance']['visual']?.length != 0 || selectedServicesMap['assistance']['special']?.length != 0"
+                                   [ngClass]="isMobile ? 'paragraph-s' : 'maintext-M'">
+                                    {{"Free" | translate}}</p>
+                            </div>
+                        </div>
+                        <div class="rightAngle" *ngIf="isMobile" (click)="openSideNav('specialAssistance')">
+                            <ic-icon
+                                    [icon]="_iconService.ANGLE_RIGHT" class="mobile-icon"
+                                    style="color: #6A7186;"
+                            ></ic-icon>
+                        </div>
+                        <div *ngIf="selectedServicesMap['assistance']['hearing']?.length === 0 &&
+                         selectedServicesMap['assistance']['visual']?.length === 0 && selectedServicesMap['assistance']['special']?.length === 0"
+                             fxHide.lt-sm="true" fxFlex="0" fxFlex.gt-sm="10" fxFlex.md="15">
+                            <button class="custom-btn" mat-raised-button
+                                    (click)="openSideNav('specialAssistance')">{{"SELECT" | translate}}</button>
+                        </div>
+
+
+                        <div *ngIf="selectedServicesMap['assistance']['hearing']?.length != 0 ||
+                        selectedServicesMap['assistance']['visual']?.length != 0 || selectedServicesMap['assistance']['special']?.length != 0"
+                             fxHide.lt-sm="true"
+                             fxFlex="0" fxFlex.gt-sm="25" fxLayoutGap="10%" fxLayout="row">
+                            <p fxFlex="60" class="maintext-S-semibold"
+                               fxLayoutAlign="end center">Free</p>
+                            <div fxFlex="40" fxLayoutAlign="center center">
+                                <button class="custom-btn-edit" mat-raised-button><span
+                                        class="maintext-S-semibold"
+                                        (click)="editService('assistance')">{{"Edit" | translate}}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <!--testing-->
+        </div>
+    </div>
+    <div fxFlex.gt-sm="30" fxFlex="0" class="displayZero" fxLayoutAlign="center center"
+         fxLayoutAlign.gt-sm="start start">
+        <vex-booking style="width: 100%" (selected)="changeSelected($event)" [baggageInput]="true"></vex-booking>
+    </div>
+</div>

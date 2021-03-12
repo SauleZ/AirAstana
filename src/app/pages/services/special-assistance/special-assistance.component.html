@@ -1,0 +1,265 @@
+<!-- **************************************************************************************************** -->
+<!-- ******                                  DESKTOP VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<div style="width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<div fxLayout="column" *ngIf="!globalLoading"
+     style="width: 100%; height: 100%;">
+    <div style=" padding: 28px 24px; width: 100%; z-index: 10000; top:0;position: sticky; background-color: white"
+         fxLayout="row">
+        <div fxLayoutAlign="start start" fxFlex="90">
+            <div fxLayout="column" fxLayoutGap="5%">
+                <mat-card-title><p class="headline-S">{{"Special assistance" | translate}}</p></mat-card-title>
+            </div>
+        </div>
+        <div fxLayoutAlign="end start" fxFlex="10">
+            <button mat-icon-button (click)="closeClick('cancel')">
+                <!--                    <ic-icon [icon]="_iconService.CLEAR" class="ltr:-ml-1 rtl:-mr-1 ltr:mr-2 rtl:ml-2 displayDesktop"-->
+                <!--                             inline="true"-->
+                <!--                             size="22px"></ic-icon>-->
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z"
+                          fill="#6A7186"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div style="width: 100%; padding: 0 24px;overflow-y:scroll; overflow-x:hidden; height: 100%;">
+        <mat-card-content class="sidenav" fxLayout="column"
+                          fxLayoutGap="4%" *ngIf="booking && booking.order && booking.order.passengers">
+            <div *ngFor="let passenger of booking.order.passengers" fxLayout="column">
+                <p *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" class="headline-S" style="color: #32384A; padding-bottom: 24px">
+                    {{passenger.names[0].firstName}} {{passenger.names[0].lastName}}
+                </p>
+                <div *ngIf="passenger.passengerTypeCode != 'INF'" fxLayout="column" fxLayoutGap="1%">
+                    <mat-card style="background: #F6F7F9; border: 0!important; box-shadow: none!important">
+                        <mat-card-content *ngIf="selectedServiceMap['special']" fxLayout="column" fxLayoutGap="2%">
+                            <div fxLayout="row" fxLayoutAlign="space-between center">
+                                <div>
+                                    <p class="maintext-M-semibold">{{"Special assistance" | translate}}</p>
+                                </div>
+                                <div>
+                                 <mat-slide-toggle (change)="setNull($event, matSlideToggle1, passenger.id, 'special')" [checked]="selectedServiceMap['special'][passenger.id]"
+                                                  #matSlideToggle1></mat-slide-toggle>
+                                </div>
+                            </div>
+
+                            <span *ngIf="matSlideToggle1.checked">
+                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"
+                                                    appearance="outline">
+                                    <mat-label>{{"Select assistance" | translate}}</mat-label>
+                                    <mat-select *ngIf="servicesTypes && servicesTypes['special'] && servicesTypes['special'][0] && servicesTypes['special'][0].serviceId" [(ngModel)]="selectedServiceMap['special'][passenger.id]">
+<!--                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>-->
+                                        <mat-option *ngFor="let service of servicesTypes['special']" [value]="service.serviceId">
+                                            {{service.title}}
+                                        </mat-option>
+                                        <mat-option [value]="null">-- None --</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </span>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="background: #F6F7F9; border: 0!important; box-shadow: none!important">
+                        <mat-card-content fxLayout="column" fxLayoutGap="2%" *ngIf="selectedServiceMap['visual']">
+                                                        <span fxLayout="row" fxLayoutAlign="space-between center">
+
+                            <div>
+                                <p class="maintext-M-semibold">{{"Visually impaired passenger" | translate}}</p>
+                            </div>
+                            <div>
+                                <mat-slide-toggle (change)="setNull($event, matSlideToggle2, passenger.id, 'visual')" [checked]="selectedServiceMap['visual'][passenger.id]"
+                                                  #matSlideToggle2></mat-slide-toggle>
+                            </div>
+                                                        </span>
+
+                            <span *ngIf="matSlideToggle2.checked">
+                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"
+                                                    appearance="outline">
+                                    <mat-label>{{"Select assistance" | translate}}</mat-label>
+                                    <mat-select *ngIf="servicesTypes && servicesTypes['visual'] && servicesTypes['visual'][0] && servicesTypes['visual'][0].serviceId" [(ngModel)]="selectedServiceMap['visual'][passenger.id]">
+<!--                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>-->
+                                        <mat-option *ngFor="let service of servicesTypes['visual']" [value]="service.serviceId">
+                                            {{service.title}}
+                                        </mat-option>
+                                        <mat-option [value]="null">-- None --</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </span>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card
+                            style="background: #F6F7F9; border: 0!important; box-shadow: none!important">
+                        <mat-card-content fxLayout="column" fxLayoutGap="2%" *ngIf="selectedServiceMap['hearing']">
+                            <span fxLayout="row" fxLayoutAlign="space-between center">
+                            <div>
+                                <p class="maintext-M-semibold">{{"Hearing impaired passenger" | translate}}</p>
+                            </div>
+                            <div>
+                                <mat-slide-toggle (change)="setNull($event, matSlideToggle3, passenger.id, 'hearing')" [checked]="selectedServiceMap['hearing'][passenger.id]"
+                                                  #matSlideToggle3></mat-slide-toggle>
+                            </div>
+                            </span>
+
+                            <span *ngIf="matSlideToggle3.checked">
+                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"
+                                                    appearance="outline">
+                                    <mat-label>{{"Select assistance" | translate}}</mat-label>
+                                    <mat-select *ngIf="servicesTypes && servicesTypes['hearing'] && servicesTypes['hearing'][0] && servicesTypes['hearing'][0].serviceId" [(ngModel)]="selectedServiceMap['hearing'][passenger.id]">
+<!--                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>-->
+                                        <mat-option *ngFor="let service of servicesTypes['hearing']" [value]="service.serviceId">
+                                            {{service.title}}
+                                        </mat-option>
+                                        <mat-option [value]="null">-- None --</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </span>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+
+        </mat-card-content>
+    </div>
+    <div id="height"
+         [ngClass]="{'fixed': booking && booking.cart && booking.cart.passengers.length == 1, 'sticky':  booking && booking.cart && booking.cart.passengers.length > 1}"
+         fxFlexAlign="end end"
+         style="bottom: 0; width: 100%;padding:24px;
+         box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); z-index: 5; background-color: white; position: sticky;"
+         fxLayout="row">
+        <div fxFlex="88" fxLayout="column" fxLayoutAlign="center start">
+            <p class="maintext-M-semibold" style="color: #282D3E;">{{"Free" | translate}}</p>
+        </div>
+        <div fxFlex="12" fxLayoutAlign="center center">
+            <button class="button-standard-L" mat-raised-button [disabled]="exist"
+                    (click)="closeClick('save')">{{"SAVE" | translate}}</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- **************************************************************************************************** -->
+<!-- ******                                  MOBILE VERSION                                        ****** -->
+<!-- **************************************************************************************************** -->
+<!--<div *ngIf="isMobile">-->
+<!--    <div mat-dialog-title fxLayout="row" style="margin: 20px 16px">-->
+<!--        <div fxLayoutAlign="start center" fxFlex="90">-->
+<!--            <mat-card-title><p class="headline-S">{{"Special assistance" | translate}}</p></mat-card-title>-->
+<!--        </div>-->
+<!--        <div fxLayoutAlign="center center" fxFlex="10">-->
+<!--            <button mat-icon-button (click)="closeClick('cancel')">-->
+<!--                &lt;!&ndash;                <ic-icon [icon]="_iconService.CLEAR"&ndash;&gt;-->
+<!--                &lt;!&ndash;                         size="22px"></ic-icon>&ndash;&gt;-->
+<!--                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                    <path d="M7.00072 5.58574L11.9507 0.635742L13.3647 2.04974L8.41472 6.99974L13.3647 11.9497L11.9507 13.3637L7.00072 8.41374L2.05072 13.3637L0.636719 11.9497L5.58672 6.99974L0.636719 2.04974L2.05072 0.635742L7.00072 5.58574Z"-->
+<!--                          fill="#6A7186"/>-->
+<!--                </svg>-->
+<!--            </button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+<!--    <div style="width: 100%; padding: 0 24px;">-->
+<!--        <mat-card-content fxLayout="column" fxLayoutGap="4%" *ngIf="booking && booking.order && booking.order.passengers">-->
+<!--            <div *ngFor="let passenger of booking.order.passengers" fxLayout="column">-->
+<!--                <p *ngIf="passenger.passengerTypeCode != 'INF'" fxFlex="100" class="headline-S" style="color: #32384A; padding-bottom: 24px">-->
+<!--                    {{passenger.names[0].firstName}} {{passenger.names[0].lastName}}-->
+<!--                </p>-->
+<!--                <div *ngIf="passenger.passengerTypeCode != 'INF'" fxLayout="column" fxLayoutGap="1%">-->
+<!--                    <mat-card style="background: #F6F7F9; border: 0!important; box-shadow: none!important" *ngIf="selectedServiceMap['special']">-->
+<!--                        <mat-card-content fxLayout="column" fxLayoutGap="2%">-->
+<!--                            <span fxLayout="row" fxLayoutAlign="space-between center">-->
+<!--                                <div>-->
+<!--                                <p class="maintext-M-semibold">{{"Special assistance" | translate}}</p>-->
+<!--                            </div>-->
+<!--                                <div>-->
+<!--                                <mat-slide-toggle #matSlideToggle1></mat-slide-toggle>-->
+<!--                            </div>-->
+<!--                            </span>-->
+<!--                            <span *ngIf="matSlideToggle1.checked">-->
+<!--                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"-->
+<!--                                                    appearance="outline">-->
+<!--                                    <mat-label>{{"Select assistance" | translate}}</mat-label>-->
+<!--                                    <mat-select [(ngModel)]="selectedServiceMap['special'][passenger.id]">-->
+<!--&lt;!&ndash;                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>&ndash;&gt;-->
+<!--                                        <mat-option *ngFor="let service of servicesTypes['special']" [value]="service">-->
+<!--                                            {{service.title}}-->
+<!--                                        </mat-option>-->
+<!--                                        <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                                    </mat-select>-->
+<!--                                </mat-form-field>-->
+<!--                            </span>-->
+<!--                        </mat-card-content>-->
+<!--                    </mat-card>-->
+<!--                    <mat-card-->
+<!--                            style="background: #F6F7F9; border: 0!important; box-shadow: none!important">-->
+<!--                        <mat-card-content fxLayout="column" fxLayoutGap="2%">-->
+<!--                                                        <span fxLayout="row" fxLayoutAlign="space-between center">-->
+
+<!--                            <div>-->
+<!--                                <p class="maintext-M-semibold">{{"Visually impaired passenger" | translate}}</p>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <mat-slide-toggle #matSlideToggle2></mat-slide-toggle>-->
+<!--                            </div>-->
+<!--                                                        </span>-->
+
+<!--                            <span *ngIf="matSlideToggle2.checked">-->
+<!--                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"-->
+<!--                                                    appearance="outline">-->
+<!--                                    <mat-label>{{"Select assistance" | translate}}</mat-label>-->
+<!--                                    <mat-select [(ngModel)]="selectedServiceMap['visual'][passenger.id]">-->
+<!--&lt;!&ndash;                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>&ndash;&gt;-->
+<!--                                        <mat-option *ngFor="let service of servicesTypes['visual']" [value]="service">-->
+<!--                                            {{service.title}}-->
+<!--                                        </mat-option>-->
+<!--                                        <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                                    </mat-select>-->
+<!--                                </mat-form-field>-->
+<!--                            </span>-->
+<!--                        </mat-card-content>-->
+<!--                    </mat-card>-->
+<!--                    <mat-card-->
+<!--                            style="background: #F6F7F9; border: 0!important; box-shadow: none!important">-->
+<!--                        <mat-card-content fxLayout="column" fxLayoutGap="2%">-->
+<!--                            <span fxLayout="row" fxLayoutAlign="space-between center">-->
+<!--                            <div>-->
+<!--                                <p class="maintext-M-semibold">{{"Hearing impaired passenger" | translate}}</p>-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <mat-slide-toggle #matSlideToggle3></mat-slide-toggle>-->
+<!--                            </div>-->
+<!--                            </span>-->
+
+<!--                            <span *ngIf="matSlideToggle3.checked">-->
+<!--                                    <mat-form-field fxFlex="100" fxFlex.lt-sm="100" fxFlex.lt-lg="100"-->
+<!--                                                    appearance="outline">-->
+<!--                                    <mat-label>{{"Select assistance" | translate}}</mat-label>-->
+<!--                                    <mat-select [(ngModel)]="selectedServiceMap['hearing'][passenger.id]">-->
+<!--&lt;!&ndash;                                        <mat-option *ngFor="let option of options" value="{{option.key}}">{{option.value}}</mat-option>&ndash;&gt;-->
+<!--                                        <mat-option *ngFor="let service of servicesTypes['hearing']" [value]="service">-->
+<!--                                            {{service.title}}-->
+<!--                                        </mat-option>-->
+<!--                                        <mat-option [value]="null">&#45;&#45; None &#45;&#45;</mat-option>-->
+<!--                                    </mat-select>-->
+<!--                                </mat-form-field>-->
+<!--                            </span>-->
+<!--                        </mat-card-content>-->
+<!--                    </mat-card>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </mat-card-content>-->
+<!--    </div>-->
+
+<!--    <div style="bottom: 0; position: fixed; width: 100%;padding:16px;box-shadow: 0px -2px 8px rgba(50, 56, 74, 0.08); z-index: 10; background-color: white; height: 80px"-->
+<!--         fxLayout="row">-->
+<!--        <div fxFlex="88" fxLayout="column" fxLayoutAlign="center start">-->
+<!--            <p class="maintext-M-semibold" style="color: #282D3E;">{{"Free" | translate}}</p>-->
+<!--        </div>-->
+<!--        <div fxFlex="20" fxLayoutAlign="center center">-->
+<!--            <button class="button-standard-L" mat-raised-button-->
+<!--                    (click)="closeClick('save')">{{"SAVE" | translate}}</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->

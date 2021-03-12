@@ -1,0 +1,24 @@
+<section class="container" fxLayout="row" fxLayoutAlign="start center" *ngIf="items && items.length > 0">
+<!--    <div *ngIf="selectedIndex!=0" style="margin-right: 2%">-->
+        <!--        <button [routerLink]="items[selectedIndex-1].route" mat-icon-button-->
+        <!--                style="background-color: #F6F7F9">-->
+        <!--            <img src="./assets/img/web/arrow_left.png">-->
+        <!--        </button>--> <!--mat-icon-button [routerLink]="items[selectedIndex-1].route *ngIf="selectedIndex>0" cdkStepperPrevious"-->
+<!--        <button style="background-color: #F6F7F9; cursor: default">-->
+<!--            <ic-icon [icon]="icChevronLeft" size="18px" fxLayoutAlign="start center"></ic-icon>-->
+<!--        </button>-->
+<!--    </div>-->
+
+    <div fxLayout="row" fxLayoutGap="13%" fxLayoutAlign="start center">
+        <div *ngFor="let item of items; let i = index;" fxLayout="row">
+            <a class="{{route.includes(items[i].route) && items[i].route !== '' ? 'active' : ''}}"
+               (click)="onClick(i)"
+               fxLayout="row">
+                <span class="maintext-M-semibold">{{item.label | translate}}</span>
+            </a>
+            <p *ngIf="i!=3" style="margin: 0 18%;">
+                –
+            </p>
+        </div>
+    </div>
+</section>

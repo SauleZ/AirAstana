@@ -1,0 +1,60 @@
+.mat-dialog-container {
+  border-radius: 4px !important;
+}
+
+::ng-deep .cdk-global-overlay-wrapper {
+  display: flex !important;
+  position: absolute !important;
+  z-index: 1000 !important;
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
+  padding-right: 9% !important;
+  padding-bottom: 10% !important;
+}
+
+
+@media (max-width: 767px) {
+  ::ng-deep .cdk-global-overlay-wrapper {
+    display: flex !important;
+    position: absolute !important;
+    z-index: 1000 !important;
+    justify-content: unset !important;
+    align-items: unset !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  ::ng-deep .cdk-overlay-pane {
+    max-width: 100% !important;
+    pointer-events: auto !important;
+    //width: 100% !important;
+    //position: static !important;;
+  }
+
+  ::ng-deep .mat-dialog-container{
+    overflow: unset !important;
+  }
+
+  ::ng-deep .mat-dialog-content {
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-dialog-actions {
+    margin: 2%;
+  }
+}
+
+.select-btn {
+  color: #FFFFFF;
+  background: #32384A;
+  width: 71px;
+  height: unset;
+}
+.change-btn {
+  color: #282D3E;
+  background: #F6F7F9;
+  width: 81px;
+  height: unset;
+}

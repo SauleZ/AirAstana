@@ -1,0 +1,651 @@
+<div class="h-full w-full overflow-hidden" fxLayout="column" fxLayoutGap="2%">
+
+    <div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+        <vex-loader></vex-loader>
+    </div>
+    <div *ngIf="!globalLoading">
+        <div *ngFor="let flight of flights; let i = index;" fxLayout="column" fxLayoutAlign="start start"
+             class="margin-bottom">
+            <!--        <div fxLayout="row" fxLayoutAlign="center center" style="color: #6A7186;" [fxHide]="!isMobile">-->
+            <!--            {{flight.type}}-->
+            <!--        </div>-->
+            <div *ngIf="flight.type === 'Departure'" fxLayout="row"
+                 class="routeDep" fxLayoutAlign="start center" style="width: 100%;">
+                <!--searchRequest && searchRequest.itineraries.length >= 1 && -->
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">{{flight.from}}&nbsp; </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest">{{searchRequest.itineraries[0].originLocation}}&nbsp; </p>
+                <img src="./assets/img/web/Line_header.svg" [fxHide]="isMobile">&nbsp;
+                <p class="headline-M" [fxHide]="!isMobile"> — </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">&nbsp; {{flight.to}} </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest"> &nbsp; {{searchRequest.itineraries[0].destinationLocation}}&nbsp; </p>
+            </div>
+
+
+            <div *ngIf="flight.type === 'Return'" fxLayout="row"
+                 class="routeDep" fxLayoutAlign="start center" style="width: 100%;">
+                <!--searchRequest && searchRequest.itineraries.length === 2 && -->
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">{{flight.from}}&nbsp; </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1">{{searchRequest.itineraries[1].originLocation}}&nbsp; </p>
+                <img src="./assets/img/web/Line_header.svg" [fxHide]="isMobile"
+                     *ngIf="searchRequest && searchRequest.itineraries.length > 1">&nbsp;
+                <p class="headline-M" [fxHide]="!isMobile"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1"> — </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'" *ngIf="!searchRequest">&nbsp; {{flight.to}} </p>
+                <p [ngClass]="isMobile ? 'headline-M' : 'headline-XL'"
+                   *ngIf="searchRequest && searchRequest.itineraries.length > 1">
+                    &nbsp; {{searchRequest.itineraries[1].destinationLocation}}&nbsp; </p>
+            </div>
+
+
+            <div fxLayout="row" fxLayoutAlign="start center" style="width: 100%;">
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="calendarResult && flight.type === 'Departure'">{{calendarResult.departureDate | localizedDates}}
+                    , {{calendarResult.departureDate | date: 'EEE':undefined:locale}}</div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="calendarResult && flight.type === 'Return'">{{calendarResult.returnDate | localizedDates}}
+                    , {{calendarResult.returnDate| date: 'EEE':undefined:locale}}</div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="searchRequest && !calendarResult && searchRequest.itineraries.length === 1 && flight.type === 'Departure'">
+                    {{searchRequest.itineraries[0].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[0].departureDateTime | date: 'EEE' :undefined : locale}}
+                </div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="!calendarResult && searchRequest && searchRequest.itineraries.length === 2 && flight.type === 'Departure'">
+                    {{searchRequest.itineraries[0].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[0].departureDateTime | date: 'EEE':undefined:locale}}
+                </div>
+
+                <div [ngClass]="isMobile ? 'paragraph-s text-muted' : 'paragraph-m headline-paragraph'"
+                     *ngIf="!calendarResult && searchRequest && searchRequest.itineraries.length === 2 && flight.type === 'Return'">
+                    {{searchRequest.itineraries[1].departureDateTime | localizedDates}},
+                    {{searchRequest.itineraries[1].departureDateTime | date: 'EEE':undefined:locale}}
+                </div>
+            </div>
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               DESKTOP VERSION                                          ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isDesktop" style="width: 100%;">
+                <mat-accordion *ngIf="!selectedBoundMap[flight.type] && boundsReply" displayMode="flat"
+                               style="width: 100%;">
+                    <mat-expansion-panel style="border-radius: 8px;" class="panel"
+                                         *ngFor="let bound of flightBoundMap[flight.type]; let i = index;"
+                                         (mouseenter)="expandBound(flight.type, i, true)"
+                                         (mouseleave)="expandBound(flight.type, i, false)">
+                        <!--*ngIf="minutesToHours(bound.flights[0].details.departure.dateTime) >= filter?.departureFrom && minutesToHours(bound.flights[0].details.departure.dateTime) <= filter?.departureTo"-->
+                        <mat-expansion-panel-header class="specific-class"
+                                                    style="padding: 32px; background: white; !important" fxLayout="row"
+                                                    fxLayoutAlign="start start">
+                            <mat-panel-title fxFlex="80">
+                                <div fxLayout="row" style="width: 100%">
+                                    <div fxFlex="24px" style="margin-right: 24px;" fxLayoutAlign="start center">
+                                        <img style="width: 24px;" src="assets/img/web/logo 1.png">
+                                    </div>
+                                    <div fxFlex="70">
+                                        <div fxLayout="column">
+                                            <div fxLayout="row">
+                                                <div fxFlex="18" fxLayoutAlign="start center"
+                                                     class="headline-S">{{bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                                </div>
+                                                <div fxFlex="13" fxLayoutAlign="center center"></div>
+                                                <div fxFlex="38" fxLayoutAlign="center center"
+                                                     class="maintext-S text-muted">{{millsIntoHours(bound.duration)}}
+                                                    <span *ngIf="bound.flights.length > 1">  &nbsp;{{"with"| translate}}&nbsp; {{bound.flights.length - 1}}
+                                                        <span *ngIf="bound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                                    <span
+                                                            *ngIf="bound.flights.length > 2">{{"STOPS" | translate}}</span></span>
+                                                    <span
+                                                            *ngIf="bound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                                </div>
+                                                <div fxFlex="13" fxLayoutAlign="center center"></div>
+                                                <div fxFlex="18" fxLayoutAlign="end center"
+                                                     class="paragraph-s text-muted"><p
+                                                        class="headline-S">{{bound.flights[bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}</p>&nbsp;
+                                                    <span fxLayout="row" fxLayoutGap="3px"
+                                                          class="paragraph-xs text-light-grey"
+                                                          *ngIf="countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime) > 0"><span>
+                                        +{{countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime)}}</span>
+                                                    <span>day<span
+                                                            *ngIf="countDays(bound.flights[0].details.departure.dateTime, bound.flights[bound.flights.length - 1].details.arrival.dateTime) > 1">s</span></span></span>
+                                                </div>
+                                            </div>
+
+                                            <div fxLayout="row">
+                                                <div fxFlex="10" fxLayoutAlign="start center"
+                                                     style="text-decoration: underline"
+                                                     class="maintext-S text-muted"><span
+                                                        class="example-button"
+                                                        matTooltip="{{bound.originLocation.cityName}}"
+                                                        matTooltipPosition="above"
+                                                        matTooltipClass="example-tooltip">{{bound.originLocation.cityCode}}</span>
+                                                </div>
+                                                <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                     style="margin: 3% 0; height: 1px">
+                                                <div fxLayoutAlign="center center"
+                                                     *ngIf="bound.flights && bound.flights.length != 0 && bound.flights[0].details.stop">
+
+                                                    <div class="maintext-S text-muted" style=" background-color: #F6F7F9;text-align: center;
+                                                 border-radius: 4px;text-decoration-line: underline; z-index: 5; padding: 4px 8px;"
+                                                         *ngFor="let stop of getStops(bound)">
+                                                        <div matTooltip="{{stop.cityName}}"
+                                                             matTooltipPosition="above"
+                                                             matTooltipClass="example-tooltip">
+                                                            {{stop.locationCode}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!--<img fxFlex="32" src="./assets/img/web/Line_horizontal.png"-->
+                                                <!--*ngIf="!bound.flights[0]?.details.stops"-->
+                                                <!--style="margin: 3% 0; height: 1px">-->
+
+                                                <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                     style="margin: 3% 0; height: 1px">
+
+                                                <div fxFlex="10" fxLayoutAlign="center center"
+                                                     class="maintext-S text-muted"
+                                                     style="text-decoration: underline"><span class="example-button"
+                                                                                              matTooltip="{{bound.destinationLocation.cityName}}"
+                                                                                              matTooltipPosition="above"
+                                                                                              matTooltipClass="example-tooltip">{{bound.destinationLocation.cityCode}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div fxFlex="20"></div>
+                                </div>
+                            </mat-panel-title>
+                            <mat-panel-description fxLayout="row" fxFlex="20" fxLayoutAlign="end start">
+                                <!--                            <div>-->
+                                <!--                                <div>-->
+                                <span fxLayoutAlign="start start">{{"FROM" | translate}} &nbsp;</span>
+                                <span fxLayout="{{openedBoundMap && openedBoundMap[flight.type] && openedBoundMap[flight.type][i] ? 'column' : 'row'}}">
+                                        <span class="headline-M">{{priceView(bound.minimumCost.total.toString())}}
+                                            <span *ngIf="bound.minimumCost.currencyCode"
+                                                  [innerHTML]="bound.minimumCost.currencyCode"></span>
+                                        </span>
+                                        <p *ngIf="openedBoundMap && openedBoundMap[flight.type] && openedBoundMap[flight.type][i]"
+                                           class="maintext-S" style="color: #6A7186;">{{"Choose Rate" | translate}}</p>
+                                    </span>
+                                <!--                                </div>-->
+                                <!--                            </div>-->
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <vex-details-header *ngIf="fareFamilyDictionary"
+                                            (selectEvent)="changeSelected($event, flight, i)"
+                                            [type]="'rates'"
+                                            [bound]="bound"
+                                            [fareFamilyDictionary]="fareFamilyDictionary"></vex-details-header>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <div *ngIf="selectedBoundMap[flight.type]" class="selected-Bound">
+                    <div style="padding:39px 32px" fxLayout="row" fxLayoutAlign="start start">
+                        <div fxFlex="80">
+                            <div fxLayout="row" style="width: 100%">
+                                <div fxFlex="8" fxLayoutAlign="start center">
+                                    <img src="assets/img/web/icons/circle_check.svg">
+                                    <!--<ic-icon [icon]="iconService.CIRCLE_CHECK"-->
+                                    <!--style="color: green;" mat-list-icon-->
+                                    <!--size="24px"></ic-icon>--></div>
+                                <div fxFlex="70">
+                                    <div fxLayout="column">
+                                        <div fxLayout="row">
+                                            <div fxFlex="20" fxLayoutAlign="start center"
+                                                 class="headline-S">{{selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                            </div>
+                                            <div fxFlex="11" fxLayoutAlign="center center"></div>
+                                            <div fxFlex="38" fxLayoutAlign="center center"
+                                                 class="maintext-S text-muted">{{millsIntoHours(selectedBoundMap[flight.type].bound.duration)}}
+                                                <span
+                                                        *ngIf="selectedBoundMap[flight.type].bound.flights.length > 1">
+                                                &nbsp;{{"with"| translate}}&nbsp;
+                                                    {{selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                                    <span *ngIf="selectedBoundMap[flight.type].bound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                                <span *ngIf="selectedBoundMap[flight.type].bound.flights.length > 2">{{"STOPS" | translate}}</span>
+                                            </span>
+                                                <span
+                                                        *ngIf="selectedBoundMap[flight.type].bound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                            </div>
+                                            <div fxFlex="11" fxLayoutAlign="center center"></div>
+                                            <div fxFlex="20" fxLayoutAlign="end center"
+                                                 class="paragraph-s text-light-grey"><p
+                                                    class="headline-S">{{selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}</p>&nbsp;
+                                                <span *ngIf="countDays(selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime, selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1].details.arrival.dateTime) > 0">
+                                        +{{countDays(selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime, selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1].details.arrival.dateTime)}}
+                                                    day<span
+                                                        *ngIf="countDays(selectedBoundMap[flight.type].bound.flights[0].details.departure.dateTime, selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1].details.arrival.dateTime) > 1">s</span></span>
+                                            </div>
+                                        </div>
+                                        <div fxLayout="row">
+                                            <div fxFlex="10" fxLayoutAlign="start center"
+                                                 style="text-decoration: underline"
+                                                 class="maintext-S text-muted"><span
+                                                    class="example-button"
+                                                    matTooltip="{{selectedBoundMap[flight.type].bound.originLocation.cityName}}"
+                                                    matTooltipPosition="above"
+                                                    matTooltipClass="example-tooltip">
+                                            {{selectedBoundMap[flight.type].bound.originLocation.cityCode}}</span>
+                                            </div>
+                                            <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                 style="margin: 3% 0; height: 1px">
+
+                                            <div fxLayoutAlign="center center"
+                                                 *ngIf="selectedBoundMap[flight.type].bound.flights && selectedBoundMap[flight.type].bound.flights.length != 0 && selectedBoundMap[flight.type].bound.flights[0].details.stop"
+                                                 style=" background-color: #F6F7F9;text-align: center;
+                                                 border-radius: 4px;text-decoration-line: underline; z-index: 5; padding: 4px 8px;">
+
+                                                <div class="maintext-S text-muted" style=" background-color: #F6F7F9;text-align: center;
+                                                 border-radius: 4px;text-decoration-line: underline; z-index: 5; padding: 4px 8px;"
+                                                     *ngFor="let stop of getStops(selectedBoundMap[flight.type].bound)">
+                                                    <div matTooltip="{{stop.cityName}}"
+                                                         matTooltipPosition="above"
+                                                         matTooltipClass="example-tooltip">
+                                                        {{stop.locationCode}}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <img fxFlex="40" src="./assets/img/web/Line_horizontal.png"
+                                                 style="margin: 3% 0; height: 1px">
+
+                                            <div fxFlex="10" fxLayoutAlign="center center"
+                                                 class="maintext-S text-muted"
+                                                 style="text-decoration: underline">
+                                            <span class="example-button"
+                                                  matTooltip="{{selectedBoundMap[flight.type].bound.destinationLocation.cityName}}"
+                                                  matTooltipPosition="above"
+                                                  matTooltipClass="example-tooltip">{{selectedBoundMap[flight.type].bound.destinationLocation.cityCode}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div fxFlex="20"></div>
+                            </div>
+                        </div>
+                        <div fxFlex="20" fxLayoutAlign="end center">
+                            <div fxLayout="column" fxLayoutGap="10%">
+                                <div>
+                                <span class="headline-M">
+                                    {{priceView(selectedBoundMap[flight.type].rate.cost.total.toString())}}
+                                    <span *ngIf="selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                          [innerHTML]="selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                </span>
+                                </div>
+                                <div fxLayoutAlign="end end">
+                                    <button mat-raised-button style="background-color: #F6F7F9;"
+                                            (click)="changeBound(flight.type)">
+                                        {{"CHANGE" | translate}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INNER COMPONENT -->
+                        <!-- VEX_DETAILS_HEADER -->
+                        <!--<vex-details-header (selectEvent)="changeSelected($event, flight, i)" [bound]="bound"></vex-details-header>-->
+
+                    </div>
+                </div>
+
+                <div *ngIf="flightBoundMap && flightBoundMap[flight.type].length === 0" style="margin: auto 40%">
+                    <span *ngIf="searchRequest && searchRequest.itineraries.length === 2"
+                          class="headline-L-semibold text-muted"> No flights found! </span>
+                    <span *ngIf="!searchRequest" class="headline-L-semibold text-muted"> No flights found! </span>
+                </div>
+            </div>
+
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               MOBILE VERSION                                          ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isMobile" style="margin-top: 16px; width: 100%;">
+                <div *ngIf="!selectedBoundMap[flight.type]">
+                    <div *ngFor="let inbound of flightBoundMap[flight.type]; let i = index;">
+                        <mat-card class="max-w-full" (click)="openDialog(inbound, flight, i, 'route')">
+                            <mat-card-content>
+                                <div fxLayout="column" fxLayoutGap="2%">
+                                    <div fxLayout="row">
+                                        <div fxFlex="24" fxLayoutAlign="start start"
+                                             class="maintext-M-semibold">{{inbound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                        </div>
+                                        <!--                                    <div fxFlex="8" fxLayoutAlign="center center"></div>-->
+                                        <div fxLayout="row" fxFlex="52" fxLayoutAlign="center center"
+                                             class="maintext-S text-muted"><span
+                                                class="maintext-S text-muted">{{millsIntoHours(inbound.duration)}}
+                                      </span>
+                                            <span
+                                                    *ngIf="inbound.flights.length > 1">  &nbsp;{{"with"| translate}}&nbsp;{{inbound.flights.length - 1}}
+                                                <span *ngIf="inbound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                            <span *ngIf="inbound.flights.length > 2">{{"STOPS" | translate}}</span>
+                                        </span>
+                                            <span style="width: 50%"
+                                                  *ngIf="inbound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                        </div>
+                                        <!--                                    <div fxFlex="8" fxLayoutAlign="center center"></div>-->
+                                        <div fxFlex="24" fxLayoutAlign="end center"
+                                             class="maintext-M-semibold">{{inbound.flights[inbound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                            <sup class="text-muted"
+                                                 *ngIf="countDays(inbound.flights[0].details.departure.dateTime, inbound.flights[inbound.flights.length - 1].details.arrival.dateTime) > 0">
+                                                +{{countDays(inbound.flights[0].details.departure.dateTime, inbound.flights[inbound.flights.length - 1].details.arrival.dateTime)}}</sup>
+                                        </div>
+                                    </div>
+                                    <div fxLayout="row">
+                                        <div fxFlex="13" fxLayoutAlign="start start"
+                                             class="paragraph-xs text-muted">{{inbound.originLocation.cityCode}}
+                                        </div>
+                                        <!--<div fxFlex="17" fxLayoutAlign="center center">-->
+                                        <!--                    <mat-divider style="position: relative;border: 1px solid #CED1D9"-->
+                                        <!--                                 fxLayoutAlign="center center"-->
+                                        <!--                    ></mat-divider>-->
+                                        <img fxFlex="37" src="./assets/img/web/Line_horizontal.png"
+                                             style="margin: 3% 0; height: 1px">
+                                        <!--</div>-->
+                                        <div fxLayoutAlign="center center"
+                                             *ngIf="inbound.flights[0]?.details.stops"
+                                             style="color: #6A7186; background-color: #F6F7F9; border-radius: 4px;z-index: 10;padding: 0 2%">
+                                            {{inbound.flights[0]?.details.stops[0].locationCode}}
+                                        </div>
+                                        <!--<img *ngIf="!inbound.flights[0]?.details.stops" fxFlex="14"-->
+                                        <!--src="./assets/img/web/Line_horizontal.png"-->
+                                        <!--style="margin: 3% 0; height: 1px">-->
+                                        <img fxFlex="37" src="./assets/img/web/Line_horizontal.png"
+                                             style="margin: 3% 0; height: 1px">
+
+                                        <div fxFlex="13" fxLayoutAlign="end end"
+                                             class="paragraph-xs text-muted">{{inbound.destinationLocation.cityCode}}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </mat-card-content>
+
+                        </mat-card>
+                        <mat-card class="max-w-full" style="margin-bottom: 2%"
+                                  (click)="openDialog(inbound, flight, i, 'route')">
+                            <mat-card-content>
+                                <div fxLayout="row">
+                                    <div fxFlex="20" fxLayoutAlign="space-between center">
+                                        <p class="paragraph-s"
+                                           *ngIf="!type">{{"DETAILS" | translate}}</p>
+                                        <svg width="8" height="5" viewBox="0 0 8 5" fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.00061 4.24998L0.818359 1.06773L1.87961 0.00723267L4.00061 2.12898L6.12161 0.00723267L7.18286 1.06773L4.00061 4.24998Z"
+                                                  fill="#7D8499"/>
+                                        </svg>
+
+                                        <!--                                        <mat-select>-->
+                                        <!--                                            <mat-option (click)="openDialog(inbound, flight, i, 'route')" value="route">-->
+                                        <!--                                                {{"Route" | translate}}-->
+                                        <!--                                            </mat-option>-->
+                                        <!--                                            <mat-option (click)="openDialog(inbound, flight, i, 'rates')"-->
+                                        <!--                                                        value="rate">{{"Rate" | translate}}-->
+                                        <!--                                            </mat-option>-->
+                                        <!--                                        </mat-select>-->
+                                    </div>
+                                    <div fxFlex="15"></div>
+                                    <div fxFlex="65" fxLayoutAlign="end center">
+                                    <span class="maintext-S-semibold text-muted-light">{{"FROM" | translate}}
+                                        &nbsp;</span>
+                                        <span class="headline-S">&nbsp; {{priceView(inbound.minimumCost.total.toString())}}&nbsp;
+                                            <span *ngIf="inbound.minimumCost.currencyCode"
+                                                  [innerHTML]="inbound.minimumCost.currencyCode"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+
+                        </mat-card>
+                    </div>
+                </div>
+                <div *ngIf="selectedBoundMap[flight.type]">
+                    <mat-card class="max-w-full">
+                        <mat-card-content>
+                            <div fxLayout="column" fxLayoutGap="2%">
+                                <div fxLayout="row">
+                                    <div fxFlex="10" fxLayoutAlign="start center">
+                                        <img style="padding: 1%" src="./assets/img/web/icons/selected.svg"></div>
+                                    <div fxFlex="50" fxLayoutAlign="start center"
+                                         class="maintext-M-semibold">{{selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                        -
+                                        {{selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                        <span *ngIf="durationIntoDays(selectedBoundMap[flight.type].bound.duration) > 0">   +{{durationIntoDays(selectedBoundMap[flight.type].bound.duration)}}</span>
+                                    </div>
+                                    <div fxFlex="52" fxLayoutAlign="center center"
+                                         class="maintext-S text-muted">{{millsIntoHours(selectedBoundMap[flight.type].bound.duration)}}
+                                        <span
+                                                *ngIf="selectedBoundMap[flight.type].bound.flights.length > 1">  &nbsp;{{"with"| translate}}&nbsp;{{selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                            <span *ngIf="selectedBoundMap[flight.type].bound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                        <span *ngIf="selectedBoundMap[flight.type].bound.flights.length > 2">{{"STOPS" | translate}}</span>
+                                    </span>
+                                        <span style="width: 50%"
+                                              *ngIf="selectedBoundMap[flight.type].bound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </mat-card-content>
+
+                    </mat-card>
+                    <mat-card class="max-w-full" style="margin-bottom: 2%"
+                              (click)="openDialog(selectedBoundMap[flight.type].bound, flight, i , 'route', selectedBoundMap[flight.type].rate)">
+                        <mat-card-content>
+                            <div fxLayout="row">
+                                <div fxFlex="20" fxLayoutAlign="space-between center">
+                                    <p class="paragraph-s" *ngIf="!type">{{"DETAILS" | translate}}</p>
+                                    <svg width="8" height="5" viewBox="0 0 8 5" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.00061 4.24998L0.818359 1.06773L1.87961 0.00723267L4.00061 2.12898L6.12161 0.00723267L7.18286 1.06773L4.00061 4.24998Z"
+                                              fill="#7D8499"/>
+                                    </svg>
+                                    <!--                                    <mat-select>-->
+                                    <!--                                        <mat-option-->
+                                    <!--                                                (click)="openDialog(selectedBoundMap[flight.type].bound, flight, i , 'route', selectedBoundMap[flight.type].rate)"-->
+                                    <!--                                                value="route">{{"Route" | translate}}-->
+                                    <!--                                        </mat-option>-->
+                                    <!--                                        <mat-option-->
+                                    <!--                                                (click)="openDialog(selectedBoundMap[flight.type].bound, flight, i , 'rates', selectedBoundMap[flight.type].rate)"-->
+                                    <!--                                                value="rate">{{"Rate" | translate}}-->
+                                    <!--                                        </mat-option>-->
+                                    <!--                                    </mat-select>-->
+                                </div>
+                                <div fxFlex="10"></div>
+                                <div fxFlex="70" fxLayoutAlign="end center">
+                                    <button style="background: #F6F7F9;border-radius: 4px;height: 32px"
+                                            mat-raised-button
+                                            (click)="changeBound(flight.type)">{{"CHANGE" | translate}}
+                                    </button>
+                                    <span class="headline-S">&nbsp; {{priceView(selectedBoundMap[flight.type].rate.cost.total.toString())}}&nbsp;
+                                        <span *ngIf="selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                              [innerHTML]="selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+
+                </div>
+                <div *ngIf="flightBoundMap && flightBoundMap[flight.type].length === 0"
+                     style="width: 100%; margin-bottom: 2%; margin-top: -1%; text-align: center;">
+                    <span *ngIf="searchRequest && searchRequest.itineraries.length === 2"
+                          class="headline-L-semibold text-muted"> No flights found! </span>
+                    <span *ngIf="!searchRequest" class="headline-L-semibold text-muted"> No flights found! </span>
+                </div>
+            </div>
+
+
+            <!-- **************************************************************************************************** -->
+            <!-- ******                               TABLET VERSION                                          ****** -->
+            <!-- **************************************************************************************************** -->
+            <div *ngIf="isTablet" style="width: 100%; margin-top: 16px">
+                <div *ngIf="!selectedBoundMap[flight.type]">
+                    <div *ngFor="let inbound of flightBoundMap[flight.type]; let i = index;" class="max-w-full">
+                        <mat-card class="max-w-full">
+                            <mat-card-content>
+                                <div fxLayout="column">
+                                    <div fxLayout="row">
+                                        <div fxFlex="24" fxLayoutAlign="start start"
+                                             class="maintext-M-semibold">{{inbound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                        </div>
+                                        <div fxFlex="8" fxLayoutAlign="center center"></div>
+                                        <div fxFlex="36" fxLayoutAlign="center center"
+                                             class="maintext-S text-muted">{{millsIntoHours(inbound.duration)}}
+                                            <span *ngIf="inbound.flights.length > 1">  &nbsp;{{"with"| translate}}&nbsp; {{inbound.flights.length - 1}}
+                                                <span *ngIf="inbound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                            <span *ngIf="inbound.flights.length > 2">{{"STOPS" | translate}}</span>
+                                        </span>
+                                            <span style="width: 50%"
+                                                  *ngIf="inbound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                        </div>
+                                        <div fxFlex="8" fxLayoutAlign="center center"></div>
+                                        <div fxFlex="24" fxLayoutAlign="end center"
+                                             class="maintext-M-semibold">{{inbound.flights[inbound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                            <sup *ngIf="countDays(inbound.flights[0]?.details.departure.dateTime, inbound.flights[inbound.flights.length - 1].details.arrival.dateTime) > 0">
+                                                +{{countDays(inbound.flights[0]?.details.departure.dateTime, inbound.flights[inbound.flights.length - 1].details.arrival.dateTime)}}
+                                            </sup>
+                                        </div>
+                                    </div>
+                                    <div fxLayout="row">
+                                        <div fxFlex="6" fxLayoutAlign="start center"
+                                             class="paragraph-xs text-muted">{{inbound.originLocation.cityCode}}
+                                        </div>
+                                        <!--<div fxFlex="17" fxLayoutAlign="center center">-->
+                                        <!--                    <mat-divider style="position: relative;border: 1px solid #CED1D9"-->
+                                        <!--                                 fxLayoutAlign="center center"-->
+                                        <!--                    ></mat-divider>-->
+                                        <img fxFlex="44" src="./assets/img/web/Line_horizontal.png"
+                                             style="margin: 3% 0; height: 1px">
+                                        <!--</div>-->
+                                        <div fxLayoutAlign="center center" class="paragraph-xs text-muted"
+                                             *ngIf="inbound.flights[0]?.details.stops"
+                                             style="color: #6A7186; background-color: #F6F7F9;border-radius: 4px; width: 46px; height: 22px; z-index: 10;padding: 2px 8px; margin:1.5% 0">
+                                            {{inbound.flights[0]?.details.stops[0].locationCode}}
+                                        </div>
+                                        <img fxFlex="44" src="./assets/img/web/Line_horizontal.png"
+                                             style="margin: 3% 0; height: 1px">
+
+                                        <div fxFlex="6" fxLayoutAlign="end center"
+                                             class="paragraph-xs text-muted">{{inbound.destinationLocation.cityCode}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                        <mat-card class="max-w-full" style="margin-bottom: 2%">
+                            <mat-card-content>
+                                <div fxLayout="row">
+                                    <div fxFlex="10" fxLayoutAlign="start start">
+                                        <mat-label class="paragraph-s"
+                                                   *ngIf="!type">{{"DETAILS" | translate}}</mat-label>
+                                        <mat-select>
+                                            <mat-option (click)="chooseType('route', i, flight.type)"
+                                                        value="route">{{"Route" | translate}}
+                                            </mat-option>
+                                            <mat-option (click)="chooseType('rates', i, flight.type)"
+                                                        value="rate">{{"Rate" | translate}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <div fxFlex="52"></div>
+                                    <div fxFlex="50" fxLayoutAlign="end center">
+                                        <span class="maintext-S-semibold text-muted">{{"FROM" | translate}}
+                                            &nbsp;</span>
+                                        <span class="headline-S">{{priceView(inbound.minimumCost.total.toString())}}&nbsp; <span
+                                                *ngIf="inbound.minimumCost.currencyCode"
+                                                [innerHTML]="inbound.minimumCost.currencyCode"></span></span>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+
+                        </mat-card>
+                        <div *ngIf="typeMap && typeMap[flight.type] && typeMap[flight.type][i]">
+                            <vex-details-header *ngIf="fareFamilyDictionary"
+                                                (selectEvent)="changeSelected($event, flight, i)" [bound]="inbound"
+                                                [type]="typeMap[flight.type][i]"
+                                                [fareFamilyDictionary]="fareFamilyDictionary"></vex-details-header>
+                        </div>
+                    </div>
+                </div>
+
+                <!--selectedBoundMap[flight.type].rate-->
+                <div *ngIf="selectedBoundMap[flight.type]">
+                    <mat-card class="max-w-full">
+                        <mat-card-content>
+                            <div fxLayout="column" fxLayoutGap="2%">
+                                <div fxLayout="row"><!--for the git-->
+                                    <div fxFlex="6" fxLayoutAlign="start center">
+                                        <img style="padding: 1%" src="./assets/img/web/icons/selected.svg"></div>
+                                    <div fxFlex="54" fxLayoutAlign="start center"
+                                         class="maintext-M-semibold">{{selectedBoundMap[flight.type].bound.flights[0]?.details.departure.dateTime | date: 'HH:mm'}}
+                                        -
+                                        {{selectedBoundMap[flight.type].bound.flights[selectedBoundMap[flight.type].bound.flights.length - 1]?.details.arrival.dateTime | date: 'HH:mm'}}&nbsp;
+                                        <span *ngIf="durationIntoDays(selectedBoundMap[flight.type].bound.duration) > 0">   +{{durationIntoDays(selectedBoundMap[flight.type].bound.duration)}}</span>
+                                    </div>
+                                    <div fxFlex="40" fxLayoutAlign="end center"
+                                         class="maintext-S text-muted">{{millsIntoHours(selectedBoundMap[flight.type].bound.duration)}}
+                                        <span *ngIf="selectedBoundMap[flight.type].bound.flights.length > 1">
+                                        {{"with"| translate}}&nbsp; {{selectedBoundMap[flight.type].bound.flights.length - 1}}
+                                            <!--                                            {{"STOP" | translate}}-->
+                                            <span *ngIf="selectedBoundMap[flight.type].bound.flights.length-1 == 1">{{"STOP" | translate}}</span>
+                                            <span *ngIf="selectedBoundMap[flight.type].bound.flights.length > 2">{{"STOPS" | translate}}</span>
+                                        </span>
+                                        <span style="width: 50%"
+                                              *ngIf="selectedBoundMap[flight.type].bound.flights.length == 1">,&nbsp;{{"DIRECT" | translate}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card class="max-w-full" style="margin-bottom: 2%">
+                        <mat-card-content>
+                            <div fxLayout="row">
+                                <div fxFlex="10" fxLayoutAlign="start center">
+                                    <mat-label class="paragraph-s">{{"DETAILS" | translate}}</mat-label>
+                                    <mat-select>
+                                        <mat-option
+                                                (click)="chooseType('route', i, flight.type, selectedBoundMap[flight.type].rate)"
+                                                value="route">{{"Route" | translate}}
+                                        </mat-option>
+                                        <mat-option
+                                                (click)="chooseType('rates', i, flight.type, selectedBoundMap[flight.type].rate)"
+                                                value="rate">{{"Rate" | translate}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                                <div fxFlex="30"></div>
+                                <div fxFlex="60" fxLayoutAlign="end center">
+                                    <button style="background: #F6F7F9;border-radius: 4px;height: 32px"
+                                            mat-raised-button
+                                            (click)="changeBound(flight.type)">{{"CHANGE" | translate}}
+                                    </button>
+                                    <span class="headline-S">&nbsp; {{priceView(selectedBoundMap[flight.type].rate.cost.total.toString())}}&nbsp;
+                                        <span *ngIf="selectedBoundMap[flight.type].rate.cost.currencyCode"
+                                              [innerHTML]="selectedBoundMap[flight.type].rate.cost.currencyCode"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </mat-card-content>
+
+                    </mat-card>
+                    <div *ngIf="typeMap && typeMap[flight.type] && typeMap[flight.type][i]">
+                        <vex-details-header *ngIf="fareFamilyDictionary"
+                                            (selectEvent)="changeSelected($event, flight, i)"
+                                            [type]="typeMap[flight.type][i]"
+                                            [bound]="selectedBoundMap[flight.type].bound"
+                                            [fareFamilyDictionary]="fareFamilyDictionary"
+                                            [chosenRate2]="selectedBoundMap[flight.type].rate"
+                        ></vex-details-header>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

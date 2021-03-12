@@ -1,0 +1,409 @@
+<!--<div *ngIf="globalLoading" class="spinner" style="z-index: 10"></div>-->
+<div style="height: 100%; width: 100%;" *ngIf="globalLoading" fxLayoutAlign="center center">
+    <vex-loader></vex-loader>
+</div>
+<div id="errorTextDiv" fxLayout="row" style="width: 100%" class="padding-sides padding-top" *ngIf="!globalLoading">
+    <div fxFlex.gt-sm="70" fxFlex="100" fxLayout="column" fxLayoutGap="16px">
+        <span [ngClass]="isMobile ? 'headline-M' : 'headline-XL'">{{"Enter passenger information" | translate}}</span>
+        <div fxLayout="row" fxLayoutAlign="center start" class="warning">
+            <img style="width: 20px; height: 20px" fxLayoutAlign.gt-sm="end end" fxLayoutAlign="start start"
+                 src="./assets/img/web/warningIcon.png">
+            <div fxFlex="3" fxFlex.gt-sm="2"></div>
+            <p fxFlex="90" fxFlex.gt-sm="96" style="color: #1946BF" class="paragraph-s" fxLayoutAlign="start start">
+                {{"Check visa requirements if you are not a citizen of Kazakhstan and your route contains a flight segment within Kazakhstan" | translate}}</p>
+        </div>
+
+        <!--        <input type="text" ng2TelInput />-->
+
+        <div *ngIf="submitted && contactsForm.invalid" class="warning2"
+             fxLayout="row"
+             fxLayoutAlign="center center">
+            <img fxLayoutAlign="end end" src="./assets/img/web/warning2.svg" style="width: 20px">
+            <div fxFlex.lt-sm="3" fxFlex="2"></div>
+            <p fxFlex.lt-sm="90" fxFlex="96" style="color: #563A0F;" class="paragraph-s"
+               fxLayoutAlign="start start">{{"Fill contact form information" | translate}}</p>
+        </div>
+        <div *ngIf="submitted && !checkValidity()" class="warning2"
+             fxLayout="row"
+             fxLayoutAlign="center center">
+            <img fxLayoutAlign="end end" src="./assets/img/web/warning2.svg" style="width: 20px">
+            <div fxFlex.lt-sm="3" fxFlex="2"></div>
+            <p fxFlex.lt-sm="90" fxFlex="96" style="color: #563A0F;" class="paragraph-s"
+               fxLayoutAlign="start start">{{"Invalid data presented, please review the form" | translate}}</p>
+        </div>
+        <div *ngIf="errorMessage && errorText" fxLayout="row" fxLayoutAlign="center start" class="warning3">
+            <img style="width: 20px; height: 20px" fxLayoutAlign.gt-sm="end end" fxLayoutAlign="start start"
+                 src="./assets/img/web/alert_warning.png">
+            <div fxFlex="3" fxFlex.gt-sm="2"></div>
+            <p fxFlex="90" fxFlex.gt-sm="96" style="color: #B90404" class="paragraph-s" fxLayoutAlign="start start">
+                {{errorText}}</p>
+        </div>
+
+        <div fxLayout="column" fxLayoutGap="16px" *ngFor="let passenger of passengers; let i = index;"
+             style="min-height: fit-content!important;">
+
+            <mat-card *ngIf="passengersForms[i]" [ngClass]="isMobile ? 'paddingMobile' : 'paddingDesktop'">
+                <form [formGroup]="passengersForms[i]" fxLayout="column" fxLayoutGap="2%">
+                    <mat-card-content style="margin: 2%;" fxLayout="column" fxLayoutGap="2%">
+                        <div fxLayout="row" fxLayoutGap="1%" fxLayoutAlign="start center">
+                    <span [ngClass]="isMobile ? 'headline-M' : 'headline-L'" fxFlex.lt-sm="48" fxFlex.gt-sm="25"
+                          fxFlex.gt-md="15">{{"Passenger" | translate}} {{i + 1}}</span>
+                            <span class="paragraph-s text-muted" fxFlex.lt-sm="52" fxFlex.gt-sm="75"
+                                  fxFlex.gt-lg="85">{{getTypeName(passenger.passengerTypeCode)}}</span>
+                        </div>
+
+                        <div fxLayout="column" fxLayoutGap="1%">
+                            <div fxLayout="column">
+                                <div fxLayout="row"
+                                     *ngIf="passenger.passengerTypeCode === 'ADT' || passenger.passengerTypeCode === 'CHD'">
+                                    <div style="cursor: pointer" fxFlex.lt-sm="30" fxFlex.gt-sm="13" fxFlex.gt-lg="10"
+                                         (click)="selectGender('male', i)" fxLayoutAlign="center center"
+                                         [ngClass]="{'gender-selected': genderList[i] === 'male',
+                                                     'gender':  genderList[i] !== 'male',
+                                                      'errorGender': (genderTouched[i] &&
+                                                      (genderList[i] === null || genderList[i] === undefined) &&
+                                                      passenger.passengerTypeCode !== 'INF')
+                                                      || (((passengersForms[i].get('firstName').touched)
+                                                      || (passengersForms[i].get('lastName').touched)
+                                                      || (passengersForms[i].get('documentType').touched)
+                                                      || (passengersForms[i].get('documentNumber').touched) && passenger.passengerTypeCode !== 'INF' ) && (genderList[i] !== 'male' && genderList[i] !== 'female'))
+                                                      }">
+                                        <!--[ngClass]="genderList[i] === 'male' ? 'gender-selected' : 'gender' "-->
+                                        {{"Male" | translate}}
+                                    </div>
+                                    <div fxFlex="3" fxFlex.lt-sm="5"></div>
+                                    <div style="cursor: pointer" fxFlex.lt-sm="30" fxFlex.gt-sm="13" fxFlex.gt-lg="10"
+                                         (click)="selectGender('female', i)" fxLayoutAlign="center center"
+                                         [ngClass]="{'gender-selected': genderList[i] === 'female',
+                                                     'gender':  genderList[i] !== 'female',
+                                                      'errorGender': (genderTouched[i] &&
+                                                      (genderList[i] === null || genderList[i] === undefined) &&
+                                                      passenger.passengerTypeCode !== 'INF')
+                                                      || (((passengersForms[i].get('firstName').touched)
+                                                      || (passengersForms[i].get('lastName').touched)
+                                                      || (passengersForms[i].get('documentType').touched)
+                                                      || (passengersForms[i].get('documentNumber').touched) && passenger.passengerTypeCode !== 'INF' ) && (genderList[i] !== 'male' && genderList[i] !== 'female'))
+                                                      }">
+                                        <!--[ngClass]="genderList[i] === 'male' ? 'gender-selected' : 'gender' "-->
+                                        {{"Female" | translate}}
+                                    </div>
+                                </div>
+                                <mat-error
+                                        *ngIf="(genderTouched[i] &&
+                                                      (genderList[i] === null || genderList[i] === undefined) &&
+                                                      passenger.passengerTypeCode !== 'INF')
+                                                      || (( passenger.passengerTypeCode !== 'INF' && ((passengersForms[i].get('firstName').touched)
+                                                      || (passengersForms[i].get('lastName').touched)
+                                                      || (passengersForms[i].get('documentType').touched)
+                                                      || (passengersForms[i].get('documentNumber').touched) )  ) && (genderList[i] !== 'male' && genderList[i] !== 'female'))">
+                                    {{"Gender was not selected. Gender is required" | translate}}
+                                </mat-error>
+                            </div>
+
+                            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutAlign="space-between center">
+                                <mat-form-field style="width: 100%" fxFlex.gt-sm="49" fxFlex.md="47" fxFlex="100"
+                                                fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Name(in latin)" | translate}}</mat-label>
+                                    <input formControlName="firstName" matInput required>
+                                    <mat-error
+                                            *ngIf="(submitted && passengersForms[i].get('firstName').untouched) || passengersForms[i].get('firstName').hasError('required')">
+                                        {{"Name is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                    <mat-error
+                                            *ngIf="(submitted && passengersForms[i].get('firstName').untouched) || passengersForms[i].get('firstName').hasError('pattern')">
+                                        {{"Name must contain only latin letters" | translate}}
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field style="width: 100%" fxFlex.gt-sm="49" fxFlex.md="47" fxFlex="100"
+                                                fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Surname(in latin)" | translate}}</mat-label>
+                                    <input formControlName="lastName" matInput required>
+                                    <mat-error *ngIf="passengersForms[i].get('lastName').hasError('required')">
+                                        {{"Surname is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="passengersForms[i].get('lastName').hasError('pattern')">
+                                        {{"Surname must contain only latin letters" | translate}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutAlign="space-between center"
+                                 *ngIf="passenger.passengerTypeCode !== 'INF'">
+                                <mat-form-field style="width: 100%" fxFlex="49" fxFlex.md="47" fxFlex.lt-sm="100"
+                                                fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Document type" | translate}}</mat-label>
+                                    <mat-select formControlName="documentType">
+                                        <mat-option *ngFor="let i of docTypes" [value]="i.value">
+                                            {{i.viewValue}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="passengersForms[i].get('documentType').hasError('required')">
+                                        {{"Document type is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field style="width: 100%" fxFlex.md="47" fxFlex="49" fxFlex.lt-sm="100"
+                                                fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Document number" | translate}}</mat-label>
+                                    <input formControlName="documentNumber" matInput required>
+                                    <mat-error *ngIf="passengersForms[i].get('documentNumber').hasError('required')">
+                                        {{"Document number is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                    <mat-error *ngIf="passengersForms[i].get('documentNumber').hasError('maxlength')">
+                                        {{"Maximum number of characters is 25" | translate}}
+                                    </mat-error>
+                                    <mat-error *ngIf="passengersForms[i].get('documentNumber').hasError('pattern')">
+                                        {{"Only numbers and letters are allowed" | translate}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div fxLayout.gt-sm="row"
+                                 *ngIf="passenger.passengerTypeCode === 'CHD' || passenger.passengerTypeCode === 'INF'">
+                                <mat-form-field fxFlex="50" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Date of birth" | translate}}</mat-label>
+                                    <input matInput formControlName="dateOfBirth" [matDatepicker]="picker"
+                                           [max]="minDate">
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+
+                                    <mat-error *ngIf="passengersForms[i].get('dateOfBirth').hasError('required')">
+                                        {{"Date of birth is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                    <mat-error
+                                            *ngIf="!passengersForms[i].get('dateOfBirth').hasError('required') && passenger.passengerTypeCode === 'INF' && passengersForms[i].get('dateOfBirth').hasError('infAge')">
+                                        The age must not exceed 2 years
+                                    </mat-error>
+                                    <mat-error
+                                            *ngIf="!passengersForms[i].get('dateOfBirth').hasError('required') && passenger.passengerTypeCode === 'CHD' && passengersForms[i].get('dateOfBirth').hasError('chdAgeLE12')">
+                                        The age must not exceed 12 years and not less than 2 yeas old
+                                    </mat-error>
+                                    <mat-error
+                                            *ngIf="!passengersForms[i].get('dateOfBirth').hasError('required') && passenger.passengerTypeCode === 'CHD' && passengersForms[i].get('dateOfBirth').hasError('between112and14')">
+                                        Contact the call center
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div *ngIf="passenger.passengerTypeCode !== 'INF'" fxLayout="row" fxLayoutAlign="start start
+">
+                                <!--(click)="show(i)"-->
+                                <mat-checkbox (change)="show(i)" fxFlex="2" fxFlex.lt-sm="10" fxFlex.lt-lg="5"
+                                              formControlName="membershipCheck">
+                                </mat-checkbox>
+                                <div fxFlex="98">{{"Has loyalty program membership number" | translate}}</div>
+                            </div>
+
+                            <div *ngIf="checkedList[i]">
+                                <mat-form-field fxFlex="50" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Loyalty Program" | translate}}</mat-label>
+                                    <mat-select formControlName="program">
+                                        <mat-option *ngFor="let i of programs" [value]="i.value">
+                                            {{i.viewValue}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="passengersForms[i].get('program').hasError('required')">
+                                        {{"Program is" | translate}} <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div fxLayout="column" fxLayout.gt-sm="row" *ngIf="checkedList[i]">
+                                <mat-form-field fxFlex="50" fxFlex.lt-sm="100" fxFlex.lt-lg="100" appearance="outline">
+                                    <mat-label>{{"Membership number" | translate}}</mat-label>
+                                    <input formControlName="membershipNumber" matInput>
+                                    <mat-error *ngIf="passengersForms[i].get('membershipNumber').hasError('required')">
+                                        {{"Membership Number is" | translate}}
+                                        <strong>{{"required" | translate}}</strong>
+                                    </mat-error>
+                                </mat-form-field>
+                                <span style="color: red;"
+                                      *ngIf="membershipErrorMsg && !passengersForms[i].get('membershipNumber').hasError('required')">
+                                        {{membershipErrorMsg}}
+                                </span>
+                            </div>
+
+                        </div>
+                    </mat-card-content>
+                </form>
+            </mat-card>
+
+        </div>
+        <mat-card [ngClass]="isMobile ? 'paddingMobile' : 'paddingDesktop'">
+            <form [formGroup]="frequentFlyerCardForm" fxLayout="column" fxFlex.gt-sm="50" fxFlex="100">
+                <mat-card-content style="margin-bottom: 0!important;">
+                    <div fxLayout="column" fxLayoutGap="2%">
+                        <span [ngClass]="isMobile ? 'headline-M' : 'headline-L'">Nomad Corporate</span>
+                        <div fxLayout="column" fxLayoutGap="1%">
+                            <p class="paragraph-m text-muted">Applicable for all passengers</p>
+                        </div>
+                    </div>
+
+                    <div fxLayout.gt-sm="row" fxLayout="column" style="margin-top: 1%">
+
+                        <div fxFlex="100">
+                            <mat-form-field fxFlex="100" appearance="outline">
+                                <mat-label>Nomad Corporate Number</mat-label>
+                                <input formControlName="nomadNumber" matInput
+                                       placeholder="Enter Nomad Corporate Number">
+                                <mat-error *ngIf="frequentFlyerCardForm.get('nomadNumber').hasError('minlength') ||
+                                      frequentFlyerCardForm.get('nomadNumber').hasError('maxlength')">
+                                    Nomad Corporate Number is 9 numbers long.
+                                </mat-error>
+                                <mat-error *ngIf="frequentFlyerCardForm.get('nomadNumber').hasError('pattern')">
+                                    Nomad Corporate Number must contain only digits.
+                                </mat-error>
+                                <mat-error *ngIf="nomadErrorMsg">
+                                    {{nomadErrorMsg}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </mat-card-content>
+            </form>
+        </mat-card>
+        <mat-card [ngClass]="isMobile ? 'paddingMobile' : 'paddingDesktop'">
+            <form [formGroup]="contactsForm" fxLayout="column" fxLayoutGap="2%">
+                <mat-card-content style="margin: 2%;">
+                    <div fxLayout="column" fxLayoutGap="2%">
+                        <span [ngClass]="isMobile ? 'headline-M' : 'headline-L'">{{"Contact details" | translate}}</span>
+                        <div fxLayout="column" fxLayoutGap="1%">
+                            <p class="paragraph-m text-muted">{{"We will send a ticket to this email." | translate}}</p>
+                            <p class="paragraph-m text-muted">{{"Phone number is required for communication in case of changes." | translate}}</p>
+                        </div>
+                    </div>
+
+                    <div fxLayout.gt-sm="row" fxLayout="column" fxLayoutGap.gt-sm="20px" style="margin-top: 4%">
+
+                        <div fxFlex.gt-sm="50" fxFlex="100">
+                            <mat-form-field fxFlex="100" appearance="outline">
+                                <mat-label>Email</mat-label>
+                                <input formControlName="email" matInput required>
+                                <mat-error *ngIf="contactsForm.get('email').hasError('required')">
+                                    {{"Email is" | translate}} <strong>{{"required" | translate}}</strong>
+                                </mat-error>
+                                <mat-error *ngIf="contactsForm.get('email').hasError('email')">
+                                    {{"The content must be a valid email address" | translate}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+
+
+                        <div fxFlex.gt-sm="50" fxFlex="100">
+
+
+                            <mat-form-field fxLayout="row" appearance="outline" floatLabel="always"
+                                            formGroupName="phoneForm"
+                                            [ngClass]="(contactsForm.get('phoneForm').get('phone').touched)
+                           && contactsForm.get('phoneForm').get('phone').invalid? 'phone-filed-error' : 'phone-filed'">
+                                <!--                                <mat-select-country fxFlex="15" fxFlex.gt-lg="13" fxFlex.lt-sm="25" formControlName="code">-->
+                                <!--                                </mat-select-country>-->
+                                <!--&lt;!&ndash;                                <span fxFlex="15" fxFlex.gt-lg="13" fxFlex.lt-sm="25" fxLayout="row" fxLayoutAlign="start center">&ndash;&gt;-->
+                                <!--&lt;!&ndash;                                    <span fxLayoutAlign="start start">+</span><input matInput required formControlName="code" placeholder="Code" maxlength="3">&ndash;&gt;-->
+                                <!--&lt;!&ndash;                                    <span style="font-size: 16px; color: lightgrey;">|</span>&ndash;&gt;-->
+                                <!--&lt;!&ndash;                                </span>&ndash;&gt;-->
+                                <!--                                &lt;!&ndash;data-inputmask="'mask': '999 999 99 99'"&ndash;&gt;-->
+                                <!--                                <input style="padding-left: 5px;" fxFlex="85" fxFlex.gt-lg="87" fxFlex.lt-sm="75" formControlName="number"-->
+                                <!--                                       placeholder="Phone number" matInput-->
+                                <!--                                       maxlength="30" minlength="1" required-->
+                                <!--                                       (click)="onInputClick($event)" (keyup)="checkPhone()">-->
+                                <input placeholder="Phone number" matInput [hidden]="true">
+
+                                <!--                                <ngx-intl-tel-input [cssClass]="'custom-input'"-->
+                                <!--                                                    [preferredCountries]="preferredCountries"-->
+                                <!--                                                    [enableAutoCountrySelect]="true"  [searchCountryFlag]="true" [enablePlaceholder]="false"-->
+                                <!--                                                    [selectFirstCountry]="true" [searchCountryField]="[SearchCountryField.All]"-->
+                                <!--                                                    [selectedCountryISO]="CountryISO.Kazakhstan" [maxLength]="15" [tooltipField]="TooltipLabel.Name"-->
+                                <!--                                                    [phoneValidation]="true" [separateDialCode]="true"-->
+                                <!--                                                    [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phone">-->
+                                <!--                                </ngx-intl-tel-input>-->
+
+                                <ngx-intl-tel-input [cssClass]="'custom-input'"
+                                                    [preferredCountries]="preferredCountries"
+                                                    [enableAutoCountrySelect]="true" [searchCountryFlag]="true"
+                                                    [enablePlaceholder]="false"
+                                                    [selectFirstCountry]="true"
+                                                    [searchCountryField]="[SearchCountryField.All]"
+                                                    [selectedCountryISO]="CountryISO.Kazakhstan" [maxLength]="15"
+                                                    [tooltipField]="TooltipLabel.Name"
+                                                    [phoneValidation]="true" [separateDialCode]="true"
+                                                    [numberFormat]="PhoneNumberFormat.National"
+                                                    name="phone" formControlName="phone"
+                                                    onkeydown="return ( event.ctrlKey || event.altKey
+                                                    || (47<event.keyCode && event.keyCode<58 && event.shiftKey==false)
+                                                    || (64<event.keyCode && event.keyCode<91 && event.shiftKey==false)
+                                                    || (95<event.keyCode && event.keyCode<106)
+                                                    || (event.keyCode==8) || (event.keyCode==9)
+                                                    || (event.keyCode>34 && event.keyCode<40)
+                                                    || (event.keyCode==46) )">
+                                </ngx-intl-tel-input>
+
+                            </mat-form-field>
+
+                            <!--                            <div><strong>Is input valid:</strong>-->
+                            <!--                                <pre>{{ !contactsForm.get('phoneForm').get('phone').invalid }}</pre>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Is input touched:</strong>-->
+                            <!--                                <pre>{{ contactsForm.get('phoneForm').get('phone').touched }}</pre>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Is form valid:</strong>-->
+                            <!--                                <pre>{{ contactsForm.get('phoneForm').valid }}</pre>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Form value:</strong>-->
+                            <!--                                <pre>{{ contactsForm.get('phoneForm').value | json }}</pre>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Form value:</strong>-->
+                            <!--                                <pre>{{ contactsForm.get('phoneForm').get('phone').value | json}}</pre>-->
+                            <!--                                <p>{{ contactsForm.get('phoneForm').get('phone').value | json}}</p>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Form value:</strong>-->
+                            <!--                                <p>{{ contactsForm.get('phoneForm').get('phone').e164Number}}</p>-->
+                            <!--                            </div>-->
+                            <!--                            <div><strong>Form validation errors:</strong>-->
+                            <!--                                <pre>{{ contactsForm.get('phoneForm').get('phone').errors | json }}</pre>-->
+                            <!--                            </div>-->
+
+
+                            <!--                            <div *ngIf="(contactsForm.get('phone').get('number').dirty || contactsForm.get('phone').get('number').touched)-->
+                            <!--                            && contactsForm.get('phone').get('code').hasError('required')">-->
+                            <!--                                <span style="color: rgba(var(&#45;&#45;color-warn), 1);font-size: 75%">-->
+                            <!--                                 {{"Phone code is" | translate}} <strong>{{"required" | translate}}</strong>-->
+                            <!--                                </span><br>-->
+                            <!--                            </div>-->
+                            <!--                            <div *ngIf="contactsForm.get('phone').get('code').hasError('maxlength')">-->
+                            <!--                                <span style="color: rgba(var(&#45;&#45;color-warn), 1);font-size: 75%">-->
+                            <!--                                 {{"Maximum" | translate}} <strong>{{"3 numbers" | translate}}</strong>-->
+                            <!--                                </span><br>-->
+                            <!--                            </div>-->
+
+                            <div *ngIf="(contactsForm.get('phoneForm').get('phone').touched)
+                            && contactsForm.get('phoneForm').get('phone').invalid">
+                                <span style="color: rgba(var(--color-warn), 1);font-size: 75%">
+                                    {{"Phone number is invalid" | translate}}
+                                </span><br>
+                            </div>
+
+                            <!--                            <div *ngIf="contactsForm.get('phone').get('number').hasError('minlength') ||-->
+                            <!--                            contactsForm.get('phone').get('number').hasError('maxlength')">-->
+                            <!--                                <span style="color: rgba(var(&#45;&#45;color-warn), 1);font-size: 75%">-->
+                            <!--                                   {{"Min length is 2 numbers long" | translate}}-->
+                            <!--                                </span><br>-->
+                            <!--                            </div>-->
+
+                            <!--                            <div *ngIf="contactsForm.get('phone').get('number').hasError('pattern')">-->
+                            <!--                                <span style="color: rgba(var(&#45;&#45;color-warn), 1);font-size: 75%">-->
+                            <!--                                  {{"The phone number must contain only numbers" | translate}}-->
+                            <!--                                </span><br>-->
+                            <!--                            </div>-->
+                        </div>
+                    </div>
+                </mat-card-content>
+            </form>
+        </mat-card>
+    </div>
+    <div fxFlex.gt-sm="30" fxFlex="0" class="displayZero" fxLayoutAlign="start start">
+        <vex-booking (continueEvent)="reloadPassengerDetails($event)" style="width: 100%"></vex-booking>
+    </div>
+</div>

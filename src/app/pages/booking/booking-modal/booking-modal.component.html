@@ -1,0 +1,354 @@
+<!--<div style="padding: 5%">-->
+<div style="margin: 0 auto; width: 100%;">
+    <div mat-dialog-title fxLayout="row" style="position: sticky; top: 0; left: 0; background-color: #F6F7F9;padding: 20px 16px">
+        <div fxLayout="column" fxFlex="90" fxLayoutAlign="start start">
+            <div fxLayoutAlign="start start" class="maintext-S text-muted">{{"Total" | translate}}:</div>
+            <div fxLayoutAlign="start start" fxLayout="row">
+                <span class="headline-S" *ngIf="booking.cart && !booking.order"> {{priceView(booking?.cart?.total.total.toString())}} {{currency}}</span> <!--here-->
+                <span class="headline-S" *ngIf="booking.cart && booking.order"> {{priceView(booking.order.total.total.toString())}} {{currency}}</span> <!--here-->
+            </div>
+        </div>
+        <button fxLayoutAlign="center center" fxFlex="10" type="button" mat-icon-button tabindex="-1">
+            <mat-icon [icIcon]="icClear" (click)="close()"></mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="newClass" style="padding: 0 10%!important; height: fit-content!important;">
+
+        <div fxLayout="column" fxLayoutGap="6%">
+            <div fxLayout="row">
+                <div fxFlex="50" fxLayoutAlign="start start" class="maintext-M-semibold">{{"Flights" | translate}}
+                </div>
+                <div fxFlex="50" fxLayoutAlign="end end"
+                     class="maintext-M-semibold">{{priceView(booking?.cart.offers[0].costContainer.cost.total.toString())}}
+                    {{currency}}
+                </div>
+            </div>
+            <div fxLayout="column" fxLayoutGap="5%" >
+                <div fxLayout="column" fxLayoutGap="2%">
+                    <p class="maintext-S-semibold" style="color: #282D3E;">{{"DEPARTURE" | translate}},
+                        &nbsp;{{booking?.cart.offers[0].bounds[0].flights[0].details.departure.dateTime | date: 'd MMMM, EEE':undefined:locale}}</p>
+                    <p class="maintext-S text-muted">{{booking?.cart.offers[0].bounds[0].flights[0].details.departure.dateTime | date: 'HH:mm'}}
+                        {{booking?.cart.offers[0].bounds[0].flights[0].details.departure.locationCode}}
+                        –
+                        {{booking?.cart.offers[0].bounds[0].flights[booking?.cart.offers[0].bounds[0].flights.length - 1].details.arrival.dateTime | date: 'HH:mm'}}
+                        {{booking?.cart.offers[0].bounds[0].flights[booking?.cart.offers[0].bounds[0].flights.length - 1].details.arrival.locationCode}}</p>
+                    <div fxLayout="row">
+                        <div fxFlex="50" fxFlexAlign="start" class="maintext-S text-muted">
+                            <div *ngIf="searchRequest">
+                                    <span *ngFor="let passenger of getKeys(passengersCount); let l = last">
+                                        {{passengersCount[passenger]}}
+                                        <span>
+                                            {{getPassengerType(passenger, passengersCount[passenger]) | translate}}<span
+                                                *ngIf="!l">,</span>
+                                        </span>
+                                    </span>
+                            </div>
+                            <div *ngIf="!searchRequest">1&nbsp;<span>{{"ADULT" | translate}}, 1&nbsp;<span>{{"CHILD" | translate}}</span></span>
+                            </div>
+                        </div>
+                        <div fxFlex="50" fxLayoutAlign="end end">
+                            <p class="maintext-S text-muted">{{priceView(booking?.selectedBoundMap['Departure'].rate.cost.total.toString())}} {{currency}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="booking && booking.cart && booking.cart.offers && booking.selectedBoundMap['Return']" fxLayout="column" fxLayoutGap="2%">
+                    <p class="maintext-S-semibold" style="color: #282D3E;">{{"RETURN" | translate}},
+                        &nbsp;{{booking?.cart.offers[0].bounds[1].flights[0].details.departure.dateTime | date: 'd MMMM, EEE':undefined:locale}}</p>
+                    <p class="maintext-S text-muted">{{booking?.cart.offers[0].bounds[1].flights[0].details.departure.dateTime | date: 'HH:mm'}}
+                        {{booking?.cart.offers[0].bounds[1].flights[0].details.departure.locationCode}}
+                        –
+                        {{booking?.cart.offers[0].bounds[1].flights[booking?.cart.offers[0].bounds[1].flights.length - 1].details.arrival.dateTime | date: 'HH:mm'}}
+                        {{booking?.cart.offers[0].bounds[1].flights[booking?.cart.offers[0].bounds[1].flights.length - 1].details.arrival.locationCode}}</p>
+                    <div fxLayout="row">
+                        <div fxFlex="50" fxFlexAlign="start" class="maintext-S text-muted">
+                            <div *ngIf="searchRequest">
+                                    <span *ngFor="let passenger of getKeys(passengersCount); let l = last">
+                                        {{passengersCount[passenger]}}
+                                        <span>
+                                            {{getPassengerType(passenger, passengersCount[passenger]) | translate}}<span
+                                                *ngIf="!l">,</span>
+                                        </span>
+                                    </span>
+                            </div>
+                            <div *ngIf="!searchRequest">1&nbsp;<span>{{"ADULT" | translate}}, 1&nbsp;<span>{{"CHILD" | translate}}</span></span>
+                            </div>
+                        </div>
+                        <div fxFlex="50" fxLayoutAlign="end end">
+                            <p class="maintext-S text-muted">{{priceView(booking?.selectedBoundMap['Return'].rate.cost.total.toString())}}
+                                {{currency}}</p>
+                        </div>
+                    </div>
+                </div>
+                <mat-divider></mat-divider>
+
+
+                <div *ngIf="booking && booking.cart && booking.cart.offers">
+
+                    <div fxLayout="row" fxLayoutAlign="space-between end">
+                        <span class="maintext-S text-light">{{"Taxes" | translate}}</span>
+                        <span *ngIf="booking.cart && booking.cart.offers"><p
+                                class="maintext-S text-light">{{priceView(booking?.cart?.offers[0]?.costContainer.cost.totalTaxes.toString())}}
+                            {{currency}}</p></span>
+                    </div>
+
+                    <div *ngFor="let typeCode of getKeys(smartTaxesMap);" style="padding: 0; width: 100%"
+                         fxLayout="row"
+                         fxLayoutAlign="space-between center">
+                        <div *ngIf="typeCode !== 'INF'" style="width: 100%">
+
+                            <p class="maintext-S text-light">{{getTypeName(typeCode) | translate}}</p>
+                            <div *ngFor="let taxCode of getKeys(smartTaxesMap[typeCode])">
+                                <div fxFlex="70" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{smartTaxesMap[typeCode][taxCode].title}} <span
+                                            *ngIf="smartTaxesMap[typeCode][taxCode].passengerCount>1"> x {{smartTaxesMap[typeCode][taxCode].passengerCount }}</span>
+                                    </p>
+                                </div>
+
+                                <div fxFlex="30" fxLayoutAlign="end center">
+                                    <p *ngIf="booking.cart"
+                                       class="maintext-S text-light">{{priceView((smartTaxesMap[typeCode][taxCode].total * smartTaxesMap[typeCode][taxCode].passengerCount).toString())}}
+                                        {{currency}}</p>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="booking && booking.order && booking.order.services.baggage.length != 0 && showBaggage()" fxLayout="column">
+                    <span fxLayout="row">
+                        <div fxFlex="65" fxFlex.md="40" fxLayoutAlign="start center" class="maintext-M-semibold">
+                            {{"Baggage" | translate}}
+                        </div>
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold"
+                         *ngIf="serviceContent && serviceContent['baggageTotal'] && serviceContent['baggageTotal']['baggage'] === 0">
+                        {{"Free" | translate}}
+
+                        <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                (click)="deleteService(selectedServicesMap['baggage'], 'baggage', $event)">
+                            <img src="./assets/img/web/Delete.png" alt="warning">
+                        </button>
+                    </div>
+
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold"
+                         *ngIf="serviceContent && serviceContent['baggageTotal'] && serviceContent['baggageTotal']['baggage'] != 0">
+                        {{priceView(serviceContent['baggageTotal']['baggage'].toString())}} {{currency}}
+
+                        <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                (click)="deleteService(selectedServicesMap['baggage'], 'baggage',  $event)">
+                            <img src="./assets/img/web/Delete.png" alt="warning">
+                        </button>
+                    </div>
+                    </span>
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let baggage of booking.order.services.baggage"
+                             style="width: 100%!important;">
+<!--                            <p style="margin-left: 5%" class="maintext-S-semibold text-muted">-->
+<!--                                {{baggage.departure}} — {{baggage.arrival}}</p>-->
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{baggage.quantity}} bags /
+                                        <span *ngIf="cabinType =='business'">2 x 8kg</span>
+                                        <span *ngIf="cabinType =='eco'">23kg</span>
+                                    </p>
+                                </div>
+                                <div *ngIf="baggage.prices && baggage.prices.totalPrices" fxFlex="50"
+                                     fxLayoutAlign="end center" fxLayoutAlign.md="space-between center">
+                                    <p class="maintext-S text-muted">{{priceView(baggage.prices.totalPrices[0].total.value.toString())}}
+                                        {{currency}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="booking && booking.order && booking.order.seats" fxLayout="column">
+                    <span fxLayout="row">
+                        <div fxFlex="65" fxFlex.md="40" fxLayoutAlign="start center" class="maintext-M-semibold">
+                            {{"Seats" | translate}}
+                        </div>
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold"
+                             *ngIf="calculateTotal(booking.order.seats, 'seats') === 0">
+                        {{"Free" | translate}}
+
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteSeats(booking.order.seats)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                    </div>
+
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold"
+                             *ngIf="calculateTotal(booking.order.seats, 'seats') != 0">
+                        <span>{{priceView(calculateTotal(booking.order.seats, 'seats').toString())}} {{currency}}</span>
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                (click)="deleteSeats(booking.order.seats)">
+                                <img src="./assets/img/web/Delete.png" alt="warning">
+                            </button>
+                    </div>
+                    </span>
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let flight of booking.order.seats;"
+                             style="width: 100%!important;">
+                            <p style="margin-left: 5%" class="maintext-S-semibold text-muted">
+                                {{flight.departure}} — {{flight.arrival}}</p>
+                            <div style="margin-left: 5%" fxLayout="row" *ngFor="let seat of flight.seatSelections">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">
+                                        1 place {{seat.seatNumber}}
+                                    </p>
+                                </div>
+                                <div *ngIf="flight.prices" fxFlex="50"
+                                     fxLayoutAlign="end center" fxLayoutAlign.md="space-between center">
+<!--                                    <p class="maintext-S text-muted">{{priceView(baggage.prices.totalPrices[0].total.value.toString())}}-->
+<!--                                        ₸</p>-->
+                                    <div fxLayoutAlign="end center" *ngFor="let unitPrice of flight.prices.unitPrices;">
+                                        <p class="maintext-S text-muted"
+                                           *ngIf="checkPassengerSeat(flight.prices.unitPrices, seat.travelerId)">
+                                            <span *ngIf="unitPrice && unitPrice.travelerIds[0] === seat.travelerId">
+                                                {{priceView(unitPrice.prices[0].base.value.toString())}} {{currency}}</span></p>
+<!--                                        <p class="maintext-S text-muted"-->
+<!--                                           *ngIf="unitPrice && !checkPassengerSeat(flight.prices.unitPrices, seat.travelerId)">-->
+<!--                                            Free</p>-->
+                                    </div>
+                                </div>
+                                <div fxLayoutAlign="end center" fxFlex="50" fxLayoutAlign.md="space-between center" *ngIf="!flight.prices || !seat.isChargeable">
+                                    <p class="maintext-S text-muted">Free</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="mealList.length != 0 && showMeal()" fxLayout="column">
+                    <span fxLayout="row">
+                        <div fxFlex="65" fxFlex.md="40" fxLayoutAlign="start center" class="maintext-M-semibold">
+                            {{"Meal" | translate}}
+                        </div>
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold">
+                        {{"Free" | translate}}
+
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['meal'], 'meal', $event)">
+                            <img src="./assets/img/web/Delete.png" alt="warning">
+                        </button>
+                    </div>
+                    </span>
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let meal of mealList"
+                             style="width: 100%!important;">
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{meal}}</p>
+                                </div>
+                                <div fxFlex="50"
+                                     fxLayoutAlign="end center" fxLayoutAlign.md="space-between center">
+                                    <p class="maintext-S text-muted">{{"Free" | translate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="assistanceList.length!=0 && showAssistance()" fxLayout="column">
+                    <span fxLayout="row">
+                        <div fxFlex="65" fxFlex.md="40" fxLayoutAlign="start center" class="maintext-M-semibold">
+                            {{"Assistance" | translate}}
+                        </div>
+                        <div fxFlex="35" fxFlex.md="60" fxLayoutAlign="space-between center" fxLayoutAlign.md="end center" fxLayoutAlign.gt-md="end center" class="maintext-M-semibold">
+                        {{"Free" | translate}}
+
+                            <button style="color: #DAB267" mat-icon-button fxLayoutAlign="center center"
+                                    (click)="deleteService(selectedServicesMap['assistance'], 'assistance', $event)">
+                            <img src="./assets/img/web/Delete.png" alt="warning">
+                        </button>
+                    </div>
+                    </span>
+                    <div fxLayout="column" fxLayoutGap="5%">
+                        <div fxLayout="column" *ngFor="let assistance of assistanceList"
+                             style="width: 100%!important;">
+                            <div style="margin-left: 5%" fxLayout="row">
+                                <div fxFlex="50" fxLayoutAlign="start center">
+                                    <p class="maintext-S text-muted">{{assistance}}</p>
+                                </div>
+                                <div fxFlex="50"
+                                     fxLayoutAlign="end center" fxLayoutAlign.md="space-between center">
+                                    <p class="maintext-S text-muted">{{"Free" | translate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--                <div fxLayout="column" fxLayoutGap="5">-->
+                <!--                    <div fxLayout="row">-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="start center">-->
+                <!--                            <p class="maintext-S text-muted">{{"Taxes" | translate}}</p>-->
+                <!--                        </div>-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="end center">-->
+                <!--                            <p *ngIf="booking.cart && booking.cart.offers" class="maintext-S text-muted">{{booking?.cart?.offers[0]?.costContainer.cost.totalTaxes}}₸</p>-->
+                <!--                            <p *ngIf="booking.rate && !booking.rate.cost" class="maintext-S text-muted">8000 ₸</p>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    <div fxLayout="row">-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="start center">-->
+                <!--                            <p class="maintext-S text-muted">{{"Airport" | translate}}</p>-->
+                <!--                        </div>-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="end center">-->
+                <!--                            <p class="maintext-S text-muted">4 000 ₸</p>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+
+                <!--                    <div fxLayout="row">-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="start center">-->
+                <!--                            <p class="maintext-S text-muted">{{"Fuel surcharge" | translate}}</p>-->
+                <!--                        </div>-->
+                <!--                        <div fxFlex="50" fxLayoutAlign="end center">-->
+                <!--                            <p class="maintext-S text-muted">4 000 ₸</p>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+
+                <!--                </div>-->
+            </div>
+            <!--<div *ngIf="baggage">-->
+            <!--<div fxLayout="row">-->
+            <!--<div fxFlex="50" fxLayoutAlign="start start"-->
+            <!--class="maintext-M-semibold">{{"Baggage" | translate}}</div>-->
+            <!--<div fxFlex="50" fxLayoutAlign="end end" class="maintext-M-semibold">4 000 ₸</div>-->
+            <!--</div>-->
+            <!--<div fxLayout="column" fxLayoutGap="6%">-->
+            <!--<div fxLayoutGap="5%">-->
+            <!--<p class="maintext-S-semibold" style="color: #565D73;">Nur-Sultan — Saint-Petersburg</p>-->
+            <!--<div fxLayout="row">-->
+            <!--<div fxFlex="50" fxFlexAlign="start">-->
+            <!--<p class="maintext-S text-muted">2 bags x 23kg</p>-->
+            <!--</div>-->
+            <!--<div fxFlex="50" fxLayoutAlign="end end">-->
+            <!--<p class="maintext-S text-muted">2 000 ₸</p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div>-->
+            <!--<p class="maintext-S-semibold" style="color: #565D73;">Saint-Petersburg — Nur-Sultan</p>-->
+            <!--<div fxLayout="row">-->
+            <!--<div fxFlex="50" fxFlexAlign="start">-->
+            <!--<p class="maintext-S text-muted">2 bags x 23kg</p>-->
+            <!--</div>-->
+            <!--<div fxFlex="50" fxLayoutAlign="end end">-->
+            <!--<p class="maintext-S text-muted">2 000 ₸</p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<a style="margin-top: 5%; color: #8A6842; text-decoration: #8A6842 underline;">{{"Terms" | translate}}</a>-->
+            <!--</div>-->
+
+            <mat-dialog-actions fxLayoutAlign="center end" style="padding: 5%">
+                <button mat-button class="button-standard" (click)="continue()"> {{"CONTINUE" | translate}}</button>
+            </mat-dialog-actions>
+        </div>
+    </mat-dialog-content>
+
+
+
+</div>
